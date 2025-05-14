@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import DashboardLayout from "@/components/dashboard-layout"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 export default function NewComplaintPage() {
   const router = useRouter()
@@ -47,6 +49,12 @@ export default function NewComplaintPage() {
   return (
     <DashboardLayout userType="student">
       <div className="p-6">
+        <Link href="/dashboard/student">
+          <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
+            <ArrowLeft className="h-4 w-4 text-gray-700" />
+            <span>Back to Dashboard</span>
+          </Button>
+        </Link>
         <h1 className="text-2xl font-bold mb-6">Submit New Complaint</h1>
 
         <Card>

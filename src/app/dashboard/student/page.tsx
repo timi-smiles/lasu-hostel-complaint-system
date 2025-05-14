@@ -163,7 +163,7 @@ export default function StudentDashboard() {
                   )}
                 </CardContent>
                 <CardFooter>
-                  <Link href={`/dashboard/student/complaint/${complaint.id}`}>
+                  <Link href={`/dashboard/student/complaints/${complaint.id}`}>
                     <Button variant="outline" size="sm">
                       View Details
                     </Button>
@@ -193,7 +193,7 @@ export default function StudentDashboard() {
                     <p className="text-gray-700">{complaint.description}</p>
                   </CardContent>
                   <CardFooter>
-                    <Link href={`/dashboard/student/complaint/${complaint.id}`}>
+                    <Link href={`/dashboard/student/complaints/${complaint.id}`}>
                       <Button variant="outline" size="sm">
                         View Details
                       </Button>
@@ -237,7 +237,7 @@ export default function StudentDashboard() {
                     )}
                   </CardContent>
                   <CardFooter>
-                    <Link href={`/dashboard/student/complaint/${complaint.id}`}>
+                    <Link href={`/dashboard/student/complaints/${complaint.id}`}>
                       <Button variant="outline" size="sm">
                         View Details
                       </Button>
@@ -281,7 +281,7 @@ export default function StudentDashboard() {
                     )}
                   </CardContent>
                   <CardFooter>
-                    <Link href={`/dashboard/student/complaint/${complaint.id}`}>
+                    <Link href={`/dashboard/student/complaints/${complaint.id}`}>
                       <Button variant="outline" size="sm">
                         View Details
                       </Button>

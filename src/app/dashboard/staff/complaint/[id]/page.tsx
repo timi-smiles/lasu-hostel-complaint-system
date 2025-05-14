@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import DashboardLayout from "@/components/dashboard-layout"
+import { ArrowLeft, Link } from "lucide-react"
 
 // Mock data for a specific complaint
 const mockComplaint = {
@@ -104,9 +105,12 @@ export default function ComplaintDetailPage({ params }: { params: { id: string }
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Complaint #{params.id}</h1>
-          <Button variant="outline" onClick={() => router.push("/dashboard/staff")}>
-            Back to Dashboard
-          </Button>
+              <Link href="/dashboard/staff">
+                <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
+                  <ArrowLeft className="h-4 w-4" />
+                    <span>Back to Dashboard</span>
+                </Button>
+              </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
