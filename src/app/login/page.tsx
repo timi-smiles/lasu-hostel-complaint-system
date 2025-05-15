@@ -68,7 +68,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-              />
+              />    
             </div>
             <div className="space-y-2">
               <Label>Account Type</Label>

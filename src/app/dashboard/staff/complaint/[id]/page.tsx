@@ -110,7 +110,8 @@ export default function ComplaintDetailPage({ params }: { params: { id: string }
                   <ArrowLeft className="h-4 w-4" />
                     <span>Back to Dashboard</span>
                 </Button>
-              </Link>
+            </Link>
+
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
