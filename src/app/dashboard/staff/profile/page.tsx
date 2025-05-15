@@ -102,7 +102,7 @@ export default function StaffProfilePage() {
       <div className="p-6 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">My Profile</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Admin Profile</h1>
             <p className="text-muted-foreground">View and manage your profile information</p>
           </div>
 
@@ -189,8 +189,6 @@ export default function StaffProfilePage() {
               <TabsList className="mb-4">
                 <TabsTrigger value="personal">Personal Info</TabsTrigger>
                 <TabsTrigger value="account">Account</TabsTrigger>
-                <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                <TabsTrigger value="security">Security</TabsTrigger>
               </TabsList>
 
               {/* Personal Information Tab */}
@@ -441,198 +439,6 @@ export default function StaffProfilePage() {
                 </Card>
               </TabsContent>
 
-              {/* Notifications Tab */}
-              <TabsContent value="notifications" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Notification Preferences</CardTitle>
-                    <CardDescription>Manage how you receive notifications</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="space-y-4">
-                      <h3 className="text-sm font-medium">Notification Channels</h3>
-                      <Separator />
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-0.5">
-                            <Label>Email Notifications</Label>
-                            <p className="text-sm text-muted-foreground">Receive notifications via email</p>
-                          </div>
-                          <Switch
-                            checked={staffData.notifications.email}
-                            onCheckedChange={(checked) => handleNotificationChange("email", checked)}
-                            disabled={!isEditing}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-0.5">
-                            <Label>Push Notifications</Label>
-                            <p className="text-sm text-muted-foreground">Receive notifications in the browser</p>
-                          </div>
-                          <Switch
-                            checked={staffData.notifications.push}
-                            onCheckedChange={(checked) => handleNotificationChange("push", checked)}
-                            disabled={!isEditing}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-0.5">
-                            <Label>SMS Notifications</Label>
-                            <p className="text-sm text-muted-foreground">Receive notifications via text message</p>
-                          </div>
-                          <Switch
-                            checked={staffData.notifications.sms}
-                            onCheckedChange={(checked) => handleNotificationChange("sms", checked)}
-                            disabled={!isEditing}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h3 className="text-sm font-medium">Notification Types</h3>
-                      <Separator />
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-0.5">
-                            <Label>New Complaints</Label>
-                            <p className="text-sm text-muted-foreground">When a new complaint is submitted</p>
-                          </div>
-                          <Switch
-                            checked={staffData.notifications.newComplaints}
-                            onCheckedChange={(checked) => handleNotificationChange("newComplaints", checked)}
-                            disabled={!isEditing}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-0.5">
-                            <Label>Status Updates</Label>
-                            <p className="text-sm text-muted-foreground">When a complaint status changes</p>
-                          </div>
-                          <Switch
-                            checked={staffData.notifications.statusUpdates}
-                            onCheckedChange={(checked) => handleNotificationChange("statusUpdates", checked)}
-                            disabled={!isEditing}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-0.5">
-                            <Label>System Announcements</Label>
-                            <p className="text-sm text-muted-foreground">Important system-wide announcements</p>
-                          </div>
-                          <Switch
-                            checked={staffData.notifications.systemAnnouncements}
-                            onCheckedChange={(checked) => handleNotificationChange("systemAnnouncements", checked)}
-                            disabled={!isEditing}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Security Tab */}
-              <TabsContent value="security" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Change Password</CardTitle>
-                    <CardDescription>Update your account password</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handlePasswordChange} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="currentPassword">Current Password</Label>
-                        <Input
-                          id="currentPassword"
-                          type="password"
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="newPassword">New Password</Label>
-                        <Input
-                          id="newPassword"
-                          type="password"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                        <Input
-                          id="confirmPassword"
-                          type="password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <Button type="submit">Update Password</Button>
-                    </form>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Two-Factor Authentication</CardTitle>
-                    <CardDescription>Add an extra layer of security to your account</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label>Two-Factor Authentication</Label>
-                        <p className="text-sm text-muted-foreground">Require a verification code when logging in</p>
-                      </div>
-                      <Switch disabled={!isEditing} />
-                    </div>
-                    <Button variant="outline" disabled={!isEditing}>
-                      <Lock className="h-4 w-4 mr-2" />
-                      Set Up Two-Factor Authentication
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Login Sessions</CardTitle>
-                    <CardDescription>Manage your active login sessions</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-3 border rounded-md">
-                        <div>
-                          <p className="font-medium">Current Session</p>
-                          <p className="text-sm text-muted-foreground">
-                            Chrome on Windows • {new Date().toLocaleString()}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          Active
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between p-3 border rounded-md">
-                        <div>
-                          <p className="font-medium">Previous Session</p>
-                          <p className="text-sm text-muted-foreground">
-                            Safari on iPhone • {new Date(Date.now() - 86400000).toLocaleString()}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
-                          Expired
-                        </Badge>
-                      </div>
-                    </div>
-                    <Button variant="outline">
-                      <Lock className="h-4 w-4 mr-2" />
-                      Log Out All Other Sessions
-                    </Button>
-                  </CardContent>
-                </Card>
-              </TabsContent>
             </Tabs>
           </div>
         </div>

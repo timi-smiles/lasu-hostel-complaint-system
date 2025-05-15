@@ -197,7 +197,7 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <Link href="/dashboard/student/profile">
+                <Link href={`/dashboard/${userType}/profile`}>
                 <DropdownMenuItem>
                   <User className="h-4 w-4 mr-2" />
                   Profile

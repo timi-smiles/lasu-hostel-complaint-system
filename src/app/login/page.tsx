@@ -84,12 +84,9 @@ export default function LoginPage() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="staff" id="staff" />
-                  <Label htmlFor="staff">Staff</Label>
+                  <Label htmlFor="staff">Admin</Label>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="admin" id="admin" />
-                  <Label htmlFor="admin">Admin</Label>
-                </div>
+
               </RadioGroup>
             </div>
             <div className="text-sm text-right">
