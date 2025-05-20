@@ -143,7 +143,8 @@ export default function AnalyticsPage() {
       )
     }
     return null
-  }
+  } 
+
 
   return (
     <DashboardLayout userType="staff">

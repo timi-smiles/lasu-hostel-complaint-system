@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum UserRole {
+  STUDENT
+  STAFF
+  ADMIN
+}
+
+enum ComplaintStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum ComplaintPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ComplaintCategory {
+  PLUMBING
+  ELECTRICAL
+  FURNITURE
+  CLEANLINESS
+  NOISE_COMPLAINT
+  SECURITY
+  INTERNET
+  OTHER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  id            String      @id @default(cuid())
+  email         String      @unique
+  passwordHash  String
+  fullName      String
+  role          UserRole
+  status        UserStatus  @default(ACTIVE)
+  phone         String?
+  department    String?
+  
+  // Student specific fields
+  studentId     String?     @unique
+  hostelBlock   String?
+  roomNumber    String?
+  
+  // Timestamps
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  lastLogin     DateTime?
+  
+  // Relations
+  complaints    Complaint[] @relation("StudentComplaints")
+  assignedComplaints Complaint[] @relation("AssignedComplaints")
+  complaintUpdates ComplaintUpdate[]
+
+  @@index([email])
+  @@index([studentId])
+  @@index([role])
+}
+
+model Complaint {
+  id            String            @id @default(cuid())
+  title         String
+  description   String
+  category      ComplaintCategory
+  status        ComplaintStatus   @default(PENDING)
+  priority      ComplaintPriority @default(MEDIUM)
+  
+  // Location info
+  hostelBlock   String
+  roomNumber    String
+  
+  // Timestamps
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  // Relations
+  studentId     String
+  student       User              @relation("StudentComplaints", fields: [studentId], references: [id], onDelete: Cascade)
+  
+  assignedToId  String?
+  assignedTo    User?             @relation("AssignedComplaints", fields: [assignedToId], references: [id], onDelete: SetNull)
+  
+  updates       ComplaintUpdate[]
+
+  @@index([studentId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([category])
+  @@index([hostelBlock])
+  @@index([createdAt])
+}
+
+model ComplaintUpdate {
+  id            String    @id @default(cuid())
+  message       String
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  complaintId   String
+  complaint     Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  
+  staffId       String?
+  staff         User?     @relation(fields: [staffId], references: [id], onDelete: SetNull)
+
+  @@index([complaintId])
+  @@index([staffId])
+  @@index([createdAt])
+}
+
+// For storing notification preferences
+model NotificationPreference {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  email         Boolean   @default(true)
+  push          Boolean   @default(true)
+  sms           Boolean   @default(false)
+  newComplaints Boolean   @default(true)
+  statusUpdates Boolean   @default(true)
+  announcements Boolean   @default(true)
+  
+  // Timestamps
+  updatedAt     DateTime  @updatedAt
+}
+
