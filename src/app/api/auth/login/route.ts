@@ -2,7 +2,9 @@ import { type NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { verifyPassword } from "@/lib/auth"
-import type { UserRole } from "@prisma/client"
+
+// Define UserRole type manually if not exported by @prisma/client
+type UserRole = "ADMIN" | "STUDENT" | "STAFF";
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,7 +42,8 @@ export async function POST(req: NextRequest) {
     })
 
     // Set cookie
-    cookies().set("userId", user.id, {
+    const cookieStore = await cookies();
+    cookieStore.set("userId", user.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, // 1 week

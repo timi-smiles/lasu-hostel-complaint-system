@@ -1,7 +1,33 @@
 "use server"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
-import { type ComplaintCategory, ComplaintPriority, ComplaintStatus, UserRole } from "@prisma/client"
+
+// Define ComplaintCategory enum locally to match your database values
+enum ComplaintCategory {
+  MAINTENANCE = "MAINTENANCE",
+  CLEANLINESS = "CLEANLINESS",
+  SECURITY = "SECURITY",
+  OTHER = "OTHER"
+}
+
+enum ComplaintPriority {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH"
+}
+
+enum ComplaintStatus {
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  RESOLVED = "RESOLVED",
+  REJECTED = "REJECTED"
+}
+
+enum UserRole {
+  STUDENT = "STUDENT",
+  STAFF = "STAFF",
+  ADMIN = "ADMIN"
+}
 import { revalidatePath } from "next/cache"
 
 export async function submitComplaint(formData: FormData) {

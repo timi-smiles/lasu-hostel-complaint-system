@@ -4,6 +4,9 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 
+// Define UserRole type if not imported from elsewhere
+type UserRole = "student" | "staff" | "admin";
+
 export async function login(formData: FormData) {
   try {
     const email = formData.get("email") as string
@@ -34,12 +37,13 @@ export async function login(formData: FormData) {
     await db.users.update(user.id, { lastLogin: new Date().toISOString() })
 
     // Set cookie
-    cookies().set("userId", user.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    })
+    const cookieStore = await cookies()
+      cookieStore.set('userId', user.id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 24 * 7,
+    path: '/',
+  });
 
     // Redirect based on user role
     if (user.role === "student") {
@@ -92,7 +96,7 @@ export async function register(formData: FormData) {
       fullName,
       email,
       password,
-      role: userType,
+      role: userType as UserRole,
       studentId: userType === "student" ? studentId : undefined,
       hostelBlock: userType === "student" ? hostelBlock : undefined,
       roomNumber: userType === "student" ? roomNumber : undefined,
@@ -106,6 +110,6 @@ export async function register(formData: FormData) {
 }
 
 export async function logout() {
-  cookies().delete("userId")
+  (await cookies()).delete("userId")
   redirect("/")
 }
