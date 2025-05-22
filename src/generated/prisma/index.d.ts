@@ -29,6 +29,21 @@ export type Complaint = $Result.DefaultSelection<Prisma.$ComplaintPayload>
  */
 export type ComplaintUpdate = $Result.DefaultSelection<Prisma.$ComplaintUpdatePayload>
 /**
+ * Model ComplaintAttachment
+ * 
+ */
+export type ComplaintAttachment = $Result.DefaultSelection<Prisma.$ComplaintAttachmentPayload>
+/**
+ * Model ComplaintFeedback
+ * 
+ */
+export type ComplaintFeedback = $Result.DefaultSelection<Prisma.$ComplaintFeedbackPayload>
+/**
+ * Model ComplaintStatusLog
+ * 
+ */
+export type ComplaintStatusLog = $Result.DefaultSelection<Prisma.$ComplaintStatusLogPayload>
+/**
  * Model NotificationPreference
  * 
  */
@@ -265,6 +280,36 @@ export class PrismaClient<
     * ```
     */
   get complaintUpdate(): Prisma.ComplaintUpdateDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.complaintAttachment`: Exposes CRUD operations for the **ComplaintAttachment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ComplaintAttachments
+    * const complaintAttachments = await prisma.complaintAttachment.findMany()
+    * ```
+    */
+  get complaintAttachment(): Prisma.ComplaintAttachmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.complaintFeedback`: Exposes CRUD operations for the **ComplaintFeedback** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ComplaintFeedbacks
+    * const complaintFeedbacks = await prisma.complaintFeedback.findMany()
+    * ```
+    */
+  get complaintFeedback(): Prisma.ComplaintFeedbackDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.complaintStatusLog`: Exposes CRUD operations for the **ComplaintStatusLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ComplaintStatusLogs
+    * const complaintStatusLogs = await prisma.complaintStatusLog.findMany()
+    * ```
+    */
+  get complaintStatusLog(): Prisma.ComplaintStatusLogDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.notificationPreference`: Exposes CRUD operations for the **NotificationPreference** model.
@@ -718,6 +763,9 @@ export namespace Prisma {
     User: 'User',
     Complaint: 'Complaint',
     ComplaintUpdate: 'ComplaintUpdate',
+    ComplaintAttachment: 'ComplaintAttachment',
+    ComplaintFeedback: 'ComplaintFeedback',
+    ComplaintStatusLog: 'ComplaintStatusLog',
     NotificationPreference: 'NotificationPreference'
   };
 
@@ -737,7 +785,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "complaint" | "complaintUpdate" | "notificationPreference"
+      modelProps: "user" | "complaint" | "complaintUpdate" | "complaintAttachment" | "complaintFeedback" | "complaintStatusLog" | "notificationPreference"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -963,6 +1011,228 @@ export namespace Prisma {
           }
         }
       }
+      ComplaintAttachment: {
+        payload: Prisma.$ComplaintAttachmentPayload<ExtArgs>
+        fields: Prisma.ComplaintAttachmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ComplaintAttachmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ComplaintAttachmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>
+          }
+          findFirst: {
+            args: Prisma.ComplaintAttachmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ComplaintAttachmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>
+          }
+          findMany: {
+            args: Prisma.ComplaintAttachmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>[]
+          }
+          create: {
+            args: Prisma.ComplaintAttachmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>
+          }
+          createMany: {
+            args: Prisma.ComplaintAttachmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ComplaintAttachmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>[]
+          }
+          delete: {
+            args: Prisma.ComplaintAttachmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>
+          }
+          update: {
+            args: Prisma.ComplaintAttachmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.ComplaintAttachmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ComplaintAttachmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ComplaintAttachmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.ComplaintAttachmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintAttachmentPayload>
+          }
+          aggregate: {
+            args: Prisma.ComplaintAttachmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateComplaintAttachment>
+          }
+          groupBy: {
+            args: Prisma.ComplaintAttachmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ComplaintAttachmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ComplaintAttachmentCountArgs<ExtArgs>
+            result: $Utils.Optional<ComplaintAttachmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      ComplaintFeedback: {
+        payload: Prisma.$ComplaintFeedbackPayload<ExtArgs>
+        fields: Prisma.ComplaintFeedbackFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ComplaintFeedbackFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ComplaintFeedbackFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>
+          }
+          findFirst: {
+            args: Prisma.ComplaintFeedbackFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ComplaintFeedbackFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>
+          }
+          findMany: {
+            args: Prisma.ComplaintFeedbackFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>[]
+          }
+          create: {
+            args: Prisma.ComplaintFeedbackCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>
+          }
+          createMany: {
+            args: Prisma.ComplaintFeedbackCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ComplaintFeedbackCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>[]
+          }
+          delete: {
+            args: Prisma.ComplaintFeedbackDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>
+          }
+          update: {
+            args: Prisma.ComplaintFeedbackUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>
+          }
+          deleteMany: {
+            args: Prisma.ComplaintFeedbackDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ComplaintFeedbackUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ComplaintFeedbackUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>[]
+          }
+          upsert: {
+            args: Prisma.ComplaintFeedbackUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintFeedbackPayload>
+          }
+          aggregate: {
+            args: Prisma.ComplaintFeedbackAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateComplaintFeedback>
+          }
+          groupBy: {
+            args: Prisma.ComplaintFeedbackGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ComplaintFeedbackGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ComplaintFeedbackCountArgs<ExtArgs>
+            result: $Utils.Optional<ComplaintFeedbackCountAggregateOutputType> | number
+          }
+        }
+      }
+      ComplaintStatusLog: {
+        payload: Prisma.$ComplaintStatusLogPayload<ExtArgs>
+        fields: Prisma.ComplaintStatusLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ComplaintStatusLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ComplaintStatusLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>
+          }
+          findFirst: {
+            args: Prisma.ComplaintStatusLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ComplaintStatusLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>
+          }
+          findMany: {
+            args: Prisma.ComplaintStatusLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>[]
+          }
+          create: {
+            args: Prisma.ComplaintStatusLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>
+          }
+          createMany: {
+            args: Prisma.ComplaintStatusLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ComplaintStatusLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>[]
+          }
+          delete: {
+            args: Prisma.ComplaintStatusLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>
+          }
+          update: {
+            args: Prisma.ComplaintStatusLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.ComplaintStatusLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ComplaintStatusLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ComplaintStatusLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.ComplaintStatusLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComplaintStatusLogPayload>
+          }
+          aggregate: {
+            args: Prisma.ComplaintStatusLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateComplaintStatusLog>
+          }
+          groupBy: {
+            args: Prisma.ComplaintStatusLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ComplaintStatusLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ComplaintStatusLogCountArgs<ExtArgs>
+            result: $Utils.Optional<ComplaintStatusLogCountAggregateOutputType> | number
+          }
+        }
+      }
       NotificationPreference: {
         payload: Prisma.$NotificationPreferencePayload<ExtArgs>
         fields: Prisma.NotificationPreferenceFieldRefs
@@ -1124,6 +1394,9 @@ export namespace Prisma {
     user?: UserOmit
     complaint?: ComplaintOmit
     complaintUpdate?: ComplaintUpdateOmit
+    complaintAttachment?: ComplaintAttachmentOmit
+    complaintFeedback?: ComplaintFeedbackOmit
+    complaintStatusLog?: ComplaintStatusLogOmit
     notificationPreference?: NotificationPreferenceOmit
   }
 
@@ -1222,12 +1495,14 @@ export namespace Prisma {
     complaints: number
     assignedComplaints: number
     complaintUpdates: number
+    statusChanges: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     complaints?: boolean | UserCountOutputTypeCountComplaintsArgs
     assignedComplaints?: boolean | UserCountOutputTypeCountAssignedComplaintsArgs
     complaintUpdates?: boolean | UserCountOutputTypeCountComplaintUpdatesArgs
+    statusChanges?: boolean | UserCountOutputTypeCountStatusChangesArgs
   }
 
   // Custom InputTypes
@@ -1262,6 +1537,13 @@ export namespace Prisma {
     where?: ComplaintUpdateWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountStatusChangesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComplaintStatusLogWhereInput
+  }
+
 
   /**
    * Count Type ComplaintCountOutputType
@@ -1269,10 +1551,14 @@ export namespace Prisma {
 
   export type ComplaintCountOutputType = {
     updates: number
+    attachments: number
+    statusLogs: number
   }
 
   export type ComplaintCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     updates?: boolean | ComplaintCountOutputTypeCountUpdatesArgs
+    attachments?: boolean | ComplaintCountOutputTypeCountAttachmentsArgs
+    statusLogs?: boolean | ComplaintCountOutputTypeCountStatusLogsArgs
   }
 
   // Custom InputTypes
@@ -1291,6 +1577,20 @@ export namespace Prisma {
    */
   export type ComplaintCountOutputTypeCountUpdatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ComplaintUpdateWhereInput
+  }
+
+  /**
+   * ComplaintCountOutputType without action
+   */
+  export type ComplaintCountOutputTypeCountAttachmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComplaintAttachmentWhereInput
+  }
+
+  /**
+   * ComplaintCountOutputType without action
+   */
+  export type ComplaintCountOutputTypeCountStatusLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComplaintStatusLogWhereInput
   }
 
 
@@ -1537,6 +1837,8 @@ export namespace Prisma {
     complaints?: boolean | User$complaintsArgs<ExtArgs>
     assignedComplaints?: boolean | User$assignedComplaintsArgs<ExtArgs>
     complaintUpdates?: boolean | User$complaintUpdatesArgs<ExtArgs>
+    notificationPreference?: boolean | User$notificationPreferenceArgs<ExtArgs>
+    statusChanges?: boolean | User$statusChangesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1596,6 +1898,8 @@ export namespace Prisma {
     complaints?: boolean | User$complaintsArgs<ExtArgs>
     assignedComplaints?: boolean | User$assignedComplaintsArgs<ExtArgs>
     complaintUpdates?: boolean | User$complaintUpdatesArgs<ExtArgs>
+    notificationPreference?: boolean | User$notificationPreferenceArgs<ExtArgs>
+    statusChanges?: boolean | User$statusChangesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1607,6 +1911,8 @@ export namespace Prisma {
       complaints: Prisma.$ComplaintPayload<ExtArgs>[]
       assignedComplaints: Prisma.$ComplaintPayload<ExtArgs>[]
       complaintUpdates: Prisma.$ComplaintUpdatePayload<ExtArgs>[]
+      notificationPreference: Prisma.$NotificationPreferencePayload<ExtArgs> | null
+      statusChanges: Prisma.$ComplaintStatusLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2020,6 +2326,8 @@ export namespace Prisma {
     complaints<T extends User$complaintsArgs<ExtArgs> = {}>(args?: Subset<T, User$complaintsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignedComplaints<T extends User$assignedComplaintsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedComplaintsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     complaintUpdates<T extends User$complaintUpdatesArgs<ExtArgs> = {}>(args?: Subset<T, User$complaintUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notificationPreference<T extends User$notificationPreferenceArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationPreferenceArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    statusChanges<T extends User$statusChangesArgs<ExtArgs> = {}>(args?: Subset<T, User$statusChangesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2523,6 +2831,49 @@ export namespace Prisma {
   }
 
   /**
+   * User.notificationPreference
+   */
+  export type User$notificationPreferenceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    where?: NotificationPreferenceWhereInput
+  }
+
+  /**
+   * User.statusChanges
+   */
+  export type User$statusChangesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    where?: ComplaintStatusLogWhereInput
+    orderBy?: ComplaintStatusLogOrderByWithRelationInput | ComplaintStatusLogOrderByWithRelationInput[]
+    cursor?: ComplaintStatusLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ComplaintStatusLogScalarFieldEnum | ComplaintStatusLogScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2764,6 +3115,9 @@ export namespace Prisma {
     student?: boolean | UserDefaultArgs<ExtArgs>
     assignedTo?: boolean | Complaint$assignedToArgs<ExtArgs>
     updates?: boolean | Complaint$updatesArgs<ExtArgs>
+    attachments?: boolean | Complaint$attachmentsArgs<ExtArgs>
+    feedback?: boolean | Complaint$feedbackArgs<ExtArgs>
+    statusLogs?: boolean | Complaint$statusLogsArgs<ExtArgs>
     _count?: boolean | ComplaintCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["complaint"]>
 
@@ -2821,6 +3175,9 @@ export namespace Prisma {
     student?: boolean | UserDefaultArgs<ExtArgs>
     assignedTo?: boolean | Complaint$assignedToArgs<ExtArgs>
     updates?: boolean | Complaint$updatesArgs<ExtArgs>
+    attachments?: boolean | Complaint$attachmentsArgs<ExtArgs>
+    feedback?: boolean | Complaint$feedbackArgs<ExtArgs>
+    statusLogs?: boolean | Complaint$statusLogsArgs<ExtArgs>
     _count?: boolean | ComplaintCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ComplaintIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2838,6 +3195,9 @@ export namespace Prisma {
       student: Prisma.$UserPayload<ExtArgs>
       assignedTo: Prisma.$UserPayload<ExtArgs> | null
       updates: Prisma.$ComplaintUpdatePayload<ExtArgs>[]
+      attachments: Prisma.$ComplaintAttachmentPayload<ExtArgs>[]
+      feedback: Prisma.$ComplaintFeedbackPayload<ExtArgs> | null
+      statusLogs: Prisma.$ComplaintStatusLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3249,6 +3609,9 @@ export namespace Prisma {
     student<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     assignedTo<T extends Complaint$assignedToArgs<ExtArgs> = {}>(args?: Subset<T, Complaint$assignedToArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     updates<T extends Complaint$updatesArgs<ExtArgs> = {}>(args?: Subset<T, Complaint$updatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    attachments<T extends Complaint$attachmentsArgs<ExtArgs> = {}>(args?: Subset<T, Complaint$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    feedback<T extends Complaint$feedbackArgs<ExtArgs> = {}>(args?: Subset<T, Complaint$feedbackArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    statusLogs<T extends Complaint$statusLogsArgs<ExtArgs> = {}>(args?: Subset<T, Complaint$statusLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3726,6 +4089,73 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ComplaintUpdateScalarFieldEnum | ComplaintUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * Complaint.attachments
+   */
+  export type Complaint$attachmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    where?: ComplaintAttachmentWhereInput
+    orderBy?: ComplaintAttachmentOrderByWithRelationInput | ComplaintAttachmentOrderByWithRelationInput[]
+    cursor?: ComplaintAttachmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ComplaintAttachmentScalarFieldEnum | ComplaintAttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * Complaint.feedback
+   */
+  export type Complaint$feedbackArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    where?: ComplaintFeedbackWhereInput
+  }
+
+  /**
+   * Complaint.statusLogs
+   */
+  export type Complaint$statusLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    where?: ComplaintStatusLogWhereInput
+    orderBy?: ComplaintStatusLogOrderByWithRelationInput | ComplaintStatusLogOrderByWithRelationInput[]
+    cursor?: ComplaintStatusLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ComplaintStatusLogScalarFieldEnum | ComplaintStatusLogScalarFieldEnum[]
   }
 
   /**
@@ -4833,6 +5263,3295 @@ export namespace Prisma {
 
 
   /**
+   * Model ComplaintAttachment
+   */
+
+  export type AggregateComplaintAttachment = {
+    _count: ComplaintAttachmentCountAggregateOutputType | null
+    _avg: ComplaintAttachmentAvgAggregateOutputType | null
+    _sum: ComplaintAttachmentSumAggregateOutputType | null
+    _min: ComplaintAttachmentMinAggregateOutputType | null
+    _max: ComplaintAttachmentMaxAggregateOutputType | null
+  }
+
+  export type ComplaintAttachmentAvgAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type ComplaintAttachmentSumAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type ComplaintAttachmentMinAggregateOutputType = {
+    id: string | null
+    fileUrl: string | null
+    fileName: string | null
+    fileType: string | null
+    fileSize: number | null
+    createdAt: Date | null
+    complaintId: string | null
+  }
+
+  export type ComplaintAttachmentMaxAggregateOutputType = {
+    id: string | null
+    fileUrl: string | null
+    fileName: string | null
+    fileType: string | null
+    fileSize: number | null
+    createdAt: Date | null
+    complaintId: string | null
+  }
+
+  export type ComplaintAttachmentCountAggregateOutputType = {
+    id: number
+    fileUrl: number
+    fileName: number
+    fileType: number
+    fileSize: number
+    createdAt: number
+    complaintId: number
+    _all: number
+  }
+
+
+  export type ComplaintAttachmentAvgAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type ComplaintAttachmentSumAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type ComplaintAttachmentMinAggregateInputType = {
+    id?: true
+    fileUrl?: true
+    fileName?: true
+    fileType?: true
+    fileSize?: true
+    createdAt?: true
+    complaintId?: true
+  }
+
+  export type ComplaintAttachmentMaxAggregateInputType = {
+    id?: true
+    fileUrl?: true
+    fileName?: true
+    fileType?: true
+    fileSize?: true
+    createdAt?: true
+    complaintId?: true
+  }
+
+  export type ComplaintAttachmentCountAggregateInputType = {
+    id?: true
+    fileUrl?: true
+    fileName?: true
+    fileType?: true
+    fileSize?: true
+    createdAt?: true
+    complaintId?: true
+    _all?: true
+  }
+
+  export type ComplaintAttachmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComplaintAttachment to aggregate.
+     */
+    where?: ComplaintAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintAttachments to fetch.
+     */
+    orderBy?: ComplaintAttachmentOrderByWithRelationInput | ComplaintAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ComplaintAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintAttachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ComplaintAttachments
+    **/
+    _count?: true | ComplaintAttachmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ComplaintAttachmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ComplaintAttachmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ComplaintAttachmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ComplaintAttachmentMaxAggregateInputType
+  }
+
+  export type GetComplaintAttachmentAggregateType<T extends ComplaintAttachmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateComplaintAttachment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateComplaintAttachment[P]>
+      : GetScalarType<T[P], AggregateComplaintAttachment[P]>
+  }
+
+
+
+
+  export type ComplaintAttachmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComplaintAttachmentWhereInput
+    orderBy?: ComplaintAttachmentOrderByWithAggregationInput | ComplaintAttachmentOrderByWithAggregationInput[]
+    by: ComplaintAttachmentScalarFieldEnum[] | ComplaintAttachmentScalarFieldEnum
+    having?: ComplaintAttachmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ComplaintAttachmentCountAggregateInputType | true
+    _avg?: ComplaintAttachmentAvgAggregateInputType
+    _sum?: ComplaintAttachmentSumAggregateInputType
+    _min?: ComplaintAttachmentMinAggregateInputType
+    _max?: ComplaintAttachmentMaxAggregateInputType
+  }
+
+  export type ComplaintAttachmentGroupByOutputType = {
+    id: string
+    fileUrl: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    createdAt: Date
+    complaintId: string
+    _count: ComplaintAttachmentCountAggregateOutputType | null
+    _avg: ComplaintAttachmentAvgAggregateOutputType | null
+    _sum: ComplaintAttachmentSumAggregateOutputType | null
+    _min: ComplaintAttachmentMinAggregateOutputType | null
+    _max: ComplaintAttachmentMaxAggregateOutputType | null
+  }
+
+  type GetComplaintAttachmentGroupByPayload<T extends ComplaintAttachmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ComplaintAttachmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ComplaintAttachmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ComplaintAttachmentGroupByOutputType[P]>
+            : GetScalarType<T[P], ComplaintAttachmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ComplaintAttachmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintAttachment"]>
+
+  export type ComplaintAttachmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintAttachment"]>
+
+  export type ComplaintAttachmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintAttachment"]>
+
+  export type ComplaintAttachmentSelectScalar = {
+    id?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+  }
+
+  export type ComplaintAttachmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fileUrl" | "fileName" | "fileType" | "fileSize" | "createdAt" | "complaintId", ExtArgs["result"]["complaintAttachment"]>
+  export type ComplaintAttachmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }
+  export type ComplaintAttachmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }
+  export type ComplaintAttachmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }
+
+  export type $ComplaintAttachmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ComplaintAttachment"
+    objects: {
+      complaint: Prisma.$ComplaintPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      fileUrl: string
+      fileName: string
+      fileType: string
+      fileSize: number
+      createdAt: Date
+      complaintId: string
+    }, ExtArgs["result"]["complaintAttachment"]>
+    composites: {}
+  }
+
+  type ComplaintAttachmentGetPayload<S extends boolean | null | undefined | ComplaintAttachmentDefaultArgs> = $Result.GetResult<Prisma.$ComplaintAttachmentPayload, S>
+
+  type ComplaintAttachmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ComplaintAttachmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ComplaintAttachmentCountAggregateInputType | true
+    }
+
+  export interface ComplaintAttachmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ComplaintAttachment'], meta: { name: 'ComplaintAttachment' } }
+    /**
+     * Find zero or one ComplaintAttachment that matches the filter.
+     * @param {ComplaintAttachmentFindUniqueArgs} args - Arguments to find a ComplaintAttachment
+     * @example
+     * // Get one ComplaintAttachment
+     * const complaintAttachment = await prisma.complaintAttachment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ComplaintAttachmentFindUniqueArgs>(args: SelectSubset<T, ComplaintAttachmentFindUniqueArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ComplaintAttachment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ComplaintAttachmentFindUniqueOrThrowArgs} args - Arguments to find a ComplaintAttachment
+     * @example
+     * // Get one ComplaintAttachment
+     * const complaintAttachment = await prisma.complaintAttachment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ComplaintAttachmentFindUniqueOrThrowArgs>(args: SelectSubset<T, ComplaintAttachmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComplaintAttachment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintAttachmentFindFirstArgs} args - Arguments to find a ComplaintAttachment
+     * @example
+     * // Get one ComplaintAttachment
+     * const complaintAttachment = await prisma.complaintAttachment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ComplaintAttachmentFindFirstArgs>(args?: SelectSubset<T, ComplaintAttachmentFindFirstArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComplaintAttachment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintAttachmentFindFirstOrThrowArgs} args - Arguments to find a ComplaintAttachment
+     * @example
+     * // Get one ComplaintAttachment
+     * const complaintAttachment = await prisma.complaintAttachment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ComplaintAttachmentFindFirstOrThrowArgs>(args?: SelectSubset<T, ComplaintAttachmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ComplaintAttachments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintAttachmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ComplaintAttachments
+     * const complaintAttachments = await prisma.complaintAttachment.findMany()
+     * 
+     * // Get first 10 ComplaintAttachments
+     * const complaintAttachments = await prisma.complaintAttachment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const complaintAttachmentWithIdOnly = await prisma.complaintAttachment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ComplaintAttachmentFindManyArgs>(args?: SelectSubset<T, ComplaintAttachmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ComplaintAttachment.
+     * @param {ComplaintAttachmentCreateArgs} args - Arguments to create a ComplaintAttachment.
+     * @example
+     * // Create one ComplaintAttachment
+     * const ComplaintAttachment = await prisma.complaintAttachment.create({
+     *   data: {
+     *     // ... data to create a ComplaintAttachment
+     *   }
+     * })
+     * 
+     */
+    create<T extends ComplaintAttachmentCreateArgs>(args: SelectSubset<T, ComplaintAttachmentCreateArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ComplaintAttachments.
+     * @param {ComplaintAttachmentCreateManyArgs} args - Arguments to create many ComplaintAttachments.
+     * @example
+     * // Create many ComplaintAttachments
+     * const complaintAttachment = await prisma.complaintAttachment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ComplaintAttachmentCreateManyArgs>(args?: SelectSubset<T, ComplaintAttachmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ComplaintAttachments and returns the data saved in the database.
+     * @param {ComplaintAttachmentCreateManyAndReturnArgs} args - Arguments to create many ComplaintAttachments.
+     * @example
+     * // Create many ComplaintAttachments
+     * const complaintAttachment = await prisma.complaintAttachment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ComplaintAttachments and only return the `id`
+     * const complaintAttachmentWithIdOnly = await prisma.complaintAttachment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ComplaintAttachmentCreateManyAndReturnArgs>(args?: SelectSubset<T, ComplaintAttachmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ComplaintAttachment.
+     * @param {ComplaintAttachmentDeleteArgs} args - Arguments to delete one ComplaintAttachment.
+     * @example
+     * // Delete one ComplaintAttachment
+     * const ComplaintAttachment = await prisma.complaintAttachment.delete({
+     *   where: {
+     *     // ... filter to delete one ComplaintAttachment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ComplaintAttachmentDeleteArgs>(args: SelectSubset<T, ComplaintAttachmentDeleteArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ComplaintAttachment.
+     * @param {ComplaintAttachmentUpdateArgs} args - Arguments to update one ComplaintAttachment.
+     * @example
+     * // Update one ComplaintAttachment
+     * const complaintAttachment = await prisma.complaintAttachment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ComplaintAttachmentUpdateArgs>(args: SelectSubset<T, ComplaintAttachmentUpdateArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ComplaintAttachments.
+     * @param {ComplaintAttachmentDeleteManyArgs} args - Arguments to filter ComplaintAttachments to delete.
+     * @example
+     * // Delete a few ComplaintAttachments
+     * const { count } = await prisma.complaintAttachment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ComplaintAttachmentDeleteManyArgs>(args?: SelectSubset<T, ComplaintAttachmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComplaintAttachments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintAttachmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ComplaintAttachments
+     * const complaintAttachment = await prisma.complaintAttachment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ComplaintAttachmentUpdateManyArgs>(args: SelectSubset<T, ComplaintAttachmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComplaintAttachments and returns the data updated in the database.
+     * @param {ComplaintAttachmentUpdateManyAndReturnArgs} args - Arguments to update many ComplaintAttachments.
+     * @example
+     * // Update many ComplaintAttachments
+     * const complaintAttachment = await prisma.complaintAttachment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ComplaintAttachments and only return the `id`
+     * const complaintAttachmentWithIdOnly = await prisma.complaintAttachment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ComplaintAttachmentUpdateManyAndReturnArgs>(args: SelectSubset<T, ComplaintAttachmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ComplaintAttachment.
+     * @param {ComplaintAttachmentUpsertArgs} args - Arguments to update or create a ComplaintAttachment.
+     * @example
+     * // Update or create a ComplaintAttachment
+     * const complaintAttachment = await prisma.complaintAttachment.upsert({
+     *   create: {
+     *     // ... data to create a ComplaintAttachment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ComplaintAttachment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ComplaintAttachmentUpsertArgs>(args: SelectSubset<T, ComplaintAttachmentUpsertArgs<ExtArgs>>): Prisma__ComplaintAttachmentClient<$Result.GetResult<Prisma.$ComplaintAttachmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ComplaintAttachments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintAttachmentCountArgs} args - Arguments to filter ComplaintAttachments to count.
+     * @example
+     * // Count the number of ComplaintAttachments
+     * const count = await prisma.complaintAttachment.count({
+     *   where: {
+     *     // ... the filter for the ComplaintAttachments we want to count
+     *   }
+     * })
+    **/
+    count<T extends ComplaintAttachmentCountArgs>(
+      args?: Subset<T, ComplaintAttachmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ComplaintAttachmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ComplaintAttachment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintAttachmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ComplaintAttachmentAggregateArgs>(args: Subset<T, ComplaintAttachmentAggregateArgs>): Prisma.PrismaPromise<GetComplaintAttachmentAggregateType<T>>
+
+    /**
+     * Group by ComplaintAttachment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintAttachmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ComplaintAttachmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ComplaintAttachmentGroupByArgs['orderBy'] }
+        : { orderBy?: ComplaintAttachmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ComplaintAttachmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetComplaintAttachmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ComplaintAttachment model
+   */
+  readonly fields: ComplaintAttachmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ComplaintAttachment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ComplaintAttachmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    complaint<T extends ComplaintDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ComplaintDefaultArgs<ExtArgs>>): Prisma__ComplaintClient<$Result.GetResult<Prisma.$ComplaintPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ComplaintAttachment model
+   */
+  interface ComplaintAttachmentFieldRefs {
+    readonly id: FieldRef<"ComplaintAttachment", 'String'>
+    readonly fileUrl: FieldRef<"ComplaintAttachment", 'String'>
+    readonly fileName: FieldRef<"ComplaintAttachment", 'String'>
+    readonly fileType: FieldRef<"ComplaintAttachment", 'String'>
+    readonly fileSize: FieldRef<"ComplaintAttachment", 'Int'>
+    readonly createdAt: FieldRef<"ComplaintAttachment", 'DateTime'>
+    readonly complaintId: FieldRef<"ComplaintAttachment", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ComplaintAttachment findUnique
+   */
+  export type ComplaintAttachmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintAttachment to fetch.
+     */
+    where: ComplaintAttachmentWhereUniqueInput
+  }
+
+  /**
+   * ComplaintAttachment findUniqueOrThrow
+   */
+  export type ComplaintAttachmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintAttachment to fetch.
+     */
+    where: ComplaintAttachmentWhereUniqueInput
+  }
+
+  /**
+   * ComplaintAttachment findFirst
+   */
+  export type ComplaintAttachmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintAttachment to fetch.
+     */
+    where?: ComplaintAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintAttachments to fetch.
+     */
+    orderBy?: ComplaintAttachmentOrderByWithRelationInput | ComplaintAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComplaintAttachments.
+     */
+    cursor?: ComplaintAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintAttachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComplaintAttachments.
+     */
+    distinct?: ComplaintAttachmentScalarFieldEnum | ComplaintAttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintAttachment findFirstOrThrow
+   */
+  export type ComplaintAttachmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintAttachment to fetch.
+     */
+    where?: ComplaintAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintAttachments to fetch.
+     */
+    orderBy?: ComplaintAttachmentOrderByWithRelationInput | ComplaintAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComplaintAttachments.
+     */
+    cursor?: ComplaintAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintAttachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComplaintAttachments.
+     */
+    distinct?: ComplaintAttachmentScalarFieldEnum | ComplaintAttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintAttachment findMany
+   */
+  export type ComplaintAttachmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintAttachments to fetch.
+     */
+    where?: ComplaintAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintAttachments to fetch.
+     */
+    orderBy?: ComplaintAttachmentOrderByWithRelationInput | ComplaintAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ComplaintAttachments.
+     */
+    cursor?: ComplaintAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintAttachments.
+     */
+    skip?: number
+    distinct?: ComplaintAttachmentScalarFieldEnum | ComplaintAttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintAttachment create
+   */
+  export type ComplaintAttachmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ComplaintAttachment.
+     */
+    data: XOR<ComplaintAttachmentCreateInput, ComplaintAttachmentUncheckedCreateInput>
+  }
+
+  /**
+   * ComplaintAttachment createMany
+   */
+  export type ComplaintAttachmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ComplaintAttachments.
+     */
+    data: ComplaintAttachmentCreateManyInput | ComplaintAttachmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ComplaintAttachment createManyAndReturn
+   */
+  export type ComplaintAttachmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many ComplaintAttachments.
+     */
+    data: ComplaintAttachmentCreateManyInput | ComplaintAttachmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ComplaintAttachment update
+   */
+  export type ComplaintAttachmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ComplaintAttachment.
+     */
+    data: XOR<ComplaintAttachmentUpdateInput, ComplaintAttachmentUncheckedUpdateInput>
+    /**
+     * Choose, which ComplaintAttachment to update.
+     */
+    where: ComplaintAttachmentWhereUniqueInput
+  }
+
+  /**
+   * ComplaintAttachment updateMany
+   */
+  export type ComplaintAttachmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ComplaintAttachments.
+     */
+    data: XOR<ComplaintAttachmentUpdateManyMutationInput, ComplaintAttachmentUncheckedUpdateManyInput>
+    /**
+     * Filter which ComplaintAttachments to update
+     */
+    where?: ComplaintAttachmentWhereInput
+    /**
+     * Limit how many ComplaintAttachments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComplaintAttachment updateManyAndReturn
+   */
+  export type ComplaintAttachmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * The data used to update ComplaintAttachments.
+     */
+    data: XOR<ComplaintAttachmentUpdateManyMutationInput, ComplaintAttachmentUncheckedUpdateManyInput>
+    /**
+     * Filter which ComplaintAttachments to update
+     */
+    where?: ComplaintAttachmentWhereInput
+    /**
+     * Limit how many ComplaintAttachments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ComplaintAttachment upsert
+   */
+  export type ComplaintAttachmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ComplaintAttachment to update in case it exists.
+     */
+    where: ComplaintAttachmentWhereUniqueInput
+    /**
+     * In case the ComplaintAttachment found by the `where` argument doesn't exist, create a new ComplaintAttachment with this data.
+     */
+    create: XOR<ComplaintAttachmentCreateInput, ComplaintAttachmentUncheckedCreateInput>
+    /**
+     * In case the ComplaintAttachment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ComplaintAttachmentUpdateInput, ComplaintAttachmentUncheckedUpdateInput>
+  }
+
+  /**
+   * ComplaintAttachment delete
+   */
+  export type ComplaintAttachmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter which ComplaintAttachment to delete.
+     */
+    where: ComplaintAttachmentWhereUniqueInput
+  }
+
+  /**
+   * ComplaintAttachment deleteMany
+   */
+  export type ComplaintAttachmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComplaintAttachments to delete
+     */
+    where?: ComplaintAttachmentWhereInput
+    /**
+     * Limit how many ComplaintAttachments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComplaintAttachment without action
+   */
+  export type ComplaintAttachmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintAttachment
+     */
+    select?: ComplaintAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintAttachment
+     */
+    omit?: ComplaintAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintAttachmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ComplaintFeedback
+   */
+
+  export type AggregateComplaintFeedback = {
+    _count: ComplaintFeedbackCountAggregateOutputType | null
+    _avg: ComplaintFeedbackAvgAggregateOutputType | null
+    _sum: ComplaintFeedbackSumAggregateOutputType | null
+    _min: ComplaintFeedbackMinAggregateOutputType | null
+    _max: ComplaintFeedbackMaxAggregateOutputType | null
+  }
+
+  export type ComplaintFeedbackAvgAggregateOutputType = {
+    rating: number | null
+  }
+
+  export type ComplaintFeedbackSumAggregateOutputType = {
+    rating: number | null
+  }
+
+  export type ComplaintFeedbackMinAggregateOutputType = {
+    id: string | null
+    rating: number | null
+    comment: string | null
+    createdAt: Date | null
+    complaintId: string | null
+  }
+
+  export type ComplaintFeedbackMaxAggregateOutputType = {
+    id: string | null
+    rating: number | null
+    comment: string | null
+    createdAt: Date | null
+    complaintId: string | null
+  }
+
+  export type ComplaintFeedbackCountAggregateOutputType = {
+    id: number
+    rating: number
+    comment: number
+    createdAt: number
+    complaintId: number
+    _all: number
+  }
+
+
+  export type ComplaintFeedbackAvgAggregateInputType = {
+    rating?: true
+  }
+
+  export type ComplaintFeedbackSumAggregateInputType = {
+    rating?: true
+  }
+
+  export type ComplaintFeedbackMinAggregateInputType = {
+    id?: true
+    rating?: true
+    comment?: true
+    createdAt?: true
+    complaintId?: true
+  }
+
+  export type ComplaintFeedbackMaxAggregateInputType = {
+    id?: true
+    rating?: true
+    comment?: true
+    createdAt?: true
+    complaintId?: true
+  }
+
+  export type ComplaintFeedbackCountAggregateInputType = {
+    id?: true
+    rating?: true
+    comment?: true
+    createdAt?: true
+    complaintId?: true
+    _all?: true
+  }
+
+  export type ComplaintFeedbackAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComplaintFeedback to aggregate.
+     */
+    where?: ComplaintFeedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintFeedbacks to fetch.
+     */
+    orderBy?: ComplaintFeedbackOrderByWithRelationInput | ComplaintFeedbackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ComplaintFeedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintFeedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintFeedbacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ComplaintFeedbacks
+    **/
+    _count?: true | ComplaintFeedbackCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ComplaintFeedbackAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ComplaintFeedbackSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ComplaintFeedbackMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ComplaintFeedbackMaxAggregateInputType
+  }
+
+  export type GetComplaintFeedbackAggregateType<T extends ComplaintFeedbackAggregateArgs> = {
+        [P in keyof T & keyof AggregateComplaintFeedback]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateComplaintFeedback[P]>
+      : GetScalarType<T[P], AggregateComplaintFeedback[P]>
+  }
+
+
+
+
+  export type ComplaintFeedbackGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComplaintFeedbackWhereInput
+    orderBy?: ComplaintFeedbackOrderByWithAggregationInput | ComplaintFeedbackOrderByWithAggregationInput[]
+    by: ComplaintFeedbackScalarFieldEnum[] | ComplaintFeedbackScalarFieldEnum
+    having?: ComplaintFeedbackScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ComplaintFeedbackCountAggregateInputType | true
+    _avg?: ComplaintFeedbackAvgAggregateInputType
+    _sum?: ComplaintFeedbackSumAggregateInputType
+    _min?: ComplaintFeedbackMinAggregateInputType
+    _max?: ComplaintFeedbackMaxAggregateInputType
+  }
+
+  export type ComplaintFeedbackGroupByOutputType = {
+    id: string
+    rating: number
+    comment: string | null
+    createdAt: Date
+    complaintId: string
+    _count: ComplaintFeedbackCountAggregateOutputType | null
+    _avg: ComplaintFeedbackAvgAggregateOutputType | null
+    _sum: ComplaintFeedbackSumAggregateOutputType | null
+    _min: ComplaintFeedbackMinAggregateOutputType | null
+    _max: ComplaintFeedbackMaxAggregateOutputType | null
+  }
+
+  type GetComplaintFeedbackGroupByPayload<T extends ComplaintFeedbackGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ComplaintFeedbackGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ComplaintFeedbackGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ComplaintFeedbackGroupByOutputType[P]>
+            : GetScalarType<T[P], ComplaintFeedbackGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ComplaintFeedbackSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    rating?: boolean
+    comment?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintFeedback"]>
+
+  export type ComplaintFeedbackSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    rating?: boolean
+    comment?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintFeedback"]>
+
+  export type ComplaintFeedbackSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    rating?: boolean
+    comment?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintFeedback"]>
+
+  export type ComplaintFeedbackSelectScalar = {
+    id?: boolean
+    rating?: boolean
+    comment?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+  }
+
+  export type ComplaintFeedbackOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rating" | "comment" | "createdAt" | "complaintId", ExtArgs["result"]["complaintFeedback"]>
+  export type ComplaintFeedbackInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }
+  export type ComplaintFeedbackIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }
+  export type ComplaintFeedbackIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+  }
+
+  export type $ComplaintFeedbackPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ComplaintFeedback"
+    objects: {
+      complaint: Prisma.$ComplaintPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      rating: number
+      comment: string | null
+      createdAt: Date
+      complaintId: string
+    }, ExtArgs["result"]["complaintFeedback"]>
+    composites: {}
+  }
+
+  type ComplaintFeedbackGetPayload<S extends boolean | null | undefined | ComplaintFeedbackDefaultArgs> = $Result.GetResult<Prisma.$ComplaintFeedbackPayload, S>
+
+  type ComplaintFeedbackCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ComplaintFeedbackFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ComplaintFeedbackCountAggregateInputType | true
+    }
+
+  export interface ComplaintFeedbackDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ComplaintFeedback'], meta: { name: 'ComplaintFeedback' } }
+    /**
+     * Find zero or one ComplaintFeedback that matches the filter.
+     * @param {ComplaintFeedbackFindUniqueArgs} args - Arguments to find a ComplaintFeedback
+     * @example
+     * // Get one ComplaintFeedback
+     * const complaintFeedback = await prisma.complaintFeedback.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ComplaintFeedbackFindUniqueArgs>(args: SelectSubset<T, ComplaintFeedbackFindUniqueArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ComplaintFeedback that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ComplaintFeedbackFindUniqueOrThrowArgs} args - Arguments to find a ComplaintFeedback
+     * @example
+     * // Get one ComplaintFeedback
+     * const complaintFeedback = await prisma.complaintFeedback.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ComplaintFeedbackFindUniqueOrThrowArgs>(args: SelectSubset<T, ComplaintFeedbackFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComplaintFeedback that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintFeedbackFindFirstArgs} args - Arguments to find a ComplaintFeedback
+     * @example
+     * // Get one ComplaintFeedback
+     * const complaintFeedback = await prisma.complaintFeedback.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ComplaintFeedbackFindFirstArgs>(args?: SelectSubset<T, ComplaintFeedbackFindFirstArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComplaintFeedback that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintFeedbackFindFirstOrThrowArgs} args - Arguments to find a ComplaintFeedback
+     * @example
+     * // Get one ComplaintFeedback
+     * const complaintFeedback = await prisma.complaintFeedback.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ComplaintFeedbackFindFirstOrThrowArgs>(args?: SelectSubset<T, ComplaintFeedbackFindFirstOrThrowArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ComplaintFeedbacks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintFeedbackFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ComplaintFeedbacks
+     * const complaintFeedbacks = await prisma.complaintFeedback.findMany()
+     * 
+     * // Get first 10 ComplaintFeedbacks
+     * const complaintFeedbacks = await prisma.complaintFeedback.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const complaintFeedbackWithIdOnly = await prisma.complaintFeedback.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ComplaintFeedbackFindManyArgs>(args?: SelectSubset<T, ComplaintFeedbackFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ComplaintFeedback.
+     * @param {ComplaintFeedbackCreateArgs} args - Arguments to create a ComplaintFeedback.
+     * @example
+     * // Create one ComplaintFeedback
+     * const ComplaintFeedback = await prisma.complaintFeedback.create({
+     *   data: {
+     *     // ... data to create a ComplaintFeedback
+     *   }
+     * })
+     * 
+     */
+    create<T extends ComplaintFeedbackCreateArgs>(args: SelectSubset<T, ComplaintFeedbackCreateArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ComplaintFeedbacks.
+     * @param {ComplaintFeedbackCreateManyArgs} args - Arguments to create many ComplaintFeedbacks.
+     * @example
+     * // Create many ComplaintFeedbacks
+     * const complaintFeedback = await prisma.complaintFeedback.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ComplaintFeedbackCreateManyArgs>(args?: SelectSubset<T, ComplaintFeedbackCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ComplaintFeedbacks and returns the data saved in the database.
+     * @param {ComplaintFeedbackCreateManyAndReturnArgs} args - Arguments to create many ComplaintFeedbacks.
+     * @example
+     * // Create many ComplaintFeedbacks
+     * const complaintFeedback = await prisma.complaintFeedback.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ComplaintFeedbacks and only return the `id`
+     * const complaintFeedbackWithIdOnly = await prisma.complaintFeedback.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ComplaintFeedbackCreateManyAndReturnArgs>(args?: SelectSubset<T, ComplaintFeedbackCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ComplaintFeedback.
+     * @param {ComplaintFeedbackDeleteArgs} args - Arguments to delete one ComplaintFeedback.
+     * @example
+     * // Delete one ComplaintFeedback
+     * const ComplaintFeedback = await prisma.complaintFeedback.delete({
+     *   where: {
+     *     // ... filter to delete one ComplaintFeedback
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ComplaintFeedbackDeleteArgs>(args: SelectSubset<T, ComplaintFeedbackDeleteArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ComplaintFeedback.
+     * @param {ComplaintFeedbackUpdateArgs} args - Arguments to update one ComplaintFeedback.
+     * @example
+     * // Update one ComplaintFeedback
+     * const complaintFeedback = await prisma.complaintFeedback.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ComplaintFeedbackUpdateArgs>(args: SelectSubset<T, ComplaintFeedbackUpdateArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ComplaintFeedbacks.
+     * @param {ComplaintFeedbackDeleteManyArgs} args - Arguments to filter ComplaintFeedbacks to delete.
+     * @example
+     * // Delete a few ComplaintFeedbacks
+     * const { count } = await prisma.complaintFeedback.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ComplaintFeedbackDeleteManyArgs>(args?: SelectSubset<T, ComplaintFeedbackDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComplaintFeedbacks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintFeedbackUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ComplaintFeedbacks
+     * const complaintFeedback = await prisma.complaintFeedback.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ComplaintFeedbackUpdateManyArgs>(args: SelectSubset<T, ComplaintFeedbackUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComplaintFeedbacks and returns the data updated in the database.
+     * @param {ComplaintFeedbackUpdateManyAndReturnArgs} args - Arguments to update many ComplaintFeedbacks.
+     * @example
+     * // Update many ComplaintFeedbacks
+     * const complaintFeedback = await prisma.complaintFeedback.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ComplaintFeedbacks and only return the `id`
+     * const complaintFeedbackWithIdOnly = await prisma.complaintFeedback.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ComplaintFeedbackUpdateManyAndReturnArgs>(args: SelectSubset<T, ComplaintFeedbackUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ComplaintFeedback.
+     * @param {ComplaintFeedbackUpsertArgs} args - Arguments to update or create a ComplaintFeedback.
+     * @example
+     * // Update or create a ComplaintFeedback
+     * const complaintFeedback = await prisma.complaintFeedback.upsert({
+     *   create: {
+     *     // ... data to create a ComplaintFeedback
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ComplaintFeedback we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ComplaintFeedbackUpsertArgs>(args: SelectSubset<T, ComplaintFeedbackUpsertArgs<ExtArgs>>): Prisma__ComplaintFeedbackClient<$Result.GetResult<Prisma.$ComplaintFeedbackPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ComplaintFeedbacks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintFeedbackCountArgs} args - Arguments to filter ComplaintFeedbacks to count.
+     * @example
+     * // Count the number of ComplaintFeedbacks
+     * const count = await prisma.complaintFeedback.count({
+     *   where: {
+     *     // ... the filter for the ComplaintFeedbacks we want to count
+     *   }
+     * })
+    **/
+    count<T extends ComplaintFeedbackCountArgs>(
+      args?: Subset<T, ComplaintFeedbackCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ComplaintFeedbackCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ComplaintFeedback.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintFeedbackAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ComplaintFeedbackAggregateArgs>(args: Subset<T, ComplaintFeedbackAggregateArgs>): Prisma.PrismaPromise<GetComplaintFeedbackAggregateType<T>>
+
+    /**
+     * Group by ComplaintFeedback.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintFeedbackGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ComplaintFeedbackGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ComplaintFeedbackGroupByArgs['orderBy'] }
+        : { orderBy?: ComplaintFeedbackGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ComplaintFeedbackGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetComplaintFeedbackGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ComplaintFeedback model
+   */
+  readonly fields: ComplaintFeedbackFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ComplaintFeedback.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ComplaintFeedbackClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    complaint<T extends ComplaintDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ComplaintDefaultArgs<ExtArgs>>): Prisma__ComplaintClient<$Result.GetResult<Prisma.$ComplaintPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ComplaintFeedback model
+   */
+  interface ComplaintFeedbackFieldRefs {
+    readonly id: FieldRef<"ComplaintFeedback", 'String'>
+    readonly rating: FieldRef<"ComplaintFeedback", 'Int'>
+    readonly comment: FieldRef<"ComplaintFeedback", 'String'>
+    readonly createdAt: FieldRef<"ComplaintFeedback", 'DateTime'>
+    readonly complaintId: FieldRef<"ComplaintFeedback", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ComplaintFeedback findUnique
+   */
+  export type ComplaintFeedbackFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintFeedback to fetch.
+     */
+    where: ComplaintFeedbackWhereUniqueInput
+  }
+
+  /**
+   * ComplaintFeedback findUniqueOrThrow
+   */
+  export type ComplaintFeedbackFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintFeedback to fetch.
+     */
+    where: ComplaintFeedbackWhereUniqueInput
+  }
+
+  /**
+   * ComplaintFeedback findFirst
+   */
+  export type ComplaintFeedbackFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintFeedback to fetch.
+     */
+    where?: ComplaintFeedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintFeedbacks to fetch.
+     */
+    orderBy?: ComplaintFeedbackOrderByWithRelationInput | ComplaintFeedbackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComplaintFeedbacks.
+     */
+    cursor?: ComplaintFeedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintFeedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintFeedbacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComplaintFeedbacks.
+     */
+    distinct?: ComplaintFeedbackScalarFieldEnum | ComplaintFeedbackScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintFeedback findFirstOrThrow
+   */
+  export type ComplaintFeedbackFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintFeedback to fetch.
+     */
+    where?: ComplaintFeedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintFeedbacks to fetch.
+     */
+    orderBy?: ComplaintFeedbackOrderByWithRelationInput | ComplaintFeedbackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComplaintFeedbacks.
+     */
+    cursor?: ComplaintFeedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintFeedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintFeedbacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComplaintFeedbacks.
+     */
+    distinct?: ComplaintFeedbackScalarFieldEnum | ComplaintFeedbackScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintFeedback findMany
+   */
+  export type ComplaintFeedbackFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintFeedbacks to fetch.
+     */
+    where?: ComplaintFeedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintFeedbacks to fetch.
+     */
+    orderBy?: ComplaintFeedbackOrderByWithRelationInput | ComplaintFeedbackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ComplaintFeedbacks.
+     */
+    cursor?: ComplaintFeedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintFeedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintFeedbacks.
+     */
+    skip?: number
+    distinct?: ComplaintFeedbackScalarFieldEnum | ComplaintFeedbackScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintFeedback create
+   */
+  export type ComplaintFeedbackCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ComplaintFeedback.
+     */
+    data: XOR<ComplaintFeedbackCreateInput, ComplaintFeedbackUncheckedCreateInput>
+  }
+
+  /**
+   * ComplaintFeedback createMany
+   */
+  export type ComplaintFeedbackCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ComplaintFeedbacks.
+     */
+    data: ComplaintFeedbackCreateManyInput | ComplaintFeedbackCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ComplaintFeedback createManyAndReturn
+   */
+  export type ComplaintFeedbackCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * The data used to create many ComplaintFeedbacks.
+     */
+    data: ComplaintFeedbackCreateManyInput | ComplaintFeedbackCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ComplaintFeedback update
+   */
+  export type ComplaintFeedbackUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ComplaintFeedback.
+     */
+    data: XOR<ComplaintFeedbackUpdateInput, ComplaintFeedbackUncheckedUpdateInput>
+    /**
+     * Choose, which ComplaintFeedback to update.
+     */
+    where: ComplaintFeedbackWhereUniqueInput
+  }
+
+  /**
+   * ComplaintFeedback updateMany
+   */
+  export type ComplaintFeedbackUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ComplaintFeedbacks.
+     */
+    data: XOR<ComplaintFeedbackUpdateManyMutationInput, ComplaintFeedbackUncheckedUpdateManyInput>
+    /**
+     * Filter which ComplaintFeedbacks to update
+     */
+    where?: ComplaintFeedbackWhereInput
+    /**
+     * Limit how many ComplaintFeedbacks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComplaintFeedback updateManyAndReturn
+   */
+  export type ComplaintFeedbackUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * The data used to update ComplaintFeedbacks.
+     */
+    data: XOR<ComplaintFeedbackUpdateManyMutationInput, ComplaintFeedbackUncheckedUpdateManyInput>
+    /**
+     * Filter which ComplaintFeedbacks to update
+     */
+    where?: ComplaintFeedbackWhereInput
+    /**
+     * Limit how many ComplaintFeedbacks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ComplaintFeedback upsert
+   */
+  export type ComplaintFeedbackUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ComplaintFeedback to update in case it exists.
+     */
+    where: ComplaintFeedbackWhereUniqueInput
+    /**
+     * In case the ComplaintFeedback found by the `where` argument doesn't exist, create a new ComplaintFeedback with this data.
+     */
+    create: XOR<ComplaintFeedbackCreateInput, ComplaintFeedbackUncheckedCreateInput>
+    /**
+     * In case the ComplaintFeedback was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ComplaintFeedbackUpdateInput, ComplaintFeedbackUncheckedUpdateInput>
+  }
+
+  /**
+   * ComplaintFeedback delete
+   */
+  export type ComplaintFeedbackDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+    /**
+     * Filter which ComplaintFeedback to delete.
+     */
+    where: ComplaintFeedbackWhereUniqueInput
+  }
+
+  /**
+   * ComplaintFeedback deleteMany
+   */
+  export type ComplaintFeedbackDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComplaintFeedbacks to delete
+     */
+    where?: ComplaintFeedbackWhereInput
+    /**
+     * Limit how many ComplaintFeedbacks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComplaintFeedback without action
+   */
+  export type ComplaintFeedbackDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintFeedback
+     */
+    select?: ComplaintFeedbackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintFeedback
+     */
+    omit?: ComplaintFeedbackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintFeedbackInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ComplaintStatusLog
+   */
+
+  export type AggregateComplaintStatusLog = {
+    _count: ComplaintStatusLogCountAggregateOutputType | null
+    _min: ComplaintStatusLogMinAggregateOutputType | null
+    _max: ComplaintStatusLogMaxAggregateOutputType | null
+  }
+
+  export type ComplaintStatusLogMinAggregateOutputType = {
+    id: string | null
+    oldStatus: $Enums.ComplaintStatus | null
+    newStatus: $Enums.ComplaintStatus | null
+    createdAt: Date | null
+    complaintId: string | null
+    changedById: string | null
+  }
+
+  export type ComplaintStatusLogMaxAggregateOutputType = {
+    id: string | null
+    oldStatus: $Enums.ComplaintStatus | null
+    newStatus: $Enums.ComplaintStatus | null
+    createdAt: Date | null
+    complaintId: string | null
+    changedById: string | null
+  }
+
+  export type ComplaintStatusLogCountAggregateOutputType = {
+    id: number
+    oldStatus: number
+    newStatus: number
+    createdAt: number
+    complaintId: number
+    changedById: number
+    _all: number
+  }
+
+
+  export type ComplaintStatusLogMinAggregateInputType = {
+    id?: true
+    oldStatus?: true
+    newStatus?: true
+    createdAt?: true
+    complaintId?: true
+    changedById?: true
+  }
+
+  export type ComplaintStatusLogMaxAggregateInputType = {
+    id?: true
+    oldStatus?: true
+    newStatus?: true
+    createdAt?: true
+    complaintId?: true
+    changedById?: true
+  }
+
+  export type ComplaintStatusLogCountAggregateInputType = {
+    id?: true
+    oldStatus?: true
+    newStatus?: true
+    createdAt?: true
+    complaintId?: true
+    changedById?: true
+    _all?: true
+  }
+
+  export type ComplaintStatusLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComplaintStatusLog to aggregate.
+     */
+    where?: ComplaintStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintStatusLogs to fetch.
+     */
+    orderBy?: ComplaintStatusLogOrderByWithRelationInput | ComplaintStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ComplaintStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintStatusLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ComplaintStatusLogs
+    **/
+    _count?: true | ComplaintStatusLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ComplaintStatusLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ComplaintStatusLogMaxAggregateInputType
+  }
+
+  export type GetComplaintStatusLogAggregateType<T extends ComplaintStatusLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateComplaintStatusLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateComplaintStatusLog[P]>
+      : GetScalarType<T[P], AggregateComplaintStatusLog[P]>
+  }
+
+
+
+
+  export type ComplaintStatusLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComplaintStatusLogWhereInput
+    orderBy?: ComplaintStatusLogOrderByWithAggregationInput | ComplaintStatusLogOrderByWithAggregationInput[]
+    by: ComplaintStatusLogScalarFieldEnum[] | ComplaintStatusLogScalarFieldEnum
+    having?: ComplaintStatusLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ComplaintStatusLogCountAggregateInputType | true
+    _min?: ComplaintStatusLogMinAggregateInputType
+    _max?: ComplaintStatusLogMaxAggregateInputType
+  }
+
+  export type ComplaintStatusLogGroupByOutputType = {
+    id: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt: Date
+    complaintId: string
+    changedById: string
+    _count: ComplaintStatusLogCountAggregateOutputType | null
+    _min: ComplaintStatusLogMinAggregateOutputType | null
+    _max: ComplaintStatusLogMaxAggregateOutputType | null
+  }
+
+  type GetComplaintStatusLogGroupByPayload<T extends ComplaintStatusLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ComplaintStatusLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ComplaintStatusLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ComplaintStatusLogGroupByOutputType[P]>
+            : GetScalarType<T[P], ComplaintStatusLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ComplaintStatusLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    oldStatus?: boolean
+    newStatus?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    changedById?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+    changedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintStatusLog"]>
+
+  export type ComplaintStatusLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    oldStatus?: boolean
+    newStatus?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    changedById?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+    changedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintStatusLog"]>
+
+  export type ComplaintStatusLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    oldStatus?: boolean
+    newStatus?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    changedById?: boolean
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+    changedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["complaintStatusLog"]>
+
+  export type ComplaintStatusLogSelectScalar = {
+    id?: boolean
+    oldStatus?: boolean
+    newStatus?: boolean
+    createdAt?: boolean
+    complaintId?: boolean
+    changedById?: boolean
+  }
+
+  export type ComplaintStatusLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "oldStatus" | "newStatus" | "createdAt" | "complaintId" | "changedById", ExtArgs["result"]["complaintStatusLog"]>
+  export type ComplaintStatusLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+    changedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ComplaintStatusLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+    changedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ComplaintStatusLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    complaint?: boolean | ComplaintDefaultArgs<ExtArgs>
+    changedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $ComplaintStatusLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ComplaintStatusLog"
+    objects: {
+      complaint: Prisma.$ComplaintPayload<ExtArgs>
+      changedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      oldStatus: $Enums.ComplaintStatus
+      newStatus: $Enums.ComplaintStatus
+      createdAt: Date
+      complaintId: string
+      changedById: string
+    }, ExtArgs["result"]["complaintStatusLog"]>
+    composites: {}
+  }
+
+  type ComplaintStatusLogGetPayload<S extends boolean | null | undefined | ComplaintStatusLogDefaultArgs> = $Result.GetResult<Prisma.$ComplaintStatusLogPayload, S>
+
+  type ComplaintStatusLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ComplaintStatusLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ComplaintStatusLogCountAggregateInputType | true
+    }
+
+  export interface ComplaintStatusLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ComplaintStatusLog'], meta: { name: 'ComplaintStatusLog' } }
+    /**
+     * Find zero or one ComplaintStatusLog that matches the filter.
+     * @param {ComplaintStatusLogFindUniqueArgs} args - Arguments to find a ComplaintStatusLog
+     * @example
+     * // Get one ComplaintStatusLog
+     * const complaintStatusLog = await prisma.complaintStatusLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ComplaintStatusLogFindUniqueArgs>(args: SelectSubset<T, ComplaintStatusLogFindUniqueArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ComplaintStatusLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ComplaintStatusLogFindUniqueOrThrowArgs} args - Arguments to find a ComplaintStatusLog
+     * @example
+     * // Get one ComplaintStatusLog
+     * const complaintStatusLog = await prisma.complaintStatusLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ComplaintStatusLogFindUniqueOrThrowArgs>(args: SelectSubset<T, ComplaintStatusLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComplaintStatusLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintStatusLogFindFirstArgs} args - Arguments to find a ComplaintStatusLog
+     * @example
+     * // Get one ComplaintStatusLog
+     * const complaintStatusLog = await prisma.complaintStatusLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ComplaintStatusLogFindFirstArgs>(args?: SelectSubset<T, ComplaintStatusLogFindFirstArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComplaintStatusLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintStatusLogFindFirstOrThrowArgs} args - Arguments to find a ComplaintStatusLog
+     * @example
+     * // Get one ComplaintStatusLog
+     * const complaintStatusLog = await prisma.complaintStatusLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ComplaintStatusLogFindFirstOrThrowArgs>(args?: SelectSubset<T, ComplaintStatusLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ComplaintStatusLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintStatusLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ComplaintStatusLogs
+     * const complaintStatusLogs = await prisma.complaintStatusLog.findMany()
+     * 
+     * // Get first 10 ComplaintStatusLogs
+     * const complaintStatusLogs = await prisma.complaintStatusLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const complaintStatusLogWithIdOnly = await prisma.complaintStatusLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ComplaintStatusLogFindManyArgs>(args?: SelectSubset<T, ComplaintStatusLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ComplaintStatusLog.
+     * @param {ComplaintStatusLogCreateArgs} args - Arguments to create a ComplaintStatusLog.
+     * @example
+     * // Create one ComplaintStatusLog
+     * const ComplaintStatusLog = await prisma.complaintStatusLog.create({
+     *   data: {
+     *     // ... data to create a ComplaintStatusLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends ComplaintStatusLogCreateArgs>(args: SelectSubset<T, ComplaintStatusLogCreateArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ComplaintStatusLogs.
+     * @param {ComplaintStatusLogCreateManyArgs} args - Arguments to create many ComplaintStatusLogs.
+     * @example
+     * // Create many ComplaintStatusLogs
+     * const complaintStatusLog = await prisma.complaintStatusLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ComplaintStatusLogCreateManyArgs>(args?: SelectSubset<T, ComplaintStatusLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ComplaintStatusLogs and returns the data saved in the database.
+     * @param {ComplaintStatusLogCreateManyAndReturnArgs} args - Arguments to create many ComplaintStatusLogs.
+     * @example
+     * // Create many ComplaintStatusLogs
+     * const complaintStatusLog = await prisma.complaintStatusLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ComplaintStatusLogs and only return the `id`
+     * const complaintStatusLogWithIdOnly = await prisma.complaintStatusLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ComplaintStatusLogCreateManyAndReturnArgs>(args?: SelectSubset<T, ComplaintStatusLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ComplaintStatusLog.
+     * @param {ComplaintStatusLogDeleteArgs} args - Arguments to delete one ComplaintStatusLog.
+     * @example
+     * // Delete one ComplaintStatusLog
+     * const ComplaintStatusLog = await prisma.complaintStatusLog.delete({
+     *   where: {
+     *     // ... filter to delete one ComplaintStatusLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ComplaintStatusLogDeleteArgs>(args: SelectSubset<T, ComplaintStatusLogDeleteArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ComplaintStatusLog.
+     * @param {ComplaintStatusLogUpdateArgs} args - Arguments to update one ComplaintStatusLog.
+     * @example
+     * // Update one ComplaintStatusLog
+     * const complaintStatusLog = await prisma.complaintStatusLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ComplaintStatusLogUpdateArgs>(args: SelectSubset<T, ComplaintStatusLogUpdateArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ComplaintStatusLogs.
+     * @param {ComplaintStatusLogDeleteManyArgs} args - Arguments to filter ComplaintStatusLogs to delete.
+     * @example
+     * // Delete a few ComplaintStatusLogs
+     * const { count } = await prisma.complaintStatusLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ComplaintStatusLogDeleteManyArgs>(args?: SelectSubset<T, ComplaintStatusLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComplaintStatusLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintStatusLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ComplaintStatusLogs
+     * const complaintStatusLog = await prisma.complaintStatusLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ComplaintStatusLogUpdateManyArgs>(args: SelectSubset<T, ComplaintStatusLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComplaintStatusLogs and returns the data updated in the database.
+     * @param {ComplaintStatusLogUpdateManyAndReturnArgs} args - Arguments to update many ComplaintStatusLogs.
+     * @example
+     * // Update many ComplaintStatusLogs
+     * const complaintStatusLog = await prisma.complaintStatusLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ComplaintStatusLogs and only return the `id`
+     * const complaintStatusLogWithIdOnly = await prisma.complaintStatusLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ComplaintStatusLogUpdateManyAndReturnArgs>(args: SelectSubset<T, ComplaintStatusLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ComplaintStatusLog.
+     * @param {ComplaintStatusLogUpsertArgs} args - Arguments to update or create a ComplaintStatusLog.
+     * @example
+     * // Update or create a ComplaintStatusLog
+     * const complaintStatusLog = await prisma.complaintStatusLog.upsert({
+     *   create: {
+     *     // ... data to create a ComplaintStatusLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ComplaintStatusLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ComplaintStatusLogUpsertArgs>(args: SelectSubset<T, ComplaintStatusLogUpsertArgs<ExtArgs>>): Prisma__ComplaintStatusLogClient<$Result.GetResult<Prisma.$ComplaintStatusLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ComplaintStatusLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintStatusLogCountArgs} args - Arguments to filter ComplaintStatusLogs to count.
+     * @example
+     * // Count the number of ComplaintStatusLogs
+     * const count = await prisma.complaintStatusLog.count({
+     *   where: {
+     *     // ... the filter for the ComplaintStatusLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ComplaintStatusLogCountArgs>(
+      args?: Subset<T, ComplaintStatusLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ComplaintStatusLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ComplaintStatusLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintStatusLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ComplaintStatusLogAggregateArgs>(args: Subset<T, ComplaintStatusLogAggregateArgs>): Prisma.PrismaPromise<GetComplaintStatusLogAggregateType<T>>
+
+    /**
+     * Group by ComplaintStatusLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComplaintStatusLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ComplaintStatusLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ComplaintStatusLogGroupByArgs['orderBy'] }
+        : { orderBy?: ComplaintStatusLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ComplaintStatusLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetComplaintStatusLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ComplaintStatusLog model
+   */
+  readonly fields: ComplaintStatusLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ComplaintStatusLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ComplaintStatusLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    complaint<T extends ComplaintDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ComplaintDefaultArgs<ExtArgs>>): Prisma__ComplaintClient<$Result.GetResult<Prisma.$ComplaintPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    changedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ComplaintStatusLog model
+   */
+  interface ComplaintStatusLogFieldRefs {
+    readonly id: FieldRef<"ComplaintStatusLog", 'String'>
+    readonly oldStatus: FieldRef<"ComplaintStatusLog", 'ComplaintStatus'>
+    readonly newStatus: FieldRef<"ComplaintStatusLog", 'ComplaintStatus'>
+    readonly createdAt: FieldRef<"ComplaintStatusLog", 'DateTime'>
+    readonly complaintId: FieldRef<"ComplaintStatusLog", 'String'>
+    readonly changedById: FieldRef<"ComplaintStatusLog", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ComplaintStatusLog findUnique
+   */
+  export type ComplaintStatusLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintStatusLog to fetch.
+     */
+    where: ComplaintStatusLogWhereUniqueInput
+  }
+
+  /**
+   * ComplaintStatusLog findUniqueOrThrow
+   */
+  export type ComplaintStatusLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintStatusLog to fetch.
+     */
+    where: ComplaintStatusLogWhereUniqueInput
+  }
+
+  /**
+   * ComplaintStatusLog findFirst
+   */
+  export type ComplaintStatusLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintStatusLog to fetch.
+     */
+    where?: ComplaintStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintStatusLogs to fetch.
+     */
+    orderBy?: ComplaintStatusLogOrderByWithRelationInput | ComplaintStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComplaintStatusLogs.
+     */
+    cursor?: ComplaintStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintStatusLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComplaintStatusLogs.
+     */
+    distinct?: ComplaintStatusLogScalarFieldEnum | ComplaintStatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintStatusLog findFirstOrThrow
+   */
+  export type ComplaintStatusLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintStatusLog to fetch.
+     */
+    where?: ComplaintStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintStatusLogs to fetch.
+     */
+    orderBy?: ComplaintStatusLogOrderByWithRelationInput | ComplaintStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComplaintStatusLogs.
+     */
+    cursor?: ComplaintStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintStatusLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComplaintStatusLogs.
+     */
+    distinct?: ComplaintStatusLogScalarFieldEnum | ComplaintStatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintStatusLog findMany
+   */
+  export type ComplaintStatusLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ComplaintStatusLogs to fetch.
+     */
+    where?: ComplaintStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComplaintStatusLogs to fetch.
+     */
+    orderBy?: ComplaintStatusLogOrderByWithRelationInput | ComplaintStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ComplaintStatusLogs.
+     */
+    cursor?: ComplaintStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComplaintStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComplaintStatusLogs.
+     */
+    skip?: number
+    distinct?: ComplaintStatusLogScalarFieldEnum | ComplaintStatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * ComplaintStatusLog create
+   */
+  export type ComplaintStatusLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ComplaintStatusLog.
+     */
+    data: XOR<ComplaintStatusLogCreateInput, ComplaintStatusLogUncheckedCreateInput>
+  }
+
+  /**
+   * ComplaintStatusLog createMany
+   */
+  export type ComplaintStatusLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ComplaintStatusLogs.
+     */
+    data: ComplaintStatusLogCreateManyInput | ComplaintStatusLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ComplaintStatusLog createManyAndReturn
+   */
+  export type ComplaintStatusLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many ComplaintStatusLogs.
+     */
+    data: ComplaintStatusLogCreateManyInput | ComplaintStatusLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ComplaintStatusLog update
+   */
+  export type ComplaintStatusLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ComplaintStatusLog.
+     */
+    data: XOR<ComplaintStatusLogUpdateInput, ComplaintStatusLogUncheckedUpdateInput>
+    /**
+     * Choose, which ComplaintStatusLog to update.
+     */
+    where: ComplaintStatusLogWhereUniqueInput
+  }
+
+  /**
+   * ComplaintStatusLog updateMany
+   */
+  export type ComplaintStatusLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ComplaintStatusLogs.
+     */
+    data: XOR<ComplaintStatusLogUpdateManyMutationInput, ComplaintStatusLogUncheckedUpdateManyInput>
+    /**
+     * Filter which ComplaintStatusLogs to update
+     */
+    where?: ComplaintStatusLogWhereInput
+    /**
+     * Limit how many ComplaintStatusLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComplaintStatusLog updateManyAndReturn
+   */
+  export type ComplaintStatusLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * The data used to update ComplaintStatusLogs.
+     */
+    data: XOR<ComplaintStatusLogUpdateManyMutationInput, ComplaintStatusLogUncheckedUpdateManyInput>
+    /**
+     * Filter which ComplaintStatusLogs to update
+     */
+    where?: ComplaintStatusLogWhereInput
+    /**
+     * Limit how many ComplaintStatusLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ComplaintStatusLog upsert
+   */
+  export type ComplaintStatusLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ComplaintStatusLog to update in case it exists.
+     */
+    where: ComplaintStatusLogWhereUniqueInput
+    /**
+     * In case the ComplaintStatusLog found by the `where` argument doesn't exist, create a new ComplaintStatusLog with this data.
+     */
+    create: XOR<ComplaintStatusLogCreateInput, ComplaintStatusLogUncheckedCreateInput>
+    /**
+     * In case the ComplaintStatusLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ComplaintStatusLogUpdateInput, ComplaintStatusLogUncheckedUpdateInput>
+  }
+
+  /**
+   * ComplaintStatusLog delete
+   */
+  export type ComplaintStatusLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter which ComplaintStatusLog to delete.
+     */
+    where: ComplaintStatusLogWhereUniqueInput
+  }
+
+  /**
+   * ComplaintStatusLog deleteMany
+   */
+  export type ComplaintStatusLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComplaintStatusLogs to delete
+     */
+    where?: ComplaintStatusLogWhereInput
+    /**
+     * Limit how many ComplaintStatusLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComplaintStatusLog without action
+   */
+  export type ComplaintStatusLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComplaintStatusLog
+     */
+    select?: ComplaintStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComplaintStatusLog
+     */
+    omit?: ComplaintStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ComplaintStatusLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model NotificationPreference
    */
 
@@ -5028,6 +8747,7 @@ export namespace Prisma {
     statusUpdates?: boolean
     announcements?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notificationPreference"]>
 
   export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5040,6 +8760,7 @@ export namespace Prisma {
     statusUpdates?: boolean
     announcements?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notificationPreference"]>
 
   export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5052,6 +8773,7 @@ export namespace Prisma {
     statusUpdates?: boolean
     announcements?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notificationPreference"]>
 
   export type NotificationPreferenceSelectScalar = {
@@ -5067,10 +8789,21 @@ export namespace Prisma {
   }
 
   export type NotificationPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "email" | "push" | "sms" | "newComplaints" | "statusUpdates" | "announcements" | "updatedAt", ExtArgs["result"]["notificationPreference"]>
+  export type NotificationPreferenceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NotificationPreferenceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NotificationPreferenceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $NotificationPreferencePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "NotificationPreference"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
@@ -5475,6 +9208,7 @@ export namespace Prisma {
    */
   export interface Prisma__NotificationPreferenceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5530,6 +9264,10 @@ export namespace Prisma {
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
      * Filter, which NotificationPreference to fetch.
      */
     where: NotificationPreferenceWhereUniqueInput
@@ -5548,6 +9286,10 @@ export namespace Prisma {
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
      * Filter, which NotificationPreference to fetch.
      */
     where: NotificationPreferenceWhereUniqueInput
@@ -5565,6 +9307,10 @@ export namespace Prisma {
      * Omit specific fields from the NotificationPreference
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
     /**
      * Filter, which NotificationPreference to fetch.
      */
@@ -5614,6 +9360,10 @@ export namespace Prisma {
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
      * Filter, which NotificationPreference to fetch.
      */
     where?: NotificationPreferenceWhereInput
@@ -5662,6 +9412,10 @@ export namespace Prisma {
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
      * Filter, which NotificationPreferences to fetch.
      */
     where?: NotificationPreferenceWhereInput
@@ -5705,6 +9459,10 @@ export namespace Prisma {
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
      * The data needed to create a NotificationPreference.
      */
     data: XOR<NotificationPreferenceCreateInput, NotificationPreferenceUncheckedCreateInput>
@@ -5738,6 +9496,10 @@ export namespace Prisma {
      */
     data: NotificationPreferenceCreateManyInput | NotificationPreferenceCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5752,6 +9514,10 @@ export namespace Prisma {
      * Omit specific fields from the NotificationPreference
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
     /**
      * The data needed to update a NotificationPreference.
      */
@@ -5804,6 +9570,10 @@ export namespace Prisma {
      * Limit how many NotificationPreferences to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5818,6 +9588,10 @@ export namespace Prisma {
      * Omit specific fields from the NotificationPreference
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
     /**
      * The filter to search for the NotificationPreference to update in case it exists.
      */
@@ -5844,6 +9618,10 @@ export namespace Prisma {
      * Omit specific fields from the NotificationPreference
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
     /**
      * Filter which NotificationPreference to delete.
      */
@@ -5876,6 +9654,10 @@ export namespace Prisma {
      * Omit specific fields from the NotificationPreference
      */
     omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
   }
 
 
@@ -5940,6 +9722,42 @@ export namespace Prisma {
   };
 
   export type ComplaintUpdateScalarFieldEnum = (typeof ComplaintUpdateScalarFieldEnum)[keyof typeof ComplaintUpdateScalarFieldEnum]
+
+
+  export const ComplaintAttachmentScalarFieldEnum: {
+    id: 'id',
+    fileUrl: 'fileUrl',
+    fileName: 'fileName',
+    fileType: 'fileType',
+    fileSize: 'fileSize',
+    createdAt: 'createdAt',
+    complaintId: 'complaintId'
+  };
+
+  export type ComplaintAttachmentScalarFieldEnum = (typeof ComplaintAttachmentScalarFieldEnum)[keyof typeof ComplaintAttachmentScalarFieldEnum]
+
+
+  export const ComplaintFeedbackScalarFieldEnum: {
+    id: 'id',
+    rating: 'rating',
+    comment: 'comment',
+    createdAt: 'createdAt',
+    complaintId: 'complaintId'
+  };
+
+  export type ComplaintFeedbackScalarFieldEnum = (typeof ComplaintFeedbackScalarFieldEnum)[keyof typeof ComplaintFeedbackScalarFieldEnum]
+
+
+  export const ComplaintStatusLogScalarFieldEnum: {
+    id: 'id',
+    oldStatus: 'oldStatus',
+    newStatus: 'newStatus',
+    createdAt: 'createdAt',
+    complaintId: 'complaintId',
+    changedById: 'changedById'
+  };
+
+  export type ComplaintStatusLogScalarFieldEnum = (typeof ComplaintStatusLogScalarFieldEnum)[keyof typeof ComplaintStatusLogScalarFieldEnum]
 
 
   export const NotificationPreferenceScalarFieldEnum: {
@@ -6085,13 +9903,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -6102,6 +9913,27 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -6129,6 +9961,8 @@ export namespace Prisma {
     complaints?: ComplaintListRelationFilter
     assignedComplaints?: ComplaintListRelationFilter
     complaintUpdates?: ComplaintUpdateListRelationFilter
+    notificationPreference?: XOR<NotificationPreferenceNullableScalarRelationFilter, NotificationPreferenceWhereInput> | null
+    statusChanges?: ComplaintStatusLogListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -6149,6 +9983,8 @@ export namespace Prisma {
     complaints?: ComplaintOrderByRelationAggregateInput
     assignedComplaints?: ComplaintOrderByRelationAggregateInput
     complaintUpdates?: ComplaintUpdateOrderByRelationAggregateInput
+    notificationPreference?: NotificationPreferenceOrderByWithRelationInput
+    statusChanges?: ComplaintStatusLogOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -6172,6 +10008,8 @@ export namespace Prisma {
     complaints?: ComplaintListRelationFilter
     assignedComplaints?: ComplaintListRelationFilter
     complaintUpdates?: ComplaintUpdateListRelationFilter
+    notificationPreference?: XOR<NotificationPreferenceNullableScalarRelationFilter, NotificationPreferenceWhereInput> | null
+    statusChanges?: ComplaintStatusLogListRelationFilter
   }, "id" | "email" | "studentId">
 
   export type UserOrderByWithAggregationInput = {
@@ -6233,6 +10071,9 @@ export namespace Prisma {
     student?: XOR<UserScalarRelationFilter, UserWhereInput>
     assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     updates?: ComplaintUpdateListRelationFilter
+    attachments?: ComplaintAttachmentListRelationFilter
+    feedback?: XOR<ComplaintFeedbackNullableScalarRelationFilter, ComplaintFeedbackWhereInput> | null
+    statusLogs?: ComplaintStatusLogListRelationFilter
   }
 
   export type ComplaintOrderByWithRelationInput = {
@@ -6251,6 +10092,9 @@ export namespace Prisma {
     student?: UserOrderByWithRelationInput
     assignedTo?: UserOrderByWithRelationInput
     updates?: ComplaintUpdateOrderByRelationAggregateInput
+    attachments?: ComplaintAttachmentOrderByRelationAggregateInput
+    feedback?: ComplaintFeedbackOrderByWithRelationInput
+    statusLogs?: ComplaintStatusLogOrderByRelationAggregateInput
   }
 
   export type ComplaintWhereUniqueInput = Prisma.AtLeast<{
@@ -6272,6 +10116,9 @@ export namespace Prisma {
     student?: XOR<UserScalarRelationFilter, UserWhereInput>
     assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     updates?: ComplaintUpdateListRelationFilter
+    attachments?: ComplaintAttachmentListRelationFilter
+    feedback?: XOR<ComplaintFeedbackNullableScalarRelationFilter, ComplaintFeedbackWhereInput> | null
+    statusLogs?: ComplaintStatusLogListRelationFilter
   }, "id">
 
   export type ComplaintOrderByWithAggregationInput = {
@@ -6368,6 +10215,193 @@ export namespace Prisma {
     staffId?: StringNullableWithAggregatesFilter<"ComplaintUpdate"> | string | null
   }
 
+  export type ComplaintAttachmentWhereInput = {
+    AND?: ComplaintAttachmentWhereInput | ComplaintAttachmentWhereInput[]
+    OR?: ComplaintAttachmentWhereInput[]
+    NOT?: ComplaintAttachmentWhereInput | ComplaintAttachmentWhereInput[]
+    id?: StringFilter<"ComplaintAttachment"> | string
+    fileUrl?: StringFilter<"ComplaintAttachment"> | string
+    fileName?: StringFilter<"ComplaintAttachment"> | string
+    fileType?: StringFilter<"ComplaintAttachment"> | string
+    fileSize?: IntFilter<"ComplaintAttachment"> | number
+    createdAt?: DateTimeFilter<"ComplaintAttachment"> | Date | string
+    complaintId?: StringFilter<"ComplaintAttachment"> | string
+    complaint?: XOR<ComplaintScalarRelationFilter, ComplaintWhereInput>
+  }
+
+  export type ComplaintAttachmentOrderByWithRelationInput = {
+    id?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    complaint?: ComplaintOrderByWithRelationInput
+  }
+
+  export type ComplaintAttachmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ComplaintAttachmentWhereInput | ComplaintAttachmentWhereInput[]
+    OR?: ComplaintAttachmentWhereInput[]
+    NOT?: ComplaintAttachmentWhereInput | ComplaintAttachmentWhereInput[]
+    fileUrl?: StringFilter<"ComplaintAttachment"> | string
+    fileName?: StringFilter<"ComplaintAttachment"> | string
+    fileType?: StringFilter<"ComplaintAttachment"> | string
+    fileSize?: IntFilter<"ComplaintAttachment"> | number
+    createdAt?: DateTimeFilter<"ComplaintAttachment"> | Date | string
+    complaintId?: StringFilter<"ComplaintAttachment"> | string
+    complaint?: XOR<ComplaintScalarRelationFilter, ComplaintWhereInput>
+  }, "id">
+
+  export type ComplaintAttachmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    _count?: ComplaintAttachmentCountOrderByAggregateInput
+    _avg?: ComplaintAttachmentAvgOrderByAggregateInput
+    _max?: ComplaintAttachmentMaxOrderByAggregateInput
+    _min?: ComplaintAttachmentMinOrderByAggregateInput
+    _sum?: ComplaintAttachmentSumOrderByAggregateInput
+  }
+
+  export type ComplaintAttachmentScalarWhereWithAggregatesInput = {
+    AND?: ComplaintAttachmentScalarWhereWithAggregatesInput | ComplaintAttachmentScalarWhereWithAggregatesInput[]
+    OR?: ComplaintAttachmentScalarWhereWithAggregatesInput[]
+    NOT?: ComplaintAttachmentScalarWhereWithAggregatesInput | ComplaintAttachmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ComplaintAttachment"> | string
+    fileUrl?: StringWithAggregatesFilter<"ComplaintAttachment"> | string
+    fileName?: StringWithAggregatesFilter<"ComplaintAttachment"> | string
+    fileType?: StringWithAggregatesFilter<"ComplaintAttachment"> | string
+    fileSize?: IntWithAggregatesFilter<"ComplaintAttachment"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ComplaintAttachment"> | Date | string
+    complaintId?: StringWithAggregatesFilter<"ComplaintAttachment"> | string
+  }
+
+  export type ComplaintFeedbackWhereInput = {
+    AND?: ComplaintFeedbackWhereInput | ComplaintFeedbackWhereInput[]
+    OR?: ComplaintFeedbackWhereInput[]
+    NOT?: ComplaintFeedbackWhereInput | ComplaintFeedbackWhereInput[]
+    id?: StringFilter<"ComplaintFeedback"> | string
+    rating?: IntFilter<"ComplaintFeedback"> | number
+    comment?: StringNullableFilter<"ComplaintFeedback"> | string | null
+    createdAt?: DateTimeFilter<"ComplaintFeedback"> | Date | string
+    complaintId?: StringFilter<"ComplaintFeedback"> | string
+    complaint?: XOR<ComplaintScalarRelationFilter, ComplaintWhereInput>
+  }
+
+  export type ComplaintFeedbackOrderByWithRelationInput = {
+    id?: SortOrder
+    rating?: SortOrder
+    comment?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    complaint?: ComplaintOrderByWithRelationInput
+  }
+
+  export type ComplaintFeedbackWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    complaintId?: string
+    AND?: ComplaintFeedbackWhereInput | ComplaintFeedbackWhereInput[]
+    OR?: ComplaintFeedbackWhereInput[]
+    NOT?: ComplaintFeedbackWhereInput | ComplaintFeedbackWhereInput[]
+    rating?: IntFilter<"ComplaintFeedback"> | number
+    comment?: StringNullableFilter<"ComplaintFeedback"> | string | null
+    createdAt?: DateTimeFilter<"ComplaintFeedback"> | Date | string
+    complaint?: XOR<ComplaintScalarRelationFilter, ComplaintWhereInput>
+  }, "id" | "complaintId">
+
+  export type ComplaintFeedbackOrderByWithAggregationInput = {
+    id?: SortOrder
+    rating?: SortOrder
+    comment?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    _count?: ComplaintFeedbackCountOrderByAggregateInput
+    _avg?: ComplaintFeedbackAvgOrderByAggregateInput
+    _max?: ComplaintFeedbackMaxOrderByAggregateInput
+    _min?: ComplaintFeedbackMinOrderByAggregateInput
+    _sum?: ComplaintFeedbackSumOrderByAggregateInput
+  }
+
+  export type ComplaintFeedbackScalarWhereWithAggregatesInput = {
+    AND?: ComplaintFeedbackScalarWhereWithAggregatesInput | ComplaintFeedbackScalarWhereWithAggregatesInput[]
+    OR?: ComplaintFeedbackScalarWhereWithAggregatesInput[]
+    NOT?: ComplaintFeedbackScalarWhereWithAggregatesInput | ComplaintFeedbackScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ComplaintFeedback"> | string
+    rating?: IntWithAggregatesFilter<"ComplaintFeedback"> | number
+    comment?: StringNullableWithAggregatesFilter<"ComplaintFeedback"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ComplaintFeedback"> | Date | string
+    complaintId?: StringWithAggregatesFilter<"ComplaintFeedback"> | string
+  }
+
+  export type ComplaintStatusLogWhereInput = {
+    AND?: ComplaintStatusLogWhereInput | ComplaintStatusLogWhereInput[]
+    OR?: ComplaintStatusLogWhereInput[]
+    NOT?: ComplaintStatusLogWhereInput | ComplaintStatusLogWhereInput[]
+    id?: StringFilter<"ComplaintStatusLog"> | string
+    oldStatus?: EnumComplaintStatusFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    createdAt?: DateTimeFilter<"ComplaintStatusLog"> | Date | string
+    complaintId?: StringFilter<"ComplaintStatusLog"> | string
+    changedById?: StringFilter<"ComplaintStatusLog"> | string
+    complaint?: XOR<ComplaintScalarRelationFilter, ComplaintWhereInput>
+    changedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type ComplaintStatusLogOrderByWithRelationInput = {
+    id?: SortOrder
+    oldStatus?: SortOrder
+    newStatus?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    changedById?: SortOrder
+    complaint?: ComplaintOrderByWithRelationInput
+    changedBy?: UserOrderByWithRelationInput
+  }
+
+  export type ComplaintStatusLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ComplaintStatusLogWhereInput | ComplaintStatusLogWhereInput[]
+    OR?: ComplaintStatusLogWhereInput[]
+    NOT?: ComplaintStatusLogWhereInput | ComplaintStatusLogWhereInput[]
+    oldStatus?: EnumComplaintStatusFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    createdAt?: DateTimeFilter<"ComplaintStatusLog"> | Date | string
+    complaintId?: StringFilter<"ComplaintStatusLog"> | string
+    changedById?: StringFilter<"ComplaintStatusLog"> | string
+    complaint?: XOR<ComplaintScalarRelationFilter, ComplaintWhereInput>
+    changedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type ComplaintStatusLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    oldStatus?: SortOrder
+    newStatus?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    changedById?: SortOrder
+    _count?: ComplaintStatusLogCountOrderByAggregateInput
+    _max?: ComplaintStatusLogMaxOrderByAggregateInput
+    _min?: ComplaintStatusLogMinOrderByAggregateInput
+  }
+
+  export type ComplaintStatusLogScalarWhereWithAggregatesInput = {
+    AND?: ComplaintStatusLogScalarWhereWithAggregatesInput | ComplaintStatusLogScalarWhereWithAggregatesInput[]
+    OR?: ComplaintStatusLogScalarWhereWithAggregatesInput[]
+    NOT?: ComplaintStatusLogScalarWhereWithAggregatesInput | ComplaintStatusLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ComplaintStatusLog"> | string
+    oldStatus?: EnumComplaintStatusWithAggregatesFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusWithAggregatesFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    createdAt?: DateTimeWithAggregatesFilter<"ComplaintStatusLog"> | Date | string
+    complaintId?: StringWithAggregatesFilter<"ComplaintStatusLog"> | string
+    changedById?: StringWithAggregatesFilter<"ComplaintStatusLog"> | string
+  }
+
   export type NotificationPreferenceWhereInput = {
     AND?: NotificationPreferenceWhereInput | NotificationPreferenceWhereInput[]
     OR?: NotificationPreferenceWhereInput[]
@@ -6381,6 +10415,7 @@ export namespace Prisma {
     statusUpdates?: BoolFilter<"NotificationPreference"> | boolean
     announcements?: BoolFilter<"NotificationPreference"> | boolean
     updatedAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type NotificationPreferenceOrderByWithRelationInput = {
@@ -6393,6 +10428,7 @@ export namespace Prisma {
     statusUpdates?: SortOrder
     announcements?: SortOrder
     updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
@@ -6408,6 +10444,7 @@ export namespace Prisma {
     statusUpdates?: BoolFilter<"NotificationPreference"> | boolean
     announcements?: BoolFilter<"NotificationPreference"> | boolean
     updatedAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
 
   export type NotificationPreferenceOrderByWithAggregationInput = {
@@ -6458,6 +10495,8 @@ export namespace Prisma {
     complaints?: ComplaintCreateNestedManyWithoutStudentInput
     assignedComplaints?: ComplaintCreateNestedManyWithoutAssignedToInput
     complaintUpdates?: ComplaintUpdateCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogCreateNestedManyWithoutChangedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6478,6 +10517,8 @@ export namespace Prisma {
     complaints?: ComplaintUncheckedCreateNestedManyWithoutStudentInput
     assignedComplaints?: ComplaintUncheckedCreateNestedManyWithoutAssignedToInput
     complaintUpdates?: ComplaintUpdateUncheckedCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogUncheckedCreateNestedManyWithoutChangedByInput
   }
 
   export type UserUpdateInput = {
@@ -6498,6 +10539,8 @@ export namespace Prisma {
     complaints?: ComplaintUpdateManyWithoutStudentNestedInput
     assignedComplaints?: ComplaintUpdateManyWithoutAssignedToNestedInput
     complaintUpdates?: ComplaintUpdateUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUpdateManyWithoutChangedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6518,6 +10561,8 @@ export namespace Prisma {
     complaints?: ComplaintUncheckedUpdateManyWithoutStudentNestedInput
     assignedComplaints?: ComplaintUncheckedUpdateManyWithoutAssignedToNestedInput
     complaintUpdates?: ComplaintUpdateUncheckedUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUncheckedUpdateManyWithoutChangedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6585,6 +10630,9 @@ export namespace Prisma {
     student: UserCreateNestedOneWithoutComplaintsInput
     assignedTo?: UserCreateNestedOneWithoutAssignedComplaintsInput
     updates?: ComplaintUpdateCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintUncheckedCreateInput = {
@@ -6601,6 +10649,9 @@ export namespace Prisma {
     studentId: string
     assignedToId?: string | null
     updates?: ComplaintUpdateUncheckedCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentUncheckedCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackUncheckedCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogUncheckedCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintUpdateInput = {
@@ -6617,6 +10668,9 @@ export namespace Prisma {
     student?: UserUpdateOneRequiredWithoutComplaintsNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedComplaintsNestedInput
     updates?: ComplaintUpdateUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUpdateManyWithoutComplaintNestedInput
   }
 
   export type ComplaintUncheckedUpdateInput = {
@@ -6633,6 +10687,9 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     updates?: ComplaintUpdateUncheckedUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUncheckedUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUncheckedUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUncheckedUpdateManyWithoutComplaintNestedInput
   }
 
   export type ComplaintCreateManyInput = {
@@ -6732,9 +10789,193 @@ export namespace Prisma {
     staffId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type ComplaintAttachmentCreateInput = {
+    id?: string
+    fileUrl: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    createdAt?: Date | string
+    complaint: ComplaintCreateNestedOneWithoutAttachmentsInput
+  }
+
+  export type ComplaintAttachmentUncheckedCreateInput = {
+    id?: string
+    fileUrl: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    createdAt?: Date | string
+    complaintId: string
+  }
+
+  export type ComplaintAttachmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaint?: ComplaintUpdateOneRequiredWithoutAttachmentsNestedInput
+  }
+
+  export type ComplaintAttachmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComplaintAttachmentCreateManyInput = {
+    id?: string
+    fileUrl: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    createdAt?: Date | string
+    complaintId: string
+  }
+
+  export type ComplaintAttachmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintAttachmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComplaintFeedbackCreateInput = {
+    id?: string
+    rating: number
+    comment?: string | null
+    createdAt?: Date | string
+    complaint: ComplaintCreateNestedOneWithoutFeedbackInput
+  }
+
+  export type ComplaintFeedbackUncheckedCreateInput = {
+    id?: string
+    rating: number
+    comment?: string | null
+    createdAt?: Date | string
+    complaintId: string
+  }
+
+  export type ComplaintFeedbackUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaint?: ComplaintUpdateOneRequiredWithoutFeedbackNestedInput
+  }
+
+  export type ComplaintFeedbackUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComplaintFeedbackCreateManyInput = {
+    id?: string
+    rating: number
+    comment?: string | null
+    createdAt?: Date | string
+    complaintId: string
+  }
+
+  export type ComplaintFeedbackUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintFeedbackUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComplaintStatusLogCreateInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    complaint: ComplaintCreateNestedOneWithoutStatusLogsInput
+    changedBy: UserCreateNestedOneWithoutStatusChangesInput
+  }
+
+  export type ComplaintStatusLogUncheckedCreateInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    complaintId: string
+    changedById: string
+  }
+
+  export type ComplaintStatusLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaint?: ComplaintUpdateOneRequiredWithoutStatusLogsNestedInput
+    changedBy?: UserUpdateOneRequiredWithoutStatusChangesNestedInput
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+    changedById?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComplaintStatusLogCreateManyInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    complaintId: string
+    changedById: string
+  }
+
+  export type ComplaintStatusLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+    changedById?: StringFieldUpdateOperationsInput | string
+  }
+
   export type NotificationPreferenceCreateInput = {
     id?: string
-    userId: string
     email?: boolean
     push?: boolean
     sms?: boolean
@@ -6742,6 +10983,7 @@ export namespace Prisma {
     statusUpdates?: boolean
     announcements?: boolean
     updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationPreferenceInput
   }
 
   export type NotificationPreferenceUncheckedCreateInput = {
@@ -6758,7 +11000,6 @@ export namespace Prisma {
 
   export type NotificationPreferenceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     email?: BoolFieldUpdateOperationsInput | boolean
     push?: BoolFieldUpdateOperationsInput | boolean
     sms?: BoolFieldUpdateOperationsInput | boolean
@@ -6766,6 +11007,7 @@ export namespace Prisma {
     statusUpdates?: BoolFieldUpdateOperationsInput | boolean
     announcements?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationPreferenceNestedInput
   }
 
   export type NotificationPreferenceUncheckedUpdateInput = {
@@ -6794,7 +11036,6 @@ export namespace Prisma {
 
   export type NotificationPreferenceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     email?: BoolFieldUpdateOperationsInput | boolean
     push?: BoolFieldUpdateOperationsInput | boolean
     sms?: BoolFieldUpdateOperationsInput | boolean
@@ -6894,6 +11135,17 @@ export namespace Prisma {
     none?: ComplaintUpdateWhereInput
   }
 
+  export type NotificationPreferenceNullableScalarRelationFilter = {
+    is?: NotificationPreferenceWhereInput | null
+    isNot?: NotificationPreferenceWhereInput | null
+  }
+
+  export type ComplaintStatusLogListRelationFilter = {
+    every?: ComplaintStatusLogWhereInput
+    some?: ComplaintStatusLogWhereInput
+    none?: ComplaintStatusLogWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -6904,6 +11156,10 @@ export namespace Prisma {
   }
 
   export type ComplaintUpdateOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ComplaintStatusLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -7073,6 +11329,21 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
+  export type ComplaintAttachmentListRelationFilter = {
+    every?: ComplaintAttachmentWhereInput
+    some?: ComplaintAttachmentWhereInput
+    none?: ComplaintAttachmentWhereInput
+  }
+
+  export type ComplaintFeedbackNullableScalarRelationFilter = {
+    is?: ComplaintFeedbackWhereInput | null
+    isNot?: ComplaintFeedbackWhereInput | null
+  }
+
+  export type ComplaintAttachmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ComplaintCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -7177,6 +11448,130 @@ export namespace Prisma {
     staffId?: SortOrder
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type ComplaintAttachmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+  }
+
+  export type ComplaintAttachmentAvgOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type ComplaintAttachmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+  }
+
+  export type ComplaintAttachmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+  }
+
+  export type ComplaintAttachmentSumOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type ComplaintFeedbackCountOrderByAggregateInput = {
+    id?: SortOrder
+    rating?: SortOrder
+    comment?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+  }
+
+  export type ComplaintFeedbackAvgOrderByAggregateInput = {
+    rating?: SortOrder
+  }
+
+  export type ComplaintFeedbackMaxOrderByAggregateInput = {
+    id?: SortOrder
+    rating?: SortOrder
+    comment?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+  }
+
+  export type ComplaintFeedbackMinOrderByAggregateInput = {
+    id?: SortOrder
+    rating?: SortOrder
+    comment?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+  }
+
+  export type ComplaintFeedbackSumOrderByAggregateInput = {
+    rating?: SortOrder
+  }
+
+  export type ComplaintStatusLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    oldStatus?: SortOrder
+    newStatus?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    changedById?: SortOrder
+  }
+
+  export type ComplaintStatusLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    oldStatus?: SortOrder
+    newStatus?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    changedById?: SortOrder
+  }
+
+  export type ComplaintStatusLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    oldStatus?: SortOrder
+    newStatus?: SortOrder
+    createdAt?: SortOrder
+    complaintId?: SortOrder
+    changedById?: SortOrder
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -7247,6 +11642,19 @@ export namespace Prisma {
     connect?: ComplaintUpdateWhereUniqueInput | ComplaintUpdateWhereUniqueInput[]
   }
 
+  export type NotificationPreferenceCreateNestedOneWithoutUserInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput
+    connect?: NotificationPreferenceWhereUniqueInput
+  }
+
+  export type ComplaintStatusLogCreateNestedManyWithoutChangedByInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutChangedByInput, ComplaintStatusLogUncheckedCreateWithoutChangedByInput> | ComplaintStatusLogCreateWithoutChangedByInput[] | ComplaintStatusLogUncheckedCreateWithoutChangedByInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutChangedByInput | ComplaintStatusLogCreateOrConnectWithoutChangedByInput[]
+    createMany?: ComplaintStatusLogCreateManyChangedByInputEnvelope
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+  }
+
   export type ComplaintUncheckedCreateNestedManyWithoutStudentInput = {
     create?: XOR<ComplaintCreateWithoutStudentInput, ComplaintUncheckedCreateWithoutStudentInput> | ComplaintCreateWithoutStudentInput[] | ComplaintUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: ComplaintCreateOrConnectWithoutStudentInput | ComplaintCreateOrConnectWithoutStudentInput[]
@@ -7266,6 +11674,19 @@ export namespace Prisma {
     connectOrCreate?: ComplaintUpdateCreateOrConnectWithoutStaffInput | ComplaintUpdateCreateOrConnectWithoutStaffInput[]
     createMany?: ComplaintUpdateCreateManyStaffInputEnvelope
     connect?: ComplaintUpdateWhereUniqueInput | ComplaintUpdateWhereUniqueInput[]
+  }
+
+  export type NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput
+    connect?: NotificationPreferenceWhereUniqueInput
+  }
+
+  export type ComplaintStatusLogUncheckedCreateNestedManyWithoutChangedByInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutChangedByInput, ComplaintStatusLogUncheckedCreateWithoutChangedByInput> | ComplaintStatusLogCreateWithoutChangedByInput[] | ComplaintStatusLogUncheckedCreateWithoutChangedByInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutChangedByInput | ComplaintStatusLogCreateOrConnectWithoutChangedByInput[]
+    createMany?: ComplaintStatusLogCreateManyChangedByInputEnvelope
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -7334,6 +11755,30 @@ export namespace Prisma {
     deleteMany?: ComplaintUpdateScalarWhereInput | ComplaintUpdateScalarWhereInput[]
   }
 
+  export type NotificationPreferenceUpdateOneWithoutUserNestedInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput
+    upsert?: NotificationPreferenceUpsertWithoutUserInput
+    disconnect?: NotificationPreferenceWhereInput | boolean
+    delete?: NotificationPreferenceWhereInput | boolean
+    connect?: NotificationPreferenceWhereUniqueInput
+    update?: XOR<XOR<NotificationPreferenceUpdateToOneWithWhereWithoutUserInput, NotificationPreferenceUpdateWithoutUserInput>, NotificationPreferenceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ComplaintStatusLogUpdateManyWithoutChangedByNestedInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutChangedByInput, ComplaintStatusLogUncheckedCreateWithoutChangedByInput> | ComplaintStatusLogCreateWithoutChangedByInput[] | ComplaintStatusLogUncheckedCreateWithoutChangedByInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutChangedByInput | ComplaintStatusLogCreateOrConnectWithoutChangedByInput[]
+    upsert?: ComplaintStatusLogUpsertWithWhereUniqueWithoutChangedByInput | ComplaintStatusLogUpsertWithWhereUniqueWithoutChangedByInput[]
+    createMany?: ComplaintStatusLogCreateManyChangedByInputEnvelope
+    set?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    disconnect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    delete?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    update?: ComplaintStatusLogUpdateWithWhereUniqueWithoutChangedByInput | ComplaintStatusLogUpdateWithWhereUniqueWithoutChangedByInput[]
+    updateMany?: ComplaintStatusLogUpdateManyWithWhereWithoutChangedByInput | ComplaintStatusLogUpdateManyWithWhereWithoutChangedByInput[]
+    deleteMany?: ComplaintStatusLogScalarWhereInput | ComplaintStatusLogScalarWhereInput[]
+  }
+
   export type ComplaintUncheckedUpdateManyWithoutStudentNestedInput = {
     create?: XOR<ComplaintCreateWithoutStudentInput, ComplaintUncheckedCreateWithoutStudentInput> | ComplaintCreateWithoutStudentInput[] | ComplaintUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: ComplaintCreateOrConnectWithoutStudentInput | ComplaintCreateOrConnectWithoutStudentInput[]
@@ -7376,6 +11821,30 @@ export namespace Prisma {
     deleteMany?: ComplaintUpdateScalarWhereInput | ComplaintUpdateScalarWhereInput[]
   }
 
+  export type NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput
+    upsert?: NotificationPreferenceUpsertWithoutUserInput
+    disconnect?: NotificationPreferenceWhereInput | boolean
+    delete?: NotificationPreferenceWhereInput | boolean
+    connect?: NotificationPreferenceWhereUniqueInput
+    update?: XOR<XOR<NotificationPreferenceUpdateToOneWithWhereWithoutUserInput, NotificationPreferenceUpdateWithoutUserInput>, NotificationPreferenceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateManyWithoutChangedByNestedInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutChangedByInput, ComplaintStatusLogUncheckedCreateWithoutChangedByInput> | ComplaintStatusLogCreateWithoutChangedByInput[] | ComplaintStatusLogUncheckedCreateWithoutChangedByInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutChangedByInput | ComplaintStatusLogCreateOrConnectWithoutChangedByInput[]
+    upsert?: ComplaintStatusLogUpsertWithWhereUniqueWithoutChangedByInput | ComplaintStatusLogUpsertWithWhereUniqueWithoutChangedByInput[]
+    createMany?: ComplaintStatusLogCreateManyChangedByInputEnvelope
+    set?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    disconnect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    delete?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    update?: ComplaintStatusLogUpdateWithWhereUniqueWithoutChangedByInput | ComplaintStatusLogUpdateWithWhereUniqueWithoutChangedByInput[]
+    updateMany?: ComplaintStatusLogUpdateManyWithWhereWithoutChangedByInput | ComplaintStatusLogUpdateManyWithWhereWithoutChangedByInput[]
+    deleteMany?: ComplaintStatusLogScalarWhereInput | ComplaintStatusLogScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutComplaintsInput = {
     create?: XOR<UserCreateWithoutComplaintsInput, UserUncheckedCreateWithoutComplaintsInput>
     connectOrCreate?: UserCreateOrConnectWithoutComplaintsInput
@@ -7395,11 +11864,51 @@ export namespace Prisma {
     connect?: ComplaintUpdateWhereUniqueInput | ComplaintUpdateWhereUniqueInput[]
   }
 
+  export type ComplaintAttachmentCreateNestedManyWithoutComplaintInput = {
+    create?: XOR<ComplaintAttachmentCreateWithoutComplaintInput, ComplaintAttachmentUncheckedCreateWithoutComplaintInput> | ComplaintAttachmentCreateWithoutComplaintInput[] | ComplaintAttachmentUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintAttachmentCreateOrConnectWithoutComplaintInput | ComplaintAttachmentCreateOrConnectWithoutComplaintInput[]
+    createMany?: ComplaintAttachmentCreateManyComplaintInputEnvelope
+    connect?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+  }
+
+  export type ComplaintFeedbackCreateNestedOneWithoutComplaintInput = {
+    create?: XOR<ComplaintFeedbackCreateWithoutComplaintInput, ComplaintFeedbackUncheckedCreateWithoutComplaintInput>
+    connectOrCreate?: ComplaintFeedbackCreateOrConnectWithoutComplaintInput
+    connect?: ComplaintFeedbackWhereUniqueInput
+  }
+
+  export type ComplaintStatusLogCreateNestedManyWithoutComplaintInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutComplaintInput, ComplaintStatusLogUncheckedCreateWithoutComplaintInput> | ComplaintStatusLogCreateWithoutComplaintInput[] | ComplaintStatusLogUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutComplaintInput | ComplaintStatusLogCreateOrConnectWithoutComplaintInput[]
+    createMany?: ComplaintStatusLogCreateManyComplaintInputEnvelope
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+  }
+
   export type ComplaintUpdateUncheckedCreateNestedManyWithoutComplaintInput = {
     create?: XOR<ComplaintUpdateCreateWithoutComplaintInput, ComplaintUpdateUncheckedCreateWithoutComplaintInput> | ComplaintUpdateCreateWithoutComplaintInput[] | ComplaintUpdateUncheckedCreateWithoutComplaintInput[]
     connectOrCreate?: ComplaintUpdateCreateOrConnectWithoutComplaintInput | ComplaintUpdateCreateOrConnectWithoutComplaintInput[]
     createMany?: ComplaintUpdateCreateManyComplaintInputEnvelope
     connect?: ComplaintUpdateWhereUniqueInput | ComplaintUpdateWhereUniqueInput[]
+  }
+
+  export type ComplaintAttachmentUncheckedCreateNestedManyWithoutComplaintInput = {
+    create?: XOR<ComplaintAttachmentCreateWithoutComplaintInput, ComplaintAttachmentUncheckedCreateWithoutComplaintInput> | ComplaintAttachmentCreateWithoutComplaintInput[] | ComplaintAttachmentUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintAttachmentCreateOrConnectWithoutComplaintInput | ComplaintAttachmentCreateOrConnectWithoutComplaintInput[]
+    createMany?: ComplaintAttachmentCreateManyComplaintInputEnvelope
+    connect?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+  }
+
+  export type ComplaintFeedbackUncheckedCreateNestedOneWithoutComplaintInput = {
+    create?: XOR<ComplaintFeedbackCreateWithoutComplaintInput, ComplaintFeedbackUncheckedCreateWithoutComplaintInput>
+    connectOrCreate?: ComplaintFeedbackCreateOrConnectWithoutComplaintInput
+    connect?: ComplaintFeedbackWhereUniqueInput
+  }
+
+  export type ComplaintStatusLogUncheckedCreateNestedManyWithoutComplaintInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutComplaintInput, ComplaintStatusLogUncheckedCreateWithoutComplaintInput> | ComplaintStatusLogCreateWithoutComplaintInput[] | ComplaintStatusLogUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutComplaintInput | ComplaintStatusLogCreateOrConnectWithoutComplaintInput[]
+    createMany?: ComplaintStatusLogCreateManyComplaintInputEnvelope
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
   }
 
   export type EnumComplaintCategoryFieldUpdateOperationsInput = {
@@ -7446,6 +11955,44 @@ export namespace Prisma {
     deleteMany?: ComplaintUpdateScalarWhereInput | ComplaintUpdateScalarWhereInput[]
   }
 
+  export type ComplaintAttachmentUpdateManyWithoutComplaintNestedInput = {
+    create?: XOR<ComplaintAttachmentCreateWithoutComplaintInput, ComplaintAttachmentUncheckedCreateWithoutComplaintInput> | ComplaintAttachmentCreateWithoutComplaintInput[] | ComplaintAttachmentUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintAttachmentCreateOrConnectWithoutComplaintInput | ComplaintAttachmentCreateOrConnectWithoutComplaintInput[]
+    upsert?: ComplaintAttachmentUpsertWithWhereUniqueWithoutComplaintInput | ComplaintAttachmentUpsertWithWhereUniqueWithoutComplaintInput[]
+    createMany?: ComplaintAttachmentCreateManyComplaintInputEnvelope
+    set?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    disconnect?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    delete?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    connect?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    update?: ComplaintAttachmentUpdateWithWhereUniqueWithoutComplaintInput | ComplaintAttachmentUpdateWithWhereUniqueWithoutComplaintInput[]
+    updateMany?: ComplaintAttachmentUpdateManyWithWhereWithoutComplaintInput | ComplaintAttachmentUpdateManyWithWhereWithoutComplaintInput[]
+    deleteMany?: ComplaintAttachmentScalarWhereInput | ComplaintAttachmentScalarWhereInput[]
+  }
+
+  export type ComplaintFeedbackUpdateOneWithoutComplaintNestedInput = {
+    create?: XOR<ComplaintFeedbackCreateWithoutComplaintInput, ComplaintFeedbackUncheckedCreateWithoutComplaintInput>
+    connectOrCreate?: ComplaintFeedbackCreateOrConnectWithoutComplaintInput
+    upsert?: ComplaintFeedbackUpsertWithoutComplaintInput
+    disconnect?: ComplaintFeedbackWhereInput | boolean
+    delete?: ComplaintFeedbackWhereInput | boolean
+    connect?: ComplaintFeedbackWhereUniqueInput
+    update?: XOR<XOR<ComplaintFeedbackUpdateToOneWithWhereWithoutComplaintInput, ComplaintFeedbackUpdateWithoutComplaintInput>, ComplaintFeedbackUncheckedUpdateWithoutComplaintInput>
+  }
+
+  export type ComplaintStatusLogUpdateManyWithoutComplaintNestedInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutComplaintInput, ComplaintStatusLogUncheckedCreateWithoutComplaintInput> | ComplaintStatusLogCreateWithoutComplaintInput[] | ComplaintStatusLogUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutComplaintInput | ComplaintStatusLogCreateOrConnectWithoutComplaintInput[]
+    upsert?: ComplaintStatusLogUpsertWithWhereUniqueWithoutComplaintInput | ComplaintStatusLogUpsertWithWhereUniqueWithoutComplaintInput[]
+    createMany?: ComplaintStatusLogCreateManyComplaintInputEnvelope
+    set?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    disconnect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    delete?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    update?: ComplaintStatusLogUpdateWithWhereUniqueWithoutComplaintInput | ComplaintStatusLogUpdateWithWhereUniqueWithoutComplaintInput[]
+    updateMany?: ComplaintStatusLogUpdateManyWithWhereWithoutComplaintInput | ComplaintStatusLogUpdateManyWithWhereWithoutComplaintInput[]
+    deleteMany?: ComplaintStatusLogScalarWhereInput | ComplaintStatusLogScalarWhereInput[]
+  }
+
   export type ComplaintUpdateUncheckedUpdateManyWithoutComplaintNestedInput = {
     create?: XOR<ComplaintUpdateCreateWithoutComplaintInput, ComplaintUpdateUncheckedCreateWithoutComplaintInput> | ComplaintUpdateCreateWithoutComplaintInput[] | ComplaintUpdateUncheckedCreateWithoutComplaintInput[]
     connectOrCreate?: ComplaintUpdateCreateOrConnectWithoutComplaintInput | ComplaintUpdateCreateOrConnectWithoutComplaintInput[]
@@ -7458,6 +12005,44 @@ export namespace Prisma {
     update?: ComplaintUpdateUpdateWithWhereUniqueWithoutComplaintInput | ComplaintUpdateUpdateWithWhereUniqueWithoutComplaintInput[]
     updateMany?: ComplaintUpdateUpdateManyWithWhereWithoutComplaintInput | ComplaintUpdateUpdateManyWithWhereWithoutComplaintInput[]
     deleteMany?: ComplaintUpdateScalarWhereInput | ComplaintUpdateScalarWhereInput[]
+  }
+
+  export type ComplaintAttachmentUncheckedUpdateManyWithoutComplaintNestedInput = {
+    create?: XOR<ComplaintAttachmentCreateWithoutComplaintInput, ComplaintAttachmentUncheckedCreateWithoutComplaintInput> | ComplaintAttachmentCreateWithoutComplaintInput[] | ComplaintAttachmentUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintAttachmentCreateOrConnectWithoutComplaintInput | ComplaintAttachmentCreateOrConnectWithoutComplaintInput[]
+    upsert?: ComplaintAttachmentUpsertWithWhereUniqueWithoutComplaintInput | ComplaintAttachmentUpsertWithWhereUniqueWithoutComplaintInput[]
+    createMany?: ComplaintAttachmentCreateManyComplaintInputEnvelope
+    set?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    disconnect?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    delete?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    connect?: ComplaintAttachmentWhereUniqueInput | ComplaintAttachmentWhereUniqueInput[]
+    update?: ComplaintAttachmentUpdateWithWhereUniqueWithoutComplaintInput | ComplaintAttachmentUpdateWithWhereUniqueWithoutComplaintInput[]
+    updateMany?: ComplaintAttachmentUpdateManyWithWhereWithoutComplaintInput | ComplaintAttachmentUpdateManyWithWhereWithoutComplaintInput[]
+    deleteMany?: ComplaintAttachmentScalarWhereInput | ComplaintAttachmentScalarWhereInput[]
+  }
+
+  export type ComplaintFeedbackUncheckedUpdateOneWithoutComplaintNestedInput = {
+    create?: XOR<ComplaintFeedbackCreateWithoutComplaintInput, ComplaintFeedbackUncheckedCreateWithoutComplaintInput>
+    connectOrCreate?: ComplaintFeedbackCreateOrConnectWithoutComplaintInput
+    upsert?: ComplaintFeedbackUpsertWithoutComplaintInput
+    disconnect?: ComplaintFeedbackWhereInput | boolean
+    delete?: ComplaintFeedbackWhereInput | boolean
+    connect?: ComplaintFeedbackWhereUniqueInput
+    update?: XOR<XOR<ComplaintFeedbackUpdateToOneWithWhereWithoutComplaintInput, ComplaintFeedbackUpdateWithoutComplaintInput>, ComplaintFeedbackUncheckedUpdateWithoutComplaintInput>
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateManyWithoutComplaintNestedInput = {
+    create?: XOR<ComplaintStatusLogCreateWithoutComplaintInput, ComplaintStatusLogUncheckedCreateWithoutComplaintInput> | ComplaintStatusLogCreateWithoutComplaintInput[] | ComplaintStatusLogUncheckedCreateWithoutComplaintInput[]
+    connectOrCreate?: ComplaintStatusLogCreateOrConnectWithoutComplaintInput | ComplaintStatusLogCreateOrConnectWithoutComplaintInput[]
+    upsert?: ComplaintStatusLogUpsertWithWhereUniqueWithoutComplaintInput | ComplaintStatusLogUpsertWithWhereUniqueWithoutComplaintInput[]
+    createMany?: ComplaintStatusLogCreateManyComplaintInputEnvelope
+    set?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    disconnect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    delete?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    connect?: ComplaintStatusLogWhereUniqueInput | ComplaintStatusLogWhereUniqueInput[]
+    update?: ComplaintStatusLogUpdateWithWhereUniqueWithoutComplaintInput | ComplaintStatusLogUpdateWithWhereUniqueWithoutComplaintInput[]
+    updateMany?: ComplaintStatusLogUpdateManyWithWhereWithoutComplaintInput | ComplaintStatusLogUpdateManyWithWhereWithoutComplaintInput[]
+    deleteMany?: ComplaintStatusLogScalarWhereInput | ComplaintStatusLogScalarWhereInput[]
   }
 
   export type ComplaintCreateNestedOneWithoutUpdatesInput = {
@@ -7490,8 +12075,86 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutComplaintUpdatesInput, UserUpdateWithoutComplaintUpdatesInput>, UserUncheckedUpdateWithoutComplaintUpdatesInput>
   }
 
+  export type ComplaintCreateNestedOneWithoutAttachmentsInput = {
+    create?: XOR<ComplaintCreateWithoutAttachmentsInput, ComplaintUncheckedCreateWithoutAttachmentsInput>
+    connectOrCreate?: ComplaintCreateOrConnectWithoutAttachmentsInput
+    connect?: ComplaintWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type ComplaintUpdateOneRequiredWithoutAttachmentsNestedInput = {
+    create?: XOR<ComplaintCreateWithoutAttachmentsInput, ComplaintUncheckedCreateWithoutAttachmentsInput>
+    connectOrCreate?: ComplaintCreateOrConnectWithoutAttachmentsInput
+    upsert?: ComplaintUpsertWithoutAttachmentsInput
+    connect?: ComplaintWhereUniqueInput
+    update?: XOR<XOR<ComplaintUpdateToOneWithWhereWithoutAttachmentsInput, ComplaintUpdateWithoutAttachmentsInput>, ComplaintUncheckedUpdateWithoutAttachmentsInput>
+  }
+
+  export type ComplaintCreateNestedOneWithoutFeedbackInput = {
+    create?: XOR<ComplaintCreateWithoutFeedbackInput, ComplaintUncheckedCreateWithoutFeedbackInput>
+    connectOrCreate?: ComplaintCreateOrConnectWithoutFeedbackInput
+    connect?: ComplaintWhereUniqueInput
+  }
+
+  export type ComplaintUpdateOneRequiredWithoutFeedbackNestedInput = {
+    create?: XOR<ComplaintCreateWithoutFeedbackInput, ComplaintUncheckedCreateWithoutFeedbackInput>
+    connectOrCreate?: ComplaintCreateOrConnectWithoutFeedbackInput
+    upsert?: ComplaintUpsertWithoutFeedbackInput
+    connect?: ComplaintWhereUniqueInput
+    update?: XOR<XOR<ComplaintUpdateToOneWithWhereWithoutFeedbackInput, ComplaintUpdateWithoutFeedbackInput>, ComplaintUncheckedUpdateWithoutFeedbackInput>
+  }
+
+  export type ComplaintCreateNestedOneWithoutStatusLogsInput = {
+    create?: XOR<ComplaintCreateWithoutStatusLogsInput, ComplaintUncheckedCreateWithoutStatusLogsInput>
+    connectOrCreate?: ComplaintCreateOrConnectWithoutStatusLogsInput
+    connect?: ComplaintWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutStatusChangesInput = {
+    create?: XOR<UserCreateWithoutStatusChangesInput, UserUncheckedCreateWithoutStatusChangesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStatusChangesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ComplaintUpdateOneRequiredWithoutStatusLogsNestedInput = {
+    create?: XOR<ComplaintCreateWithoutStatusLogsInput, ComplaintUncheckedCreateWithoutStatusLogsInput>
+    connectOrCreate?: ComplaintCreateOrConnectWithoutStatusLogsInput
+    upsert?: ComplaintUpsertWithoutStatusLogsInput
+    connect?: ComplaintWhereUniqueInput
+    update?: XOR<XOR<ComplaintUpdateToOneWithWhereWithoutStatusLogsInput, ComplaintUpdateWithoutStatusLogsInput>, ComplaintUncheckedUpdateWithoutStatusLogsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutStatusChangesNestedInput = {
+    create?: XOR<UserCreateWithoutStatusChangesInput, UserUncheckedCreateWithoutStatusChangesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStatusChangesInput
+    upsert?: UserUpsertWithoutStatusChangesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStatusChangesInput, UserUpdateWithoutStatusChangesInput>, UserUncheckedUpdateWithoutStatusChangesInput>
+  }
+
+  export type UserCreateNestedOneWithoutNotificationPreferenceInput = {
+    create?: XOR<UserCreateWithoutNotificationPreferenceInput, UserUncheckedCreateWithoutNotificationPreferenceInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationPreferenceInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type UserUpdateOneRequiredWithoutNotificationPreferenceNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationPreferenceInput, UserUncheckedCreateWithoutNotificationPreferenceInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationPreferenceInput
+    upsert?: UserUpsertWithoutNotificationPreferenceInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationPreferenceInput, UserUpdateWithoutNotificationPreferenceInput>, UserUncheckedUpdateWithoutNotificationPreferenceInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7713,6 +12376,33 @@ export namespace Prisma {
     _max?: NestedEnumComplaintPriorityFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -7739,6 +12429,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     assignedTo?: UserCreateNestedOneWithoutAssignedComplaintsInput
     updates?: ComplaintUpdateCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintUncheckedCreateWithoutStudentInput = {
@@ -7754,6 +12447,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     assignedToId?: string | null
     updates?: ComplaintUpdateUncheckedCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentUncheckedCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackUncheckedCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogUncheckedCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintCreateOrConnectWithoutStudentInput = {
@@ -7779,6 +12475,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     student: UserCreateNestedOneWithoutComplaintsInput
     updates?: ComplaintUpdateCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintUncheckedCreateWithoutAssignedToInput = {
@@ -7794,6 +12493,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     studentId: string
     updates?: ComplaintUpdateUncheckedCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentUncheckedCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackUncheckedCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogUncheckedCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintCreateOrConnectWithoutAssignedToInput = {
@@ -7827,6 +12529,59 @@ export namespace Prisma {
 
   export type ComplaintUpdateCreateManyStaffInputEnvelope = {
     data: ComplaintUpdateCreateManyStaffInput | ComplaintUpdateCreateManyStaffInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NotificationPreferenceCreateWithoutUserInput = {
+    id?: string
+    email?: boolean
+    push?: boolean
+    sms?: boolean
+    newComplaints?: boolean
+    statusUpdates?: boolean
+    announcements?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type NotificationPreferenceUncheckedCreateWithoutUserInput = {
+    id?: string
+    email?: boolean
+    push?: boolean
+    sms?: boolean
+    newComplaints?: boolean
+    statusUpdates?: boolean
+    announcements?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type NotificationPreferenceCreateOrConnectWithoutUserInput = {
+    where: NotificationPreferenceWhereUniqueInput
+    create: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+  }
+
+  export type ComplaintStatusLogCreateWithoutChangedByInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    complaint: ComplaintCreateNestedOneWithoutStatusLogsInput
+  }
+
+  export type ComplaintStatusLogUncheckedCreateWithoutChangedByInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    complaintId: string
+  }
+
+  export type ComplaintStatusLogCreateOrConnectWithoutChangedByInput = {
+    where: ComplaintStatusLogWhereUniqueInput
+    create: XOR<ComplaintStatusLogCreateWithoutChangedByInput, ComplaintStatusLogUncheckedCreateWithoutChangedByInput>
+  }
+
+  export type ComplaintStatusLogCreateManyChangedByInputEnvelope = {
+    data: ComplaintStatusLogCreateManyChangedByInput | ComplaintStatusLogCreateManyChangedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -7907,6 +12662,67 @@ export namespace Prisma {
     staffId?: StringNullableFilter<"ComplaintUpdate"> | string | null
   }
 
+  export type NotificationPreferenceUpsertWithoutUserInput = {
+    update: XOR<NotificationPreferenceUpdateWithoutUserInput, NotificationPreferenceUncheckedUpdateWithoutUserInput>
+    create: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+    where?: NotificationPreferenceWhereInput
+  }
+
+  export type NotificationPreferenceUpdateToOneWithWhereWithoutUserInput = {
+    where?: NotificationPreferenceWhereInput
+    data: XOR<NotificationPreferenceUpdateWithoutUserInput, NotificationPreferenceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type NotificationPreferenceUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: BoolFieldUpdateOperationsInput | boolean
+    push?: BoolFieldUpdateOperationsInput | boolean
+    sms?: BoolFieldUpdateOperationsInput | boolean
+    newComplaints?: BoolFieldUpdateOperationsInput | boolean
+    statusUpdates?: BoolFieldUpdateOperationsInput | boolean
+    announcements?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationPreferenceUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: BoolFieldUpdateOperationsInput | boolean
+    push?: BoolFieldUpdateOperationsInput | boolean
+    sms?: BoolFieldUpdateOperationsInput | boolean
+    newComplaints?: BoolFieldUpdateOperationsInput | boolean
+    statusUpdates?: BoolFieldUpdateOperationsInput | boolean
+    announcements?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintStatusLogUpsertWithWhereUniqueWithoutChangedByInput = {
+    where: ComplaintStatusLogWhereUniqueInput
+    update: XOR<ComplaintStatusLogUpdateWithoutChangedByInput, ComplaintStatusLogUncheckedUpdateWithoutChangedByInput>
+    create: XOR<ComplaintStatusLogCreateWithoutChangedByInput, ComplaintStatusLogUncheckedCreateWithoutChangedByInput>
+  }
+
+  export type ComplaintStatusLogUpdateWithWhereUniqueWithoutChangedByInput = {
+    where: ComplaintStatusLogWhereUniqueInput
+    data: XOR<ComplaintStatusLogUpdateWithoutChangedByInput, ComplaintStatusLogUncheckedUpdateWithoutChangedByInput>
+  }
+
+  export type ComplaintStatusLogUpdateManyWithWhereWithoutChangedByInput = {
+    where: ComplaintStatusLogScalarWhereInput
+    data: XOR<ComplaintStatusLogUpdateManyMutationInput, ComplaintStatusLogUncheckedUpdateManyWithoutChangedByInput>
+  }
+
+  export type ComplaintStatusLogScalarWhereInput = {
+    AND?: ComplaintStatusLogScalarWhereInput | ComplaintStatusLogScalarWhereInput[]
+    OR?: ComplaintStatusLogScalarWhereInput[]
+    NOT?: ComplaintStatusLogScalarWhereInput | ComplaintStatusLogScalarWhereInput[]
+    id?: StringFilter<"ComplaintStatusLog"> | string
+    oldStatus?: EnumComplaintStatusFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFilter<"ComplaintStatusLog"> | $Enums.ComplaintStatus
+    createdAt?: DateTimeFilter<"ComplaintStatusLog"> | Date | string
+    complaintId?: StringFilter<"ComplaintStatusLog"> | string
+    changedById?: StringFilter<"ComplaintStatusLog"> | string
+  }
+
   export type UserCreateWithoutComplaintsInput = {
     id?: string
     email: string
@@ -7924,6 +12740,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     assignedComplaints?: ComplaintCreateNestedManyWithoutAssignedToInput
     complaintUpdates?: ComplaintUpdateCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogCreateNestedManyWithoutChangedByInput
   }
 
   export type UserUncheckedCreateWithoutComplaintsInput = {
@@ -7943,6 +12761,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     assignedComplaints?: ComplaintUncheckedCreateNestedManyWithoutAssignedToInput
     complaintUpdates?: ComplaintUpdateUncheckedCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogUncheckedCreateNestedManyWithoutChangedByInput
   }
 
   export type UserCreateOrConnectWithoutComplaintsInput = {
@@ -7967,6 +12787,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     complaints?: ComplaintCreateNestedManyWithoutStudentInput
     complaintUpdates?: ComplaintUpdateCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogCreateNestedManyWithoutChangedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedComplaintsInput = {
@@ -7986,6 +12808,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     complaints?: ComplaintUncheckedCreateNestedManyWithoutStudentInput
     complaintUpdates?: ComplaintUpdateUncheckedCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogUncheckedCreateNestedManyWithoutChangedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedComplaintsInput = {
@@ -8017,6 +12841,79 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ComplaintAttachmentCreateWithoutComplaintInput = {
+    id?: string
+    fileUrl: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    createdAt?: Date | string
+  }
+
+  export type ComplaintAttachmentUncheckedCreateWithoutComplaintInput = {
+    id?: string
+    fileUrl: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    createdAt?: Date | string
+  }
+
+  export type ComplaintAttachmentCreateOrConnectWithoutComplaintInput = {
+    where: ComplaintAttachmentWhereUniqueInput
+    create: XOR<ComplaintAttachmentCreateWithoutComplaintInput, ComplaintAttachmentUncheckedCreateWithoutComplaintInput>
+  }
+
+  export type ComplaintAttachmentCreateManyComplaintInputEnvelope = {
+    data: ComplaintAttachmentCreateManyComplaintInput | ComplaintAttachmentCreateManyComplaintInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ComplaintFeedbackCreateWithoutComplaintInput = {
+    id?: string
+    rating: number
+    comment?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ComplaintFeedbackUncheckedCreateWithoutComplaintInput = {
+    id?: string
+    rating: number
+    comment?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ComplaintFeedbackCreateOrConnectWithoutComplaintInput = {
+    where: ComplaintFeedbackWhereUniqueInput
+    create: XOR<ComplaintFeedbackCreateWithoutComplaintInput, ComplaintFeedbackUncheckedCreateWithoutComplaintInput>
+  }
+
+  export type ComplaintStatusLogCreateWithoutComplaintInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    changedBy: UserCreateNestedOneWithoutStatusChangesInput
+  }
+
+  export type ComplaintStatusLogUncheckedCreateWithoutComplaintInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    changedById: string
+  }
+
+  export type ComplaintStatusLogCreateOrConnectWithoutComplaintInput = {
+    where: ComplaintStatusLogWhereUniqueInput
+    create: XOR<ComplaintStatusLogCreateWithoutComplaintInput, ComplaintStatusLogUncheckedCreateWithoutComplaintInput>
+  }
+
+  export type ComplaintStatusLogCreateManyComplaintInputEnvelope = {
+    data: ComplaintStatusLogCreateManyComplaintInput | ComplaintStatusLogCreateManyComplaintInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutComplaintsInput = {
     update: XOR<UserUpdateWithoutComplaintsInput, UserUncheckedUpdateWithoutComplaintsInput>
     create: XOR<UserCreateWithoutComplaintsInput, UserUncheckedCreateWithoutComplaintsInput>
@@ -8045,6 +12942,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedComplaints?: ComplaintUpdateManyWithoutAssignedToNestedInput
     complaintUpdates?: ComplaintUpdateUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUpdateManyWithoutChangedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutComplaintsInput = {
@@ -8064,6 +12963,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedComplaints?: ComplaintUncheckedUpdateManyWithoutAssignedToNestedInput
     complaintUpdates?: ComplaintUpdateUncheckedUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUncheckedUpdateManyWithoutChangedByNestedInput
   }
 
   export type UserUpsertWithoutAssignedComplaintsInput = {
@@ -8094,6 +12995,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     complaints?: ComplaintUpdateManyWithoutStudentNestedInput
     complaintUpdates?: ComplaintUpdateUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUpdateManyWithoutChangedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedComplaintsInput = {
@@ -8113,6 +13016,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     complaints?: ComplaintUncheckedUpdateManyWithoutStudentNestedInput
     complaintUpdates?: ComplaintUpdateUncheckedUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUncheckedUpdateManyWithoutChangedByNestedInput
   }
 
   export type ComplaintUpdateUpsertWithWhereUniqueWithoutComplaintInput = {
@@ -8131,6 +13036,76 @@ export namespace Prisma {
     data: XOR<ComplaintUpdateUpdateManyMutationInput, ComplaintUpdateUncheckedUpdateManyWithoutComplaintInput>
   }
 
+  export type ComplaintAttachmentUpsertWithWhereUniqueWithoutComplaintInput = {
+    where: ComplaintAttachmentWhereUniqueInput
+    update: XOR<ComplaintAttachmentUpdateWithoutComplaintInput, ComplaintAttachmentUncheckedUpdateWithoutComplaintInput>
+    create: XOR<ComplaintAttachmentCreateWithoutComplaintInput, ComplaintAttachmentUncheckedCreateWithoutComplaintInput>
+  }
+
+  export type ComplaintAttachmentUpdateWithWhereUniqueWithoutComplaintInput = {
+    where: ComplaintAttachmentWhereUniqueInput
+    data: XOR<ComplaintAttachmentUpdateWithoutComplaintInput, ComplaintAttachmentUncheckedUpdateWithoutComplaintInput>
+  }
+
+  export type ComplaintAttachmentUpdateManyWithWhereWithoutComplaintInput = {
+    where: ComplaintAttachmentScalarWhereInput
+    data: XOR<ComplaintAttachmentUpdateManyMutationInput, ComplaintAttachmentUncheckedUpdateManyWithoutComplaintInput>
+  }
+
+  export type ComplaintAttachmentScalarWhereInput = {
+    AND?: ComplaintAttachmentScalarWhereInput | ComplaintAttachmentScalarWhereInput[]
+    OR?: ComplaintAttachmentScalarWhereInput[]
+    NOT?: ComplaintAttachmentScalarWhereInput | ComplaintAttachmentScalarWhereInput[]
+    id?: StringFilter<"ComplaintAttachment"> | string
+    fileUrl?: StringFilter<"ComplaintAttachment"> | string
+    fileName?: StringFilter<"ComplaintAttachment"> | string
+    fileType?: StringFilter<"ComplaintAttachment"> | string
+    fileSize?: IntFilter<"ComplaintAttachment"> | number
+    createdAt?: DateTimeFilter<"ComplaintAttachment"> | Date | string
+    complaintId?: StringFilter<"ComplaintAttachment"> | string
+  }
+
+  export type ComplaintFeedbackUpsertWithoutComplaintInput = {
+    update: XOR<ComplaintFeedbackUpdateWithoutComplaintInput, ComplaintFeedbackUncheckedUpdateWithoutComplaintInput>
+    create: XOR<ComplaintFeedbackCreateWithoutComplaintInput, ComplaintFeedbackUncheckedCreateWithoutComplaintInput>
+    where?: ComplaintFeedbackWhereInput
+  }
+
+  export type ComplaintFeedbackUpdateToOneWithWhereWithoutComplaintInput = {
+    where?: ComplaintFeedbackWhereInput
+    data: XOR<ComplaintFeedbackUpdateWithoutComplaintInput, ComplaintFeedbackUncheckedUpdateWithoutComplaintInput>
+  }
+
+  export type ComplaintFeedbackUpdateWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintFeedbackUncheckedUpdateWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintStatusLogUpsertWithWhereUniqueWithoutComplaintInput = {
+    where: ComplaintStatusLogWhereUniqueInput
+    update: XOR<ComplaintStatusLogUpdateWithoutComplaintInput, ComplaintStatusLogUncheckedUpdateWithoutComplaintInput>
+    create: XOR<ComplaintStatusLogCreateWithoutComplaintInput, ComplaintStatusLogUncheckedCreateWithoutComplaintInput>
+  }
+
+  export type ComplaintStatusLogUpdateWithWhereUniqueWithoutComplaintInput = {
+    where: ComplaintStatusLogWhereUniqueInput
+    data: XOR<ComplaintStatusLogUpdateWithoutComplaintInput, ComplaintStatusLogUncheckedUpdateWithoutComplaintInput>
+  }
+
+  export type ComplaintStatusLogUpdateManyWithWhereWithoutComplaintInput = {
+    where: ComplaintStatusLogScalarWhereInput
+    data: XOR<ComplaintStatusLogUpdateManyMutationInput, ComplaintStatusLogUncheckedUpdateManyWithoutComplaintInput>
+  }
+
   export type ComplaintCreateWithoutUpdatesInput = {
     id?: string
     title: string
@@ -8144,6 +13119,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     student: UserCreateNestedOneWithoutComplaintsInput
     assignedTo?: UserCreateNestedOneWithoutAssignedComplaintsInput
+    attachments?: ComplaintAttachmentCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintUncheckedCreateWithoutUpdatesInput = {
@@ -8159,6 +13137,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     studentId: string
     assignedToId?: string | null
+    attachments?: ComplaintAttachmentUncheckedCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackUncheckedCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogUncheckedCreateNestedManyWithoutComplaintInput
   }
 
   export type ComplaintCreateOrConnectWithoutUpdatesInput = {
@@ -8183,6 +13164,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     complaints?: ComplaintCreateNestedManyWithoutStudentInput
     assignedComplaints?: ComplaintCreateNestedManyWithoutAssignedToInput
+    notificationPreference?: NotificationPreferenceCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogCreateNestedManyWithoutChangedByInput
   }
 
   export type UserUncheckedCreateWithoutComplaintUpdatesInput = {
@@ -8202,6 +13185,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     complaints?: ComplaintUncheckedCreateNestedManyWithoutStudentInput
     assignedComplaints?: ComplaintUncheckedCreateNestedManyWithoutAssignedToInput
+    notificationPreference?: NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+    statusChanges?: ComplaintStatusLogUncheckedCreateNestedManyWithoutChangedByInput
   }
 
   export type UserCreateOrConnectWithoutComplaintUpdatesInput = {
@@ -8233,6 +13218,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     student?: UserUpdateOneRequiredWithoutComplaintsNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedComplaintsNestedInput
+    attachments?: ComplaintAttachmentUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUpdateManyWithoutComplaintNestedInput
   }
 
   export type ComplaintUncheckedUpdateWithoutUpdatesInput = {
@@ -8248,6 +13236,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     studentId?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: ComplaintAttachmentUncheckedUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUncheckedUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUncheckedUpdateManyWithoutComplaintNestedInput
   }
 
   export type UserUpsertWithoutComplaintUpdatesInput = {
@@ -8278,6 +13269,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     complaints?: ComplaintUpdateManyWithoutStudentNestedInput
     assignedComplaints?: ComplaintUpdateManyWithoutAssignedToNestedInput
+    notificationPreference?: NotificationPreferenceUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUpdateManyWithoutChangedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutComplaintUpdatesInput = {
@@ -8297,6 +13290,472 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     complaints?: ComplaintUncheckedUpdateManyWithoutStudentNestedInput
     assignedComplaints?: ComplaintUncheckedUpdateManyWithoutAssignedToNestedInput
+    notificationPreference?: NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    statusChanges?: ComplaintStatusLogUncheckedUpdateManyWithoutChangedByNestedInput
+  }
+
+  export type ComplaintCreateWithoutAttachmentsInput = {
+    id?: string
+    title: string
+    description: string
+    category: $Enums.ComplaintCategory
+    status?: $Enums.ComplaintStatus
+    priority?: $Enums.ComplaintPriority
+    hostelBlock: string
+    roomNumber: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student: UserCreateNestedOneWithoutComplaintsInput
+    assignedTo?: UserCreateNestedOneWithoutAssignedComplaintsInput
+    updates?: ComplaintUpdateCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogCreateNestedManyWithoutComplaintInput
+  }
+
+  export type ComplaintUncheckedCreateWithoutAttachmentsInput = {
+    id?: string
+    title: string
+    description: string
+    category: $Enums.ComplaintCategory
+    status?: $Enums.ComplaintStatus
+    priority?: $Enums.ComplaintPriority
+    hostelBlock: string
+    roomNumber: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    studentId: string
+    assignedToId?: string | null
+    updates?: ComplaintUpdateUncheckedCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackUncheckedCreateNestedOneWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogUncheckedCreateNestedManyWithoutComplaintInput
+  }
+
+  export type ComplaintCreateOrConnectWithoutAttachmentsInput = {
+    where: ComplaintWhereUniqueInput
+    create: XOR<ComplaintCreateWithoutAttachmentsInput, ComplaintUncheckedCreateWithoutAttachmentsInput>
+  }
+
+  export type ComplaintUpsertWithoutAttachmentsInput = {
+    update: XOR<ComplaintUpdateWithoutAttachmentsInput, ComplaintUncheckedUpdateWithoutAttachmentsInput>
+    create: XOR<ComplaintCreateWithoutAttachmentsInput, ComplaintUncheckedCreateWithoutAttachmentsInput>
+    where?: ComplaintWhereInput
+  }
+
+  export type ComplaintUpdateToOneWithWhereWithoutAttachmentsInput = {
+    where?: ComplaintWhereInput
+    data: XOR<ComplaintUpdateWithoutAttachmentsInput, ComplaintUncheckedUpdateWithoutAttachmentsInput>
+  }
+
+  export type ComplaintUpdateWithoutAttachmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: EnumComplaintCategoryFieldUpdateOperationsInput | $Enums.ComplaintCategory
+    status?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    priority?: EnumComplaintPriorityFieldUpdateOperationsInput | $Enums.ComplaintPriority
+    hostelBlock?: StringFieldUpdateOperationsInput | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: UserUpdateOneRequiredWithoutComplaintsNestedInput
+    assignedTo?: UserUpdateOneWithoutAssignedComplaintsNestedInput
+    updates?: ComplaintUpdateUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUpdateManyWithoutComplaintNestedInput
+  }
+
+  export type ComplaintUncheckedUpdateWithoutAttachmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: EnumComplaintCategoryFieldUpdateOperationsInput | $Enums.ComplaintCategory
+    status?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    priority?: EnumComplaintPriorityFieldUpdateOperationsInput | $Enums.ComplaintPriority
+    hostelBlock?: StringFieldUpdateOperationsInput | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    updates?: ComplaintUpdateUncheckedUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUncheckedUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUncheckedUpdateManyWithoutComplaintNestedInput
+  }
+
+  export type ComplaintCreateWithoutFeedbackInput = {
+    id?: string
+    title: string
+    description: string
+    category: $Enums.ComplaintCategory
+    status?: $Enums.ComplaintStatus
+    priority?: $Enums.ComplaintPriority
+    hostelBlock: string
+    roomNumber: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student: UserCreateNestedOneWithoutComplaintsInput
+    assignedTo?: UserCreateNestedOneWithoutAssignedComplaintsInput
+    updates?: ComplaintUpdateCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentCreateNestedManyWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogCreateNestedManyWithoutComplaintInput
+  }
+
+  export type ComplaintUncheckedCreateWithoutFeedbackInput = {
+    id?: string
+    title: string
+    description: string
+    category: $Enums.ComplaintCategory
+    status?: $Enums.ComplaintStatus
+    priority?: $Enums.ComplaintPriority
+    hostelBlock: string
+    roomNumber: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    studentId: string
+    assignedToId?: string | null
+    updates?: ComplaintUpdateUncheckedCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentUncheckedCreateNestedManyWithoutComplaintInput
+    statusLogs?: ComplaintStatusLogUncheckedCreateNestedManyWithoutComplaintInput
+  }
+
+  export type ComplaintCreateOrConnectWithoutFeedbackInput = {
+    where: ComplaintWhereUniqueInput
+    create: XOR<ComplaintCreateWithoutFeedbackInput, ComplaintUncheckedCreateWithoutFeedbackInput>
+  }
+
+  export type ComplaintUpsertWithoutFeedbackInput = {
+    update: XOR<ComplaintUpdateWithoutFeedbackInput, ComplaintUncheckedUpdateWithoutFeedbackInput>
+    create: XOR<ComplaintCreateWithoutFeedbackInput, ComplaintUncheckedCreateWithoutFeedbackInput>
+    where?: ComplaintWhereInput
+  }
+
+  export type ComplaintUpdateToOneWithWhereWithoutFeedbackInput = {
+    where?: ComplaintWhereInput
+    data: XOR<ComplaintUpdateWithoutFeedbackInput, ComplaintUncheckedUpdateWithoutFeedbackInput>
+  }
+
+  export type ComplaintUpdateWithoutFeedbackInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: EnumComplaintCategoryFieldUpdateOperationsInput | $Enums.ComplaintCategory
+    status?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    priority?: EnumComplaintPriorityFieldUpdateOperationsInput | $Enums.ComplaintPriority
+    hostelBlock?: StringFieldUpdateOperationsInput | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: UserUpdateOneRequiredWithoutComplaintsNestedInput
+    assignedTo?: UserUpdateOneWithoutAssignedComplaintsNestedInput
+    updates?: ComplaintUpdateUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUpdateManyWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUpdateManyWithoutComplaintNestedInput
+  }
+
+  export type ComplaintUncheckedUpdateWithoutFeedbackInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: EnumComplaintCategoryFieldUpdateOperationsInput | $Enums.ComplaintCategory
+    status?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    priority?: EnumComplaintPriorityFieldUpdateOperationsInput | $Enums.ComplaintPriority
+    hostelBlock?: StringFieldUpdateOperationsInput | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    updates?: ComplaintUpdateUncheckedUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUncheckedUpdateManyWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUncheckedUpdateManyWithoutComplaintNestedInput
+  }
+
+  export type ComplaintCreateWithoutStatusLogsInput = {
+    id?: string
+    title: string
+    description: string
+    category: $Enums.ComplaintCategory
+    status?: $Enums.ComplaintStatus
+    priority?: $Enums.ComplaintPriority
+    hostelBlock: string
+    roomNumber: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student: UserCreateNestedOneWithoutComplaintsInput
+    assignedTo?: UserCreateNestedOneWithoutAssignedComplaintsInput
+    updates?: ComplaintUpdateCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackCreateNestedOneWithoutComplaintInput
+  }
+
+  export type ComplaintUncheckedCreateWithoutStatusLogsInput = {
+    id?: string
+    title: string
+    description: string
+    category: $Enums.ComplaintCategory
+    status?: $Enums.ComplaintStatus
+    priority?: $Enums.ComplaintPriority
+    hostelBlock: string
+    roomNumber: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    studentId: string
+    assignedToId?: string | null
+    updates?: ComplaintUpdateUncheckedCreateNestedManyWithoutComplaintInput
+    attachments?: ComplaintAttachmentUncheckedCreateNestedManyWithoutComplaintInput
+    feedback?: ComplaintFeedbackUncheckedCreateNestedOneWithoutComplaintInput
+  }
+
+  export type ComplaintCreateOrConnectWithoutStatusLogsInput = {
+    where: ComplaintWhereUniqueInput
+    create: XOR<ComplaintCreateWithoutStatusLogsInput, ComplaintUncheckedCreateWithoutStatusLogsInput>
+  }
+
+  export type UserCreateWithoutStatusChangesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    fullName: string
+    role: $Enums.UserRole
+    status?: $Enums.UserStatus
+    phone?: string | null
+    department?: string | null
+    studentId?: string | null
+    hostelBlock?: string | null
+    roomNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    complaints?: ComplaintCreateNestedManyWithoutStudentInput
+    assignedComplaints?: ComplaintCreateNestedManyWithoutAssignedToInput
+    complaintUpdates?: ComplaintUpdateCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutStatusChangesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    fullName: string
+    role: $Enums.UserRole
+    status?: $Enums.UserStatus
+    phone?: string | null
+    department?: string | null
+    studentId?: string | null
+    hostelBlock?: string | null
+    roomNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    complaints?: ComplaintUncheckedCreateNestedManyWithoutStudentInput
+    assignedComplaints?: ComplaintUncheckedCreateNestedManyWithoutAssignedToInput
+    complaintUpdates?: ComplaintUpdateUncheckedCreateNestedManyWithoutStaffInput
+    notificationPreference?: NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutStatusChangesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutStatusChangesInput, UserUncheckedCreateWithoutStatusChangesInput>
+  }
+
+  export type ComplaintUpsertWithoutStatusLogsInput = {
+    update: XOR<ComplaintUpdateWithoutStatusLogsInput, ComplaintUncheckedUpdateWithoutStatusLogsInput>
+    create: XOR<ComplaintCreateWithoutStatusLogsInput, ComplaintUncheckedCreateWithoutStatusLogsInput>
+    where?: ComplaintWhereInput
+  }
+
+  export type ComplaintUpdateToOneWithWhereWithoutStatusLogsInput = {
+    where?: ComplaintWhereInput
+    data: XOR<ComplaintUpdateWithoutStatusLogsInput, ComplaintUncheckedUpdateWithoutStatusLogsInput>
+  }
+
+  export type ComplaintUpdateWithoutStatusLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: EnumComplaintCategoryFieldUpdateOperationsInput | $Enums.ComplaintCategory
+    status?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    priority?: EnumComplaintPriorityFieldUpdateOperationsInput | $Enums.ComplaintPriority
+    hostelBlock?: StringFieldUpdateOperationsInput | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: UserUpdateOneRequiredWithoutComplaintsNestedInput
+    assignedTo?: UserUpdateOneWithoutAssignedComplaintsNestedInput
+    updates?: ComplaintUpdateUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUpdateOneWithoutComplaintNestedInput
+  }
+
+  export type ComplaintUncheckedUpdateWithoutStatusLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: EnumComplaintCategoryFieldUpdateOperationsInput | $Enums.ComplaintCategory
+    status?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    priority?: EnumComplaintPriorityFieldUpdateOperationsInput | $Enums.ComplaintPriority
+    hostelBlock?: StringFieldUpdateOperationsInput | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    updates?: ComplaintUpdateUncheckedUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUncheckedUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUncheckedUpdateOneWithoutComplaintNestedInput
+  }
+
+  export type UserUpsertWithoutStatusChangesInput = {
+    update: XOR<UserUpdateWithoutStatusChangesInput, UserUncheckedUpdateWithoutStatusChangesInput>
+    create: XOR<UserCreateWithoutStatusChangesInput, UserUncheckedCreateWithoutStatusChangesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutStatusChangesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutStatusChangesInput, UserUncheckedUpdateWithoutStatusChangesInput>
+  }
+
+  export type UserUpdateWithoutStatusChangesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    hostelBlock?: NullableStringFieldUpdateOperationsInput | string | null
+    roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    complaints?: ComplaintUpdateManyWithoutStudentNestedInput
+    assignedComplaints?: ComplaintUpdateManyWithoutAssignedToNestedInput
+    complaintUpdates?: ComplaintUpdateUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutStatusChangesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    hostelBlock?: NullableStringFieldUpdateOperationsInput | string | null
+    roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    complaints?: ComplaintUncheckedUpdateManyWithoutStudentNestedInput
+    assignedComplaints?: ComplaintUncheckedUpdateManyWithoutAssignedToNestedInput
+    complaintUpdates?: ComplaintUpdateUncheckedUpdateManyWithoutStaffNestedInput
+    notificationPreference?: NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutNotificationPreferenceInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    fullName: string
+    role: $Enums.UserRole
+    status?: $Enums.UserStatus
+    phone?: string | null
+    department?: string | null
+    studentId?: string | null
+    hostelBlock?: string | null
+    roomNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    complaints?: ComplaintCreateNestedManyWithoutStudentInput
+    assignedComplaints?: ComplaintCreateNestedManyWithoutAssignedToInput
+    complaintUpdates?: ComplaintUpdateCreateNestedManyWithoutStaffInput
+    statusChanges?: ComplaintStatusLogCreateNestedManyWithoutChangedByInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationPreferenceInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    fullName: string
+    role: $Enums.UserRole
+    status?: $Enums.UserStatus
+    phone?: string | null
+    department?: string | null
+    studentId?: string | null
+    hostelBlock?: string | null
+    roomNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    complaints?: ComplaintUncheckedCreateNestedManyWithoutStudentInput
+    assignedComplaints?: ComplaintUncheckedCreateNestedManyWithoutAssignedToInput
+    complaintUpdates?: ComplaintUpdateUncheckedCreateNestedManyWithoutStaffInput
+    statusChanges?: ComplaintStatusLogUncheckedCreateNestedManyWithoutChangedByInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationPreferenceInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationPreferenceInput, UserUncheckedCreateWithoutNotificationPreferenceInput>
+  }
+
+  export type UserUpsertWithoutNotificationPreferenceInput = {
+    update: XOR<UserUpdateWithoutNotificationPreferenceInput, UserUncheckedUpdateWithoutNotificationPreferenceInput>
+    create: XOR<UserCreateWithoutNotificationPreferenceInput, UserUncheckedCreateWithoutNotificationPreferenceInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationPreferenceInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationPreferenceInput, UserUncheckedUpdateWithoutNotificationPreferenceInput>
+  }
+
+  export type UserUpdateWithoutNotificationPreferenceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    hostelBlock?: NullableStringFieldUpdateOperationsInput | string | null
+    roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    complaints?: ComplaintUpdateManyWithoutStudentNestedInput
+    assignedComplaints?: ComplaintUpdateManyWithoutAssignedToNestedInput
+    complaintUpdates?: ComplaintUpdateUpdateManyWithoutStaffNestedInput
+    statusChanges?: ComplaintStatusLogUpdateManyWithoutChangedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationPreferenceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    hostelBlock?: NullableStringFieldUpdateOperationsInput | string | null
+    roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    complaints?: ComplaintUncheckedUpdateManyWithoutStudentNestedInput
+    assignedComplaints?: ComplaintUncheckedUpdateManyWithoutAssignedToNestedInput
+    complaintUpdates?: ComplaintUpdateUncheckedUpdateManyWithoutStaffNestedInput
+    statusChanges?: ComplaintStatusLogUncheckedUpdateManyWithoutChangedByNestedInput
   }
 
   export type ComplaintCreateManyStudentInput = {
@@ -8334,6 +13793,14 @@ export namespace Prisma {
     complaintId: string
   }
 
+  export type ComplaintStatusLogCreateManyChangedByInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    complaintId: string
+  }
+
   export type ComplaintUpdateWithoutStudentInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -8347,6 +13814,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignedTo?: UserUpdateOneWithoutAssignedComplaintsNestedInput
     updates?: ComplaintUpdateUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUpdateManyWithoutComplaintNestedInput
   }
 
   export type ComplaintUncheckedUpdateWithoutStudentInput = {
@@ -8362,6 +13832,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     updates?: ComplaintUpdateUncheckedUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUncheckedUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUncheckedUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUncheckedUpdateManyWithoutComplaintNestedInput
   }
 
   export type ComplaintUncheckedUpdateManyWithoutStudentInput = {
@@ -8391,6 +13864,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     student?: UserUpdateOneRequiredWithoutComplaintsNestedInput
     updates?: ComplaintUpdateUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUpdateManyWithoutComplaintNestedInput
   }
 
   export type ComplaintUncheckedUpdateWithoutAssignedToInput = {
@@ -8406,6 +13882,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     studentId?: StringFieldUpdateOperationsInput | string
     updates?: ComplaintUpdateUncheckedUpdateManyWithoutComplaintNestedInput
+    attachments?: ComplaintAttachmentUncheckedUpdateManyWithoutComplaintNestedInput
+    feedback?: ComplaintFeedbackUncheckedUpdateOneWithoutComplaintNestedInput
+    statusLogs?: ComplaintStatusLogUncheckedUpdateManyWithoutComplaintNestedInput
   }
 
   export type ComplaintUncheckedUpdateManyWithoutAssignedToInput = {
@@ -8443,11 +13922,52 @@ export namespace Prisma {
     complaintId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type ComplaintStatusLogUpdateWithoutChangedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaint?: ComplaintUpdateOneRequiredWithoutStatusLogsNestedInput
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateWithoutChangedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateManyWithoutChangedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    complaintId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type ComplaintUpdateCreateManyComplaintInput = {
     id?: string
     message: string
     createdAt?: Date | string
     staffId?: string | null
+  }
+
+  export type ComplaintAttachmentCreateManyComplaintInput = {
+    id?: string
+    fileUrl: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    createdAt?: Date | string
+  }
+
+  export type ComplaintStatusLogCreateManyComplaintInput = {
+    id?: string
+    oldStatus: $Enums.ComplaintStatus
+    newStatus: $Enums.ComplaintStatus
+    createdAt?: Date | string
+    changedById: string
   }
 
   export type ComplaintUpdateUpdateWithoutComplaintInput = {
@@ -8469,6 +13989,57 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     staffId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ComplaintAttachmentUpdateWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintAttachmentUncheckedUpdateWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintAttachmentUncheckedUpdateManyWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComplaintStatusLogUpdateWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    changedBy?: UserUpdateOneRequiredWithoutStatusChangesNestedInput
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    changedById?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ComplaintStatusLogUncheckedUpdateManyWithoutComplaintInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    oldStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    newStatus?: EnumComplaintStatusFieldUpdateOperationsInput | $Enums.ComplaintStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    changedById?: StringFieldUpdateOperationsInput | string
   }
 
 

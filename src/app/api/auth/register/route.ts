@@ -1,53 +1,76 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { db } from "@/lib/db"
 
-export async function POST(req: NextRequest) {
+import { NextResponse } from "next/server";
+import { PrismaClient } from "../../../../generated/prisma"; // Adjust the import path as necessary
+import { hash } from "argon2";
+
+const prisma = new PrismaClient();
+
+export async function POST(req: Request) {
   try {
-    const data = await req.json()
-    const { fullName, email, password, userType, studentId, hostelBlock, roomNumber } = data
-
-    // Validate required fields
-    if (!fullName || !email || !password || !userType) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
-    }
-
-    // Check if email already exists
-    const existingUser = await db.users.findByEmail(email)
-    if (existingUser) {
-      return NextResponse.json({ error: "Email already in use" }, { status: 400 })
-    }
-
-    // Validate student-specific fields
-    if (userType === "student" && (!studentId || !hostelBlock || !roomNumber)) {
-      return NextResponse.json(
-        { error: "Student ID, hostel block, and room number are required for students" },
-        { status: 400 },
-      )
-    }
-
-    // Create user
-    const newUser = await db.users.create({
+    const {
       fullName,
       email,
       password,
-      role: userType,
-      studentId: userType === "student" ? studentId : undefined,
-      hostelBlock: userType === "student" ? hostelBlock : undefined,
-      roomNumber: userType === "student" ? roomNumber : undefined,
-    })
+      confirmPassword,
+      studentId,
+      hostelBlock,
+      roomNumber,
+      userType,
+    } = await req.json();
 
-    // Return user data (without password)
-    const { passwordHash, ...userData } = newUser
+    if (
+      !fullName ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !userType ||
+      (userType === "student" && (!studentId || !hostelBlock || !roomNumber))
+    ) {
+      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    }
+
+    if (password !== confirmPassword) {
+      return NextResponse.json({ error: "Passwords do not match" }, { status: 400 });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json({ error: "User with this email already exists" }, { status: 409 });
+    }
+
+    if (studentId) {
+      const existingStudentId = await prisma.user.findUnique({
+        where: { studentId },
+      });
+
+      if (existingStudentId) {
+        return NextResponse.json({ error: "Student ID already registered" }, { status: 409 });
+      }
+    }
+
+    const hashedPassword = await hash(password); // Argon2 hashing
+
+    const newUser = await prisma.user.create({
+      data: {
+        fullName,
+        email,
+        passwordHash: hashedPassword,
+        role: userType.toUpperCase(), // 'STUDENT' or 'STAFF'
+        studentId: userType === "student" ? studentId : null,
+        hostelBlock: userType === "student" ? hostelBlock : null,
+        roomNumber: userType === "student" ? roomNumber : null,
+      },
+    });
 
     return NextResponse.json(
-      {
-        message: "Registration successful",
-        user: userData,
-      },
-      { status: 201 },
-    )
+      { message: "Registration successful", user: { id: newUser.id, email: newUser.email } },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error("Registration error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Registration error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

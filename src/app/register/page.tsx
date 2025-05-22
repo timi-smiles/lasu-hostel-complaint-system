@@ -39,17 +39,52 @@ export default function RegisterPage() {
     setFormData((prev) => ({ ...prev, userType: value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setIsLoading(true)
 
-    // In a real app, you would register with a backend
-    // For demo purposes, we'll simulate registration
-    setTimeout(() => {
+  //   // In a real app, you would register with a backend
+  //   // For demo purposes, we'll simulate registration
+  //   setTimeout(() => {
+  //     setIsLoading(false)
+  //     router.push("/login")
+  //   }, 1500)
+  // }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setIsLoading(true)
+
+  try {
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      alert(data.error || "Registration failed")
       setIsLoading(false)
-      router.push("/login")
-    }, 1500)
+      return
+    }
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+
+    alert("Registration successful")
+    router.push("/login")
+  } catch (error) {
+    console.error("Registration error:", error)
+    alert("Something went wrong")
+    setIsLoading(false)
   }
+}
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">

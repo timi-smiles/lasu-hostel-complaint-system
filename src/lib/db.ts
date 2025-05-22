@@ -1,7 +1,7 @@
 // This file simulates a database with mock data
 // In a real application, you would replace this with actual database calls
 
-import { hash, compare } from "bcrypt"
+import { hash, verify } from "argon2"
 
 // Types
 export type UserRole = "student" | "staff" | "admin"
@@ -234,7 +234,7 @@ export const db = {
     },
 
     create: async (userData: Omit<User, "id" | "passwordHash" | "createdAt"> & { password: string }): Promise<User> => {
-      const passwordHash = await hash(userData.password, 10)
+      const passwordHash = await hash(userData.password)
       const newUser: User = {
         id: `${users.length + 1}`,
         passwordHash,
@@ -257,12 +257,12 @@ export const db = {
       const index = users.findIndex((u) => u.id === id)
       if (index === -1) return false
 
-      users[index].passwordHash = await hash(newPassword, 10)
+      users[index].passwordHash = await hash(newPassword)
       return true
     },
 
     verifyPassword: async (user: User, password: string): Promise<boolean> => {
-      return compare(password, user.passwordHash)
+      return verify(password, user.passwordHash)
     },
 
     getAllStudents: async (): Promise<User[]> => {

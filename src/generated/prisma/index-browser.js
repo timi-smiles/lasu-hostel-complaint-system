@@ -160,6 +160,33 @@ exports.Prisma.ComplaintUpdateScalarFieldEnum = {
   staffId: 'staffId'
 };
 
+exports.Prisma.ComplaintAttachmentScalarFieldEnum = {
+  id: 'id',
+  fileUrl: 'fileUrl',
+  fileName: 'fileName',
+  fileType: 'fileType',
+  fileSize: 'fileSize',
+  createdAt: 'createdAt',
+  complaintId: 'complaintId'
+};
+
+exports.Prisma.ComplaintFeedbackScalarFieldEnum = {
+  id: 'id',
+  rating: 'rating',
+  comment: 'comment',
+  createdAt: 'createdAt',
+  complaintId: 'complaintId'
+};
+
+exports.Prisma.ComplaintStatusLogScalarFieldEnum = {
+  id: 'id',
+  oldStatus: 'oldStatus',
+  newStatus: 'newStatus',
+  createdAt: 'createdAt',
+  complaintId: 'complaintId',
+  changedById: 'changedById'
+};
+
 exports.Prisma.NotificationPreferenceScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -227,6 +254,9 @@ exports.Prisma.ModelName = {
   User: 'User',
   Complaint: 'Complaint',
   ComplaintUpdate: 'ComplaintUpdate',
+  ComplaintAttachment: 'ComplaintAttachment',
+  ComplaintFeedback: 'ComplaintFeedback',
+  ComplaintStatusLog: 'ComplaintStatusLog',
   NotificationPreference: 'NotificationPreference'
 };
 

@@ -72,9 +72,11 @@ model User {
   lastLogin DateTime?
 
   // Relations
-  complaints         Complaint[]       @relation("StudentComplaints")
-  assignedComplaints Complaint[]       @relation("AssignedComplaints")
-  complaintUpdates   ComplaintUpdate[]
+  complaints             Complaint[]             @relation("StudentComplaints")
+  assignedComplaints     Complaint[]             @relation("AssignedComplaints")
+  complaintUpdates       ComplaintUpdate[]
+  notificationPreference NotificationPreference?
+  statusChanges          ComplaintStatusLog[]
 
   @@index([email])
   @@index([studentId])
@@ -104,7 +106,10 @@ model Complaint {
   assignedToId String?
   assignedTo   User?   @relation("AssignedComplaints", fields: [assignedToId], references: [id], onDelete: SetNull)
 
-  updates ComplaintUpdate[]
+  updates     ComplaintUpdate[]
+  attachments ComplaintAttachment[]
+  feedback    ComplaintFeedback?
+  statusLogs  ComplaintStatusLog[]
 
   @@index([studentId])
   @@index([assignedToId])
@@ -133,10 +138,51 @@ model ComplaintUpdate {
   @@index([createdAt])
 }
 
+model ComplaintAttachment {
+  id        String   @id @default(cuid())
+  fileUrl   String
+  fileName  String
+  fileType  String
+  fileSize  Int
+  createdAt DateTime @default(now())
+
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+
+  @@index([complaintId])
+}
+
+model ComplaintFeedback {
+  id        String   @id @default(cuid())
+  rating    Int // e.g., 1-5 stars
+  comment   String?
+  createdAt DateTime @default(now())
+
+  complaintId String    @unique
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+}
+
+model ComplaintStatusLog {
+  id        String          @id @default(cuid())
+  oldStatus ComplaintStatus
+  newStatus ComplaintStatus
+  createdAt DateTime        @default(now())
+
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+
+  changedById String
+  changedBy   User   @relation(fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([complaintId])
+  @@index([changedById])
+}
+
 // For storing notification preferences
 model NotificationPreference {
   id            String  @id @default(cuid())
   userId        String  @unique
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   email         Boolean @default(true)
   push          Boolean @default(true)
   sms           Boolean @default(false)

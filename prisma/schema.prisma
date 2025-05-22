@@ -14,7 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum UserRole {
   STUDENT
   STAFF
@@ -53,29 +52,31 @@ enum UserStatus {
 }
 
 model User {
-  id            String      @id @default(cuid())
-  email         String      @unique
-  passwordHash  String
-  fullName      String
-  role          UserRole
-  status        UserStatus  @default(ACTIVE)
-  phone         String?
-  department    String?
+  id                   String                 @id @default(cuid())
+  email                String                 @unique
+  passwordHash         String
+  fullName             String
+  role                 UserRole
+  status               UserStatus             @default(ACTIVE)
+  phone                String?
+  department           String?
   
   // Student specific fields
-  studentId     String?     @unique
-  hostelBlock   String?
-  roomNumber    String?
+  studentId            String?                @unique
+  hostelBlock          String?
+  roomNumber           String?
   
   // Timestamps
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  lastLogin     DateTime?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  lastLogin            DateTime?
   
   // Relations
-  complaints    Complaint[] @relation("StudentComplaints")
-  assignedComplaints Complaint[] @relation("AssignedComplaints")
-  complaintUpdates ComplaintUpdate[]
+  complaints           Complaint[]            @relation("StudentComplaints")
+  assignedComplaints   Complaint[]            @relation("AssignedComplaints")
+  complaintUpdates     ComplaintUpdate[]
+  notificationPreference NotificationPreference?
+  statusChanges        ComplaintStatusLog[]
 
   @@index([email])
   @@index([studentId])
@@ -83,29 +84,32 @@ model User {
 }
 
 model Complaint {
-  id            String            @id @default(cuid())
+  id            String               @id @default(cuid())
   title         String
   description   String
   category      ComplaintCategory
-  status        ComplaintStatus   @default(PENDING)
-  priority      ComplaintPriority @default(MEDIUM)
+  status        ComplaintStatus      @default(PENDING)
+  priority      ComplaintPriority    @default(MEDIUM)
   
   // Location info
   hostelBlock   String
   roomNumber    String
   
   // Timestamps
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
   
   // Relations
   studentId     String
-  student       User              @relation("StudentComplaints", fields: [studentId], references: [id], onDelete: Cascade)
+  student       User                 @relation("StudentComplaints", fields: [studentId], references: [id], onDelete: Cascade)
   
   assignedToId  String?
-  assignedTo    User?             @relation("AssignedComplaints", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedTo    User?                @relation("AssignedComplaints", fields: [assignedToId], references: [id], onDelete: SetNull)
   
   updates       ComplaintUpdate[]
+  attachments   ComplaintAttachment[]
+  feedback      ComplaintFeedback?
+  statusLogs    ComplaintStatusLog[]
 
   @@index([studentId])
   @@index([assignedToId])
@@ -116,28 +120,69 @@ model Complaint {
 }
 
 model ComplaintUpdate {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   message       String
   
   // Timestamps
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime   @default(now())
   
   // Relations
   complaintId   String
-  complaint     Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  complaint     Complaint  @relation(fields: [complaintId], references: [id], onDelete: Cascade)
   
   staffId       String?
-  staff         User?     @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  staff         User?      @relation(fields: [staffId], references: [id], onDelete: SetNull)
 
   @@index([complaintId])
   @@index([staffId])
   @@index([createdAt])
 }
 
+model ComplaintAttachment {
+  id          String    @id @default(cuid())
+  fileUrl     String
+  fileName    String
+  fileType    String
+  fileSize    Int
+  createdAt   DateTime  @default(now())
+  
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  
+  @@index([complaintId])
+}
+
+model ComplaintFeedback {
+  id           String    @id @default(cuid())
+  rating       Int       // e.g., 1-5 stars
+  comment      String?
+  createdAt    DateTime  @default(now())
+  
+  complaintId  String    @unique
+  complaint    Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+}
+
+model ComplaintStatusLog {
+  id           String          @id @default(cuid())
+  oldStatus    ComplaintStatus
+  newStatus    ComplaintStatus
+  createdAt    DateTime        @default(now())
+  
+  complaintId  String
+  complaint    Complaint       @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  
+  changedById  String
+  changedBy    User            @relation(fields: [changedById], references: [id], onDelete: Restrict)
+  
+  @@index([complaintId])
+  @@index([changedById])
+}
+
 // For storing notification preferences
 model NotificationPreference {
   id            String    @id @default(cuid())
   userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   email         Boolean   @default(true)
   push          Boolean   @default(true)
   sms           Boolean   @default(false)
@@ -148,4 +193,3 @@ model NotificationPreference {
   // Timestamps
   updatedAt     DateTime  @updatedAt
 }
-

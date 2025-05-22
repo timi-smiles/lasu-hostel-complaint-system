@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -92,6 +92,24 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
     return pathname === path
   }
 
+  const router = useRouter()
+
+const handleLogout = async () => {
+  try {
+    const res = await fetch("/api/auth/logout", {
+      method: "POST",
+    })
+
+    if (res.ok) {
+      router.push("/") // or "/login", depending on your app
+    } else {
+      console.error("Logout failed")
+    }
+  } catch (err) {
+    console.error("Logout error:", err)
+  }
+}
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar for desktop */}
@@ -117,12 +135,10 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
         </nav>
 
         <div className="p-4 border-t border-gray-200">
-          <Link href="/">
-            <Button variant="outline" className="w-full justify-start" size="sm">
+            <Button onClick={handleLogout} variant="outline" className="w-full justify-start" size="sm">
               <LogOut className="h-4 w-4 mr-2" />
               Logout
             </Button>
-          </Link>
         </div>
       </aside>
 
@@ -163,12 +179,10 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
                   ))}
                 </nav>
                 <div className="p-4 border-t border-gray-200">
-                  <Link href="/">
-                    <Button variant="outline" className="w-full justify-start" size="sm">
+                    <Button onClick={handleLogout} variant="outline" className="w-full justify-start" size="sm">
                       <LogOut className="h-4 w-4 mr-2" />
                       Logout
                     </Button>
-                  </Link>
                 </div>
               </SheetContent>
             </Sheet>
@@ -204,12 +218,12 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
                 </DropdownMenuItem>
                 </Link>
                 <DropdownMenuSeparator />
-                <Link href="/">
-                  <DropdownMenuItem>
+                
+                  <DropdownMenuItem onClick={handleLogout}>
+                    {/* <Link href="/logout"> */}
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
                   </DropdownMenuItem>
-                </Link>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

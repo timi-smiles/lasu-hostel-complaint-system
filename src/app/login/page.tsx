@@ -19,25 +19,62 @@ export default function LoginPage() {
   const [userType, setUserType] = useState("student")
   const [isLoading, setIsLoading] = useState(false)
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setIsLoading(true)
+
+  //   // In a real app, you would authenticate with a backend
+  //   // For demo purposes, we'll simulate a login
+  //   setTimeout(() => {
+  //     setIsLoading(false)
+
+  //     // Redirect based on user type
+  //     if (userType === "student") {
+  //       router.push("/dashboard/student")
+  //     } else if (userType === "staff") {
+  //       router.push("/dashboard/staff")
+  //     } else {
+  //       router.push("/dashboard/admin")
+  //     }
+  //   }, 1500)
+  // }
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  e.preventDefault()
+  setIsLoading(true)
 
-    // In a real app, you would authenticate with a backend
-    // For demo purposes, we'll simulate a login
-    setTimeout(() => {
-      setIsLoading(false)
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password, userType }),
+    })
 
-      // Redirect based on user type
-      if (userType === "student") {
-        router.push("/dashboard/student")
-      } else if (userType === "staff") {
-        router.push("/dashboard/staff")
-      } else {
-        router.push("/dashboard/admin")
-      }
-    }, 1500)
+    const data = await res.json()
+
+    if (!res.ok) {
+      throw new Error(data.error || "Login failed")
+    }
+
+    // Login successful
+    const userRole = data.user.role
+
+    if (userRole === "STUDENT") {
+      router.push("/dashboard/student")
+    } else if (userRole === "STAFF") {
+      router.push("/dashboard/staff")
+    } else {
+      router.push("/dashboard/admin")
+    }
+
+  } catch (err: any) {
+    alert(err.message)
+  } finally {
+    setIsLoading(false)
   }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
