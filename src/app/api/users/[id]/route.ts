@@ -1,8 +1,10 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
+import { PrismaClient } from "../../../../generated/prisma"
 import { getCurrentUser } from "@/lib/auth"
-import { db } from "@/lib/db"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+const prisma = new PrismaClient()
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const currentUser = await getCurrentUser()
 
@@ -11,27 +13,42 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Users can only access their own profile or staff can access any profile
-    if (currentUser.id !== params.id && currentUser.role === "student") {
+    if (currentUser.id !== params.id && currentUser.role === "STUDENT") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const user = await db.users.findById(params.id)
+    const user = await prisma.user.findUnique({
+      where: {
+        id: params.id,
+      },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        status: true,
+        phone: true,
+        department: true,
+        studentId: true,
+        hostelBlock: true,
+        roomNumber: true,
+        createdAt: true,
+        lastLogin: true,
+      },
+    })
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    // Remove password hash
-    const { passwordHash, ...userData } = user
-
-    return NextResponse.json({ user: userData })
+    return NextResponse.json({ user })
   } catch (error) {
-    console.error("Get user error:", error)
+    console.error("Error fetching user:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const currentUser = await getCurrentUser()
 
@@ -40,41 +57,71 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Users can only update their own profile or admin can update any profile
-    if (currentUser.id !== params.id && currentUser.role !== "admin") {
+    if (currentUser.id !== params.id && currentUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const user = await db.users.findById(params.id)
+    const body = await request.json()
+    const { fullName, email, phone, department, hostelBlock, roomNumber } = body
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    // Validate required fields
+    if (!fullName || !email) {
+      return NextResponse.json({ error: "Full name and email are required" }, { status: 400 })
     }
 
-    const { fullName, email, phone, department, hostelBlock, roomNumber } = await req.json()
+    // Check if email is already in use by another user
+    if (email !== currentUser.email) {
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          email,
+          NOT: {
+            id: params.id,
+          },
+        },
+      })
 
-    // Update user
-    const updatedUser = await db.users.update(params.id, {
-      fullName,
-      email,
-      phone,
-      department,
-      hostelBlock,
-      roomNumber,
+      if (existingUser) {
+        return NextResponse.json({ error: "Email already in use" }, { status: 400 })
+      }
+    }
+
+    // Update user with all fields
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: params.id,
+      },
+      data: {
+        fullName,
+        email,
+        phone: phone || null,
+        department: department || null,
+        hostelBlock: hostelBlock || null,
+        roomNumber: roomNumber || null,
+      },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        status: true,
+        phone: true,
+        department: true,
+        studentId: true,
+        hostelBlock: true,
+        roomNumber: true,
+        createdAt: true,
+        lastLogin: true,
+      },
     })
 
-    if (!updatedUser) {
-      return NextResponse.json({ error: "Failed to update user" }, { status: 500 })
-    }
-
-    // Remove password hash
-    const { passwordHash, ...userData } = updatedUser
+    console.log("User updated successfully:", updatedUser)
 
     return NextResponse.json({
       message: "User updated successfully",
-      user: userData,
+      user: updatedUser,
     })
   } catch (error) {
-    console.error("Update user error:", error)
+    console.error("Error updating user:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

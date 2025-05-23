@@ -1,33 +1,8 @@
 "use server"
+
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
-
-// Define ComplaintCategory enum locally to match your database values
-enum ComplaintCategory {
-  MAINTENANCE = "MAINTENANCE",
-  CLEANLINESS = "CLEANLINESS",
-  SECURITY = "SECURITY",
-  OTHER = "OTHER"
-}
-
-enum ComplaintPriority {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH"
-}
-
-enum ComplaintStatus {
-  PENDING = "PENDING",
-  IN_PROGRESS = "IN_PROGRESS",
-  RESOLVED = "RESOLVED",
-  REJECTED = "REJECTED"
-}
-
-enum UserRole {
-  STUDENT = "STUDENT",
-  STAFF = "STAFF",
-  ADMIN = "ADMIN"
-}
+import { ComplaintPriority, ComplaintStatus, UserRole } from "../../generated/prisma"
 import { revalidatePath } from "next/cache"
 
 export async function submitComplaint(formData: FormData) {
@@ -43,15 +18,12 @@ export async function submitComplaint(formData: FormData) {
     }
 
     const title = formData.get("title") as string
-    const categoryStr = formData.get("category") as string
+    const category = formData.get("category") as string
     const description = formData.get("description") as string
 
-    if (!title || !categoryStr || !description) {
+    if (!title || !category || !description) {
       return { error: "All fields are required" }
     }
-
-    // Convert category string to enum
-    const category = categoryStr.toUpperCase().replace(" ", "_") as ComplaintCategory
 
     // Validate student has hostel info
     if (!user.hostelBlock || !user.roomNumber) {
@@ -62,7 +34,7 @@ export async function submitComplaint(formData: FormData) {
     const newComplaint = await prisma.complaint.create({
       data: {
         title,
-        category,
+        category: category as any as import("../../generated/prisma").ComplaintCategory,
         description,
         status: ComplaintStatus.PENDING,
         priority: ComplaintPriority.MEDIUM,
@@ -128,6 +100,8 @@ export async function updateComplaintStatus(complaintId: string, status: string,
     // Revalidate the complaints page to show the updated status
     revalidatePath("/dashboard/staff")
     revalidatePath(`/dashboard/staff/complaint/${complaintId}`)
+    revalidatePath("/dashboard/student")
+    revalidatePath(`/dashboard/student/complaint/${complaintId}`)
 
     return { success: true }
   } catch (error) {

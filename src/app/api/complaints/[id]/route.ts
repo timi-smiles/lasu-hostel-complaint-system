@@ -17,7 +17,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     // If student, check if they own the complaint
-    if (user.role === "student" && complaint.studentId !== user.id) {
+    if (user.role === 'student' as typeof user.role && complaint.studentId !== user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
@@ -43,7 +43,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Only staff/admin can update complaint status
-    if (user.role === "student") {
+    if (user.role === "student" as typeof user.role) {
       return NextResponse.json({ error: "Students cannot update complaints" }, { status: 403 })
     }
 
@@ -74,7 +74,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     }
 
     // Only admin can delete complaints
-    if (user.role !== "admin") {
+    if (user.role !== 'admin' as typeof user.role) {
       return NextResponse.json({ error: "Only administrators can delete complaints" }, { status: 403 })
     }
 

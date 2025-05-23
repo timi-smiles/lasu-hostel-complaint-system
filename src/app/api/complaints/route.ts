@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
-import { db } from "@/lib/db"
+import { prisma } from "@/lib/prisma"
+import { type ComplaintCategory, ComplaintPriority, ComplaintStatus, UserRole } from "../../../generated/prisma"
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,32 +13,67 @@ export async function GET(req: NextRequest) {
 
     // Get query parameters
     const url = new URL(req.url)
-    const status = url.searchParams.get("status")
-    const category = url.searchParams.get("category")
+    const status = url.searchParams.get("status") as ComplaintStatus | null
+    const category = url.searchParams.get("category") as ComplaintCategory | null
     const block = url.searchParams.get("block")
 
-    let complaints = []
+    // Base query - ALWAYS filter by user for students
+    const where: any = {}
 
-    // If student, only return their complaints
-    if (user.role === "student") {
-      complaints = await db.complaints.getByStudentId(user.id)
-    } else {
-      // Staff or admin can see all complaints
-      complaints = await db.complaints.getAll()
+    // If student, ONLY return their complaints
+    if (user.role === UserRole.STUDENT) {
+      where.studentId = user.id
     }
+    // Staff and admin can see all complaints (existing logic)
 
-    // Apply filters if provided
+    // Apply additional filters if provided
     if (status) {
-      complaints = complaints.filter((c) => c.status === status)
+      where.status = status
     }
 
     if (category) {
-      complaints = complaints.filter((c) => c.category === category)
+      where.category = category
     }
 
     if (block) {
-      complaints = complaints.filter((c) => c.hostelBlock === block)
+      where.hostelBlock = block
     }
+
+    const complaints = await prisma.complaint.findMany({
+      where,
+      include: {
+        student: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            studentId: true,
+          },
+        },
+        assignedTo: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+        updates: {
+          include: {
+            staff: {
+              select: {
+                id: true,
+                fullName: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
 
     return NextResponse.json({ complaints })
   } catch (error) {
@@ -55,28 +91,48 @@ export async function POST(req: NextRequest) {
     }
 
     // Only students can create complaints
-    if (user.role !== "student") {
+    if (user.role !== UserRole.STUDENT) {
       return NextResponse.json({ error: "Only students can submit complaints" }, { status: 403 })
     }
 
-    const { title, category, description, priority = "medium" } = await req.json()
+    const { title, category, description, priority = ComplaintPriority.MEDIUM } = await req.json()
 
     // Validate required fields
     if (!title || !category || !description) {
       return NextResponse.json({ error: "Title, category, and description are required" }, { status: 400 })
     }
 
+    // Validate student has hostel info
+    if (!user.hostelBlock || !user.roomNumber) {
+      return NextResponse.json(
+        { error: "Your profile is missing hostel information. Please update your profile." },
+        { status: 400 },
+      )
+    }
+
     // Create complaint
-    const newComplaint = await db.complaints.create({
-      title,
-      category,
-      description,
-      status: "pending",
-      priority,
-      studentId: user.id,
-      studentName: user.fullName,
-      hostelBlock: user.hostelBlock!,
-      roomNumber: user.roomNumber!,
+    const newComplaint = await prisma.complaint.create({
+      data: {
+        title,
+        category,
+        description,
+        status: ComplaintStatus.PENDING,
+        priority,
+        studentId: user.id,
+        hostelBlock: user.hostelBlock,
+        roomNumber: user.roomNumber,
+      },
+      include: {
+        student: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            studentId: true,
+          },
+        },
+        updates: true,
+      },
     })
 
     return NextResponse.json(
