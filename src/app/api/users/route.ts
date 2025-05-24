@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Only staff and admin can list users
-    if (user.role === "student") {
+    if (user.role === "STUDENT") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
