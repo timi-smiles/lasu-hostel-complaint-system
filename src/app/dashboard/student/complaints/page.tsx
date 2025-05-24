@@ -302,33 +302,37 @@ export default function ComplaintsPage() {
         </Link>
       </div>
 
+      {/* Stats cards with colors */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <Card>
+        {/* Total Complaints - Colorful gradient */}
+        <Card className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Total Complaints</CardTitle>
+            <CardTitle className="text-lg text-white">Total Complaints</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{complaints.length}</p>
+            <p className="text-3xl font-bold text-white">{complaints.length}</p>
           </CardContent>
         </Card>
 
-        <Card>
+        {/* Active Complaints - Softer Yellow (like dashboard pending) */}
+        <Card className="bg-yellow-50 border-yellow-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Active Complaints</CardTitle>
+            <CardTitle className="text-lg text-yellow-800">Active Complaints</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-yellow-700">
               {complaints.filter((c) => c.status === "PENDING" || c.status === "IN_PROGRESS").length}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        {/* Resolved - Green */}
+        <Card className="bg-green-50 border-green-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Resolved</CardTitle>
+            <CardTitle className="text-lg text-green-800">Resolved</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{complaints.filter((c) => c.status === "RESOLVED").length}</p>
+            <p className="text-3xl font-bold text-green-700">{complaints.filter((c) => c.status === "RESOLVED").length}</p>
           </CardContent>
         </Card>
       </div>

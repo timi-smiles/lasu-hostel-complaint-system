@@ -232,39 +232,51 @@ export default function StudentDashboard() {
 
   return (
     <DashboardLayout userType="student">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Student Dashboard</h1>
-          <Link href="/dashboard/student/new-complaint">
-            <Button>Submit New Complaint</Button>
-          </Link>
+      <div className="p-4 md:p-6">
+        {/* Mobile-optimized header */}
+        <div className="flex flex-col space-y-4 mb-6 md:flex-row md:justify-between md:items-start md:space-y-0">
+          <div className="text-center md:text-left">
+            <h1 className="text-2xl md:text-2xl font-bold">Student Dashboard</h1>
+            <p className="text-sm text-gray-600 mt-1">Manage your hostel complaints</p>
+          </div>
+          <div className="w-full md:w-auto">
+            <Link href="/dashboard/student/new-complaint" className="block">
+              <Button className="w-full md:w-auto px-6 py-2.5 font-medium">
+                Submit New Complaint
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
+        {/* Stats cards - better mobile spacing with colors */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+          {/* Total Complaints - Colorful gradient */}
+          <Card className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Total Complaints</CardTitle>
+              <CardTitle className="text-lg text-white">Total Complaints</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">{complaints.length}</p>
+              <p className="text-3xl font-bold text-white">{complaints.length}</p>
             </CardContent>
           </Card>
 
-          <Card>
+          {/* Pending - Yellow */}
+          <Card className="bg-yellow-50 border-yellow-200">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Pending</CardTitle>
+              <CardTitle className="text-lg text-yellow-800">Pending</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">{complaints.filter((c) => c.status === "PENDING").length}</p>
+              <p className="text-3xl font-bold text-yellow-700">{complaints.filter((c) => c.status === "PENDING").length}</p>
             </CardContent>
           </Card>
 
-          <Card>
+          {/* Resolved - Green */}
+          <Card className="bg-green-50 border-green-200">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Resolved</CardTitle>
+              <CardTitle className="text-lg text-green-800">Resolved</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">{complaints.filter((c) => c.status === "RESOLVED").length}</p>
+              <p className="text-3xl font-bold text-green-700">{complaints.filter((c) => c.status === "RESOLVED").length}</p>
             </CardContent>
           </Card>
         </div>
