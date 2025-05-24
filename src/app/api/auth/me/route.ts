@@ -10,9 +10,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Return user data (without password)
-    const { passwordHash, ...userData } = user
-
-    return NextResponse.json({ user: userData })
+    return NextResponse.json({ user })
   } catch (error) {
     console.error("Get current user error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

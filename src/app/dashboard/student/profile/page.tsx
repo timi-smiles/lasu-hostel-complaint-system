@@ -63,11 +63,66 @@ export default function StudentProfilePage() {
     systemAnnouncements: true,
   })
 
+  // Helper function for safe date formatting
+  const formatDate = (dateString: string | Date | null | undefined, includeTime = false) => {
+    if (!dateString) return 'Date not available'
+    
+    try {
+      // Handle both ISO strings and Date objects
+      let date: Date
+      
+      if (typeof dateString === 'string') {
+        date = new Date(dateString)
+      } else if (dateString instanceof Date) {
+        date = dateString
+      } else {
+        console.log("Unexpected date format:", dateString)
+        return 'Invalid date format'
+      }
+      
+      if (isNaN(date.getTime())) {
+        console.log("Invalid date after parsing:", dateString)
+        return 'Invalid date'
+      }
+      
+      if (includeTime) {
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      } else {
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      }
+    } catch (error) {
+      console.error('Date formatting error:', error, 'for input:', dateString)
+      return 'Invalid date'
+    }
+  }
+
+  // Helper function to generate initials
+  const getInitials = (fullName: string) => {
+    return fullName
+      .split(" ")
+      .slice(0, 2)
+      .map((name) => name[0])
+      .join("")
+      .toUpperCase()
+  }
+
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true)
+        setError(null)
+        
         const response = await fetch("/api/auth/me", {
           credentials: "include",
         })
@@ -81,18 +136,22 @@ export default function StudentProfilePage() {
         }
 
         const data = await response.json()
+        console.log("Fetched user data:", data.user)
+        
         setUserData(data.user)
+        
         // Initialize form data with user data
         setFormData({
-          fullName: data.user.fullName,
-          email: data.user.email,
+          fullName: data.user.fullName || "",
+          email: data.user.email || "",
           phone: data.user.phone || "",
           department: data.user.department || "",
           hostelBlock: data.user.hostelBlock || "",
           roomNumber: data.user.roomNumber || "",
         })
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred")
+        const errorMessage = err instanceof Error ? err.message : "An error occurred"
+        setError(errorMessage)
         toast({
           variant: "destructive",
           title: "Error",
@@ -150,11 +209,20 @@ export default function StudentProfilePage() {
       }
 
       const result = await response.json()
+      console.log("Update response:", result)
 
-      // Update the userData state with the new data
-      setUserData({
-        ...userData,
-        ...result.user,
+      // Update userData with the response from server
+      const updatedUser = result.user
+      setUserData(updatedUser)
+      
+      // Update formData to match the saved data
+      setFormData({
+        fullName: updatedUser.fullName || "",
+        email: updatedUser.email || "",
+        phone: updatedUser.phone || "",
+        department: updatedUser.department || "",
+        hostelBlock: updatedUser.hostelBlock || "",
+        roomNumber: updatedUser.roomNumber || "",
       })
 
       setIsEditing(false)
@@ -164,6 +232,7 @@ export default function StudentProfilePage() {
         description: "Your profile has been updated successfully.",
       })
     } catch (err) {
+      console.error("Save error:", err)
       toast({
         variant: "destructive",
         title: "Error",
@@ -182,6 +251,15 @@ export default function StudentProfilePage() {
         variant: "destructive",
         title: "Error",
         description: "New passwords do not match.",
+      })
+      return
+    }
+
+    if (newPassword.length < 6) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Password must be at least 6 characters long.",
       })
       return
     }
@@ -223,11 +301,26 @@ export default function StudentProfilePage() {
     }
   }
 
+  const handleCancelEdit = () => {
+    if (!userData) return
+    
+    // Reset form data to original user data
+    setFormData({
+      fullName: userData.fullName || "",
+      email: userData.email || "",
+      phone: userData.phone || "",
+      department: userData.department || "",
+      hostelBlock: userData.hostelBlock || "",
+      roomNumber: userData.roomNumber || "",
+    })
+    setIsEditing(false)
+  }
+
   if (isLoading) {
     return (
       <DashboardLayout userType="student">
         <div className="p-6 space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <Skeleton className="h-8 w-48 mb-2" />
               <Skeleton className="h-4 w-64" />
@@ -291,7 +384,7 @@ export default function StudentProfilePage() {
           <div className="flex items-center gap-2">
             {isEditing ? (
               <>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
+                <Button variant="outline" onClick={handleCancelEdit}>
                   Cancel
                 </Button>
                 <Button onClick={handleSaveProfile} disabled={isSaving}>
@@ -315,10 +408,7 @@ export default function StudentProfilePage() {
                 <Avatar className="h-24 w-24">
                   <AvatarImage src="/placeholder.svg?height=96&width=96" alt={userData.fullName} />
                   <AvatarFallback className="text-2xl">
-                    {userData.fullName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                    {getInitials(userData.fullName || "User")}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -347,7 +437,7 @@ export default function StudentProfilePage() {
                   <span className="text-sm">ID: {userData.studentId}</span>
                 </div>
               )}
-              {userData.hostelBlock && userData.roomNumber && (
+              {(userData.hostelBlock && userData.roomNumber) && (
                 <div className="flex items-center gap-2">
                   <Building className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">
@@ -357,19 +447,15 @@ export default function StudentProfilePage() {
               )}
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">Joined: {new Date(userData.createdAt).toLocaleDateString()}</span>
+                <span className="text-sm">
+                  Joined: {userData?.createdAt ? formatDate(userData.createdAt) : 'Date not available'}
+                </span>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-2">
               <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard/student")}>
                 View Dashboard
               </Button>
-              {isEditing && (
-                <Button variant="secondary" className="w-full">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Photo
-                </Button>
-              )}
             </CardFooter>
           </Card>
 
@@ -415,7 +501,7 @@ export default function StudentProfilePage() {
                         <Label htmlFor="phone">
                           Phone Number
                           {userData.phone && (
-                            <span className="ml-2 text-green-600 text-xs flex items-center">
+                            <span className="ml-2 text-green-600 text-xs inline-flex items-center">
                               <CheckCircle className="h-3 w-3 mr-1" />
                               Added
                             </span>
@@ -433,7 +519,7 @@ export default function StudentProfilePage() {
                         <Label htmlFor="department">
                           Department
                           {userData.department && (
-                            <span className="ml-2 text-green-600 text-xs flex items-center">
+                            <span className="ml-2 text-green-600 text-xs inline-flex items-center">
                               <CheckCircle className="h-3 w-3 mr-1" />
                               Added
                             </span>
@@ -469,7 +555,7 @@ export default function StudentProfilePage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="studentId">Student ID</Label>
-                        <Input id="studentId" value={userData.studentId || ""} disabled />
+                        <Input id="studentId" value={userData.studentId || "Not assigned"} disabled />
                       </div>
                     </div>
                   </CardContent>
@@ -507,16 +593,16 @@ export default function StudentProfilePage() {
                       <div className="space-y-2">
                         <Label>Member Since</Label>
                         <Input
-                          value={new Date(userData.createdAt).toLocaleDateString()}
+                          value={userData?.createdAt ? formatDate(userData.createdAt) : 'Date not available'}
                           disabled
                           className="text-muted-foreground"
                         />
                       </div>
-                      {userData.lastLogin && (
+                      {userData?.lastLogin && (
                         <div className="space-y-2">
                           <Label>Last Login</Label>
                           <Input
-                            value={new Date(userData.lastLogin).toLocaleString()}
+                            value={formatDate(userData.lastLogin, true)}
                             disabled
                             className="text-muted-foreground"
                           />

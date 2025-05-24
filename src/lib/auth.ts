@@ -31,7 +31,11 @@ export async function getCurrentUser() {
         hostelBlock: true,
         roomNumber: true,
         department: true,
-        studentId: true
+        studentId: true,
+        phone: true,        // ✅ Add this
+        status: true,       // ✅ Add this  
+        createdAt: true,    // ✅ Add this
+        lastLogin: true     // ✅ Add this
       }
     })
 

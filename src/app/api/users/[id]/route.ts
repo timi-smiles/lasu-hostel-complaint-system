@@ -78,7 +78,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     // Students cannot change their role or status
     const updateData: any = {
       fullName,
-      phone,
+      phone, // Make sure this line exists
       department,
       studentId,
       hostelBlock,
@@ -101,7 +101,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         fullName: true,
         role: true,
         status: true,
-        phone: true,
+        phone: true, // Make sure this is included in the select
         department: true,
         studentId: true,
         hostelBlock: true,
