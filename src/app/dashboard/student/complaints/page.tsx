@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Calendar, Filter, Search, SlidersHorizontal } from 'lucide-react'
 import {
@@ -18,107 +19,222 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Mock data for complaints
-const mockComplaints = [
-  {
-    id: "C001",
-    title: "Leaking Faucet in Bathroom",
-    category: "Plumbing",
-    description: "The faucet in my bathroom is constantly dripping, wasting water.",
-    status: "in-progress",
-    date: "2025-05-10T10:30:00",
-    updates: [
-      { date: "2025-05-10T14:20:00", message: "Maintenance team has been notified." },
-      { date: "2025-05-11T09:15:00", message: "Plumber scheduled for tomorrow." },
-    ],
-  },
-  {
-    id: "C002",
-    title: "Broken Light Fixture",
-    category: "Electrical",
-    description: "The ceiling light in my room is flickering and sometimes doesn't turn on.",
-    status: "pending",
-    date: "2025-05-11T15:45:00",
-    updates: [],
-  },
-  {
-    id: "C003",
-    title: "Noisy Neighbors",
-    category: "Noise Complaint",
-    description: "The residents in room 203 play loud music after quiet hours (11 PM).",
-    status: "resolved",
-    date: "2025-05-05T20:10:00",
-    updates: [
-      { date: "2025-05-06T10:00:00", message: "Hostel warden has been informed." },
-      { date: "2025-05-06T16:30:00", message: "Warden spoke with the residents." },
-      { date: "2025-05-08T11:20:00", message: "Issue resolved. Please report if it happens again." },
-    ],
-  },
-  {
-    id: "C004",
-    title: "Broken Chair",
-    category: "Furniture",
-    description: "One of the chairs in my room has a broken leg and is unusable.",
-    status: "pending",
-    date: "2025-05-12T08:20:00",
-    updates: [],
-  },
-  {
-    id: "C005",
-    title: "Wi-Fi Connectivity Issues",
-    category: "Internet",
-    description: "The Wi-Fi signal is very weak in my room, making it difficult to attend online classes.",
-    status: "in-progress",
-    date: "2025-05-09T11:15:00",
-    updates: [{ date: "2025-05-09T14:30:00", message: "IT department has been notified." }],
-  },
-  {
-    id: "C006",
-    title: "Water Heater Not Working",
-    category: "Plumbing",
-    description: "The water heater in the bathroom is not working, only cold water is available.",
-    status: "resolved",
-    date: "2025-04-20T09:30:00",
-    updates: [
-      { date: "2025-04-20T11:00:00", message: "Maintenance team has been notified." },
-      { date: "2025-04-21T14:15:00", message: "Water heater has been repaired." },
-    ],
-  },
-  {
-    id: "C007",
-    title: "Missing Dustbin",
-    category: "Housekeeping",
-    description: "The dustbin in my room is missing after the cleaning staff visited.",
-    status: "resolved",
-    date: "2025-04-25T16:20:00",
-    updates: [
-      { date: "2025-04-26T09:10:00", message: "Housekeeping has been notified." },
-      { date: "2025-04-26T15:30:00", message: "New dustbin has been provided." },
-    ],
-  },
-]
+interface User {
+  id: string
+  email: string
+  fullName: string
+  role: string
+}
+
+interface Complaint {
+  id: string
+  title: string
+  category: string
+  description: string
+  status: string
+  createdAt: string
+  updates: Array<{
+    id: string
+    message: string
+    createdAt: string
+    staff?: {
+      fullName: string
+    }
+  }>
+}
 
 export default function ComplaintsPage() {
-  const [complaints, setComplaints] = useState(mockComplaints)
+  const [user, setUser] = useState<User | null>(null)
+  const [complaints, setComplaints] = useState<Complaint[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [authLoading, setAuthLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterCategory, setFilterCategory] = useState("all")
   const [sortBy, setSortBy] = useState("newest")
 
+  // Check authentication
+  useEffect(() => {
+    async function checkAuthAndFetchComplaints() {
+      try {
+        // First check authentication
+        const authResponse = await fetch('/api/auth/me')
+        if (!authResponse.ok) {
+          setUser(null)
+          return
+        }
+        
+        const authData = await authResponse.json()
+        setUser(authData.user)
+        
+        // Then fetch complaints
+        const complaintsResponse = await fetch('/api/complaints')
+        if (!complaintsResponse.ok) {
+          throw new Error('Failed to fetch complaints')
+        }
+        
+        const complaintsData = await complaintsResponse.json()
+        console.log("Full API response:", complaintsData)
+        
+        const complaints = complaintsData.complaints || complaintsData || []
+        setComplaints(complaints)
+        
+      } catch (error) {
+        console.error('Error:', error)
+        setComplaints([])
+      } finally {
+        setAuthLoading(false)
+        setIsLoading(false)
+      }
+    }
+
+    checkAuthAndFetchComplaints()
+  }, [])
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        {/* Back button skeleton */}
+        <div className="mb-4">
+          <Skeleton className="h-10 w-40" />
+        </div>
+
+        {/* Header section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-48" />
+        </div>
+
+        {/* Quick loading cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <Skeleton className="h-5 w-32" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-9 w-12" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <Skeleton className="h-4 w-48 mx-auto" />
+        </div>
+      </div>
+    )
+  }
+
+  // Show loading while fetching complaints
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        {/* Back button skeleton */}
+        <div className="mb-4">
+          <Skeleton className="h-10 w-40" />
+        </div>
+
+        {/* Header section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-48" />
+        </div>
+
+        {/* Stats cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <Skeleton className="h-5 w-32" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-9 w-12" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Search and Filter Section */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-44" />
+              <Skeleton className="h-10 w-24" />
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <Skeleton className="h-4 w-48 mx-auto" />
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="text-center py-10">
+          <p>Please log in to view your complaints.</p>
+          <Link href="/login">
+            <Button className="mt-4">Sign In</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Show empty state if no complaints
+  if (complaints.length === 0) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="mb-4">
+          <Link href="/dashboard/student">
+            <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Dashboard</span>
+            </Button>
+          </Link>
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <h1 className="text-2xl font-bold">My Complaints</h1>
+          <Link href="/dashboard/student/new-complaint">
+            <Button>Submit New Complaint</Button>
+          </Link>
+        </div>
+
+        <div className="text-center py-20">
+          <h2 className="text-xl font-semibold mb-2">No Recent Complaints</h2>
+          <p className="text-gray-500 mb-6">You haven't submitted any complaints yet.</p>
+          <Link href="/dashboard/student/new-complaint">
+            <Button>Submit Your First Complaint</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "pending":
+      case "PENDING":
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
             Pending
           </Badge>
         )
-      case "in-progress":
+      case "IN_PROGRESS":
         return (
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             In Progress
           </Badge>
         )
-      case "resolved":
+      case "RESOLVED":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             Resolved
@@ -153,14 +269,14 @@ export default function ComplaintsPage() {
     })
     .sort((a, b) => {
       if (sortBy === "newest") {
-        return new Date(b.date).getTime() - new Date(a.date).getTime()
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       } else if (sortBy === "oldest") {
-        return new Date(a.date).getTime() - new Date(b.date).getTime()
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       } else if (sortBy === "status") {
         const statusOrder: { [key: string]: number } = {
-          pending: 0,
-          "in-progress": 1,
-          resolved: 2,
+          PENDING: 0,
+          IN_PROGRESS: 1,
+          RESOLVED: 2,
         }
         return statusOrder[a.status] - statusOrder[b.status]
       }
@@ -169,8 +285,8 @@ export default function ComplaintsPage() {
 
   return (
     <div className="p-6 space-y-6">
-        {/* Back button */}
-    <div className="mb-4">
+      {/* Back button */}
+      <div className="mb-4">
         <Link href="/dashboard/student">
           <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
             <ArrowLeft className="h-4 w-4" />
@@ -202,7 +318,7 @@ export default function ComplaintsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">
-              {complaints.filter((c) => c.status === "pending" || c.status === "in-progress").length}
+              {complaints.filter((c) => c.status === "PENDING" || c.status === "IN_PROGRESS").length}
             </p>
           </CardContent>
         </Card>
@@ -212,11 +328,12 @@ export default function ComplaintsPage() {
             <CardTitle className="text-lg">Resolved</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{complaints.filter((c) => c.status === "resolved").length}</p>
+            <p className="text-3xl font-bold">{complaints.filter((c) => c.status === "RESOLVED").length}</p>
           </CardContent>
         </Card>
       </div>
 
+      {/* Search and Filter Section */}
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
@@ -241,12 +358,14 @@ export default function ComplaintsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Plumbing">Plumbing</SelectItem>
-                <SelectItem value="Electrical">Electrical</SelectItem>
-                <SelectItem value="Furniture">Furniture</SelectItem>
-                <SelectItem value="Internet">Internet</SelectItem>
-                <SelectItem value="Noise Complaint">Noise Complaint</SelectItem>
-                <SelectItem value="Housekeeping">Housekeeping</SelectItem>
+                <SelectItem value="PLUMBING">Plumbing</SelectItem>
+                <SelectItem value="ELECTRICAL">Electrical</SelectItem>
+                <SelectItem value="FURNITURE">Furniture</SelectItem>
+                <SelectItem value="INTERNET">Internet</SelectItem>
+                <SelectItem value="NOISE">Noise Complaint</SelectItem>
+                <SelectItem value="HOUSEKEEPING">Housekeeping</SelectItem>
+                <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
+                <SelectItem value="OTHER">Other</SelectItem>
               </SelectContent>
             </Select>
 
@@ -275,12 +394,13 @@ export default function ComplaintsPage() {
         </div>
       </div>
 
+      {/* Tabs and Complaints Display */}
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="all">All Complaints</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-          <TabsTrigger value="resolved">Resolved</TabsTrigger>
+          <TabsTrigger value="PENDING">Pending</TabsTrigger>
+          <TabsTrigger value="IN_PROGRESS">In Progress</TabsTrigger>
+          <TabsTrigger value="RESOLVED">Resolved</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
@@ -292,7 +412,7 @@ export default function ComplaintsPage() {
                     <div>
                       <CardTitle>{complaint.title}</CardTitle>
                       <CardDescription>
-                        {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.date)}
+                        {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.createdAt)}
                       </CardDescription>
                     </div>
                     {getStatusBadge(complaint.status)}
@@ -305,10 +425,13 @@ export default function ComplaintsPage() {
                     <div className="mt-4">
                       <h4 className="font-semibold mb-2">Updates:</h4>
                       <div className="space-y-2">
-                        {complaint.updates.map((update, index) => (
-                          <div key={index} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
-                            <p className="text-gray-500">{new Date(update.date).toLocaleString()}</p>
+                        {complaint.updates.map((update) => (
+                          <div key={update.id} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
+                            <p className="text-gray-500">{new Date(update.createdAt).toLocaleString()}</p>
                             <p>{update.message}</p>
+                            {update.staff && (
+                              <p className="text-xs text-gray-400">- {update.staff.fullName}</p>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -331,10 +454,10 @@ export default function ComplaintsPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="pending" className="space-y-4">
-          {filteredComplaints.filter((c) => c.status === "pending").length > 0 ? (
+        <TabsContent value="PENDING" className="space-y-4">
+          {filteredComplaints.filter((c) => c.status === "PENDING").length > 0 ? (
             filteredComplaints
-              .filter((c) => c.status === "pending")
+              .filter((c) => c.status === "PENDING")
               .map((complaint) => (
                 <Card key={complaint.id}>
                   <CardHeader className="pb-2">
@@ -342,7 +465,7 @@ export default function ComplaintsPage() {
                       <div>
                         <CardTitle>{complaint.title}</CardTitle>
                         <CardDescription>
-                          {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.date)}
+                          {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.createdAt)}
                         </CardDescription>
                       </div>
                       {getStatusBadge(complaint.status)}
@@ -367,10 +490,10 @@ export default function ComplaintsPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="in-progress" className="space-y-4">
-          {filteredComplaints.filter((c) => c.status === "in-progress").length > 0 ? (
+        <TabsContent value="IN_PROGRESS" className="space-y-4">
+          {filteredComplaints.filter((c) => c.status === "IN_PROGRESS").length > 0 ? (
             filteredComplaints
-              .filter((c) => c.status === "in-progress")
+              .filter((c) => c.status === "IN_PROGRESS")
               .map((complaint) => (
                 <Card key={complaint.id}>
                   <CardHeader className="pb-2">
@@ -378,7 +501,7 @@ export default function ComplaintsPage() {
                       <div>
                         <CardTitle>{complaint.title}</CardTitle>
                         <CardDescription>
-                          {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.date)}
+                          {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.createdAt)}
                         </CardDescription>
                       </div>
                       {getStatusBadge(complaint.status)}
@@ -391,9 +514,9 @@ export default function ComplaintsPage() {
                       <div className="mt-4">
                         <h4 className="font-semibold mb-2">Updates:</h4>
                         <div className="space-y-2">
-                          {complaint.updates.map((update, index) => (
-                            <div key={index} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
-                              <p className="text-gray-500">{new Date(update.date).toLocaleString()}</p>
+                          {complaint.updates.map((update) => (
+                            <div key={update.id} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
+                              <p className="text-gray-500">{new Date(update.createdAt).toLocaleString()}</p>
                               <p>{update.message}</p>
                             </div>
                           ))}
@@ -417,10 +540,10 @@ export default function ComplaintsPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="resolved" className="space-y-4">
-          {filteredComplaints.filter((c) => c.status === "resolved").length > 0 ? (
+        <TabsContent value="RESOLVED" className="space-y-4">
+          {filteredComplaints.filter((c) => c.status === "RESOLVED").length > 0 ? (
             filteredComplaints
-              .filter((c) => c.status === "resolved")
+              .filter((c) => c.status === "RESOLVED")
               .map((complaint) => (
                 <Card key={complaint.id}>
                   <CardHeader className="pb-2">
@@ -428,7 +551,7 @@ export default function ComplaintsPage() {
                       <div>
                         <CardTitle>{complaint.title}</CardTitle>
                         <CardDescription>
-                          {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.date)}
+                          {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.createdAt)}
                         </CardDescription>
                       </div>
                       {getStatusBadge(complaint.status)}
@@ -441,9 +564,9 @@ export default function ComplaintsPage() {
                       <div className="mt-4">
                         <h4 className="font-semibold mb-2">Updates:</h4>
                         <div className="space-y-2">
-                          {complaint.updates.map((update, index) => (
-                            <div key={index} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
-                              <p className="text-gray-500">{new Date(update.date).toLocaleString()}</p>
+                          {complaint.updates.map((update) => (
+                            <div key={update.id} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
+                              <p className="text-gray-500">{new Date(update.createdAt).toLocaleString()}</p>
                               <p>{update.message}</p>
                             </div>
                           ))}

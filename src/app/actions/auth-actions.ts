@@ -17,8 +17,7 @@ export async function login(formData: FormData) {
       return { error: "All fields are required" }
     }
 
-    const user = await db.users.findByEmail(email)
-
+const user = await db.users.findByEmail(email)
     if (!user) {
       return { error: "Invalid credentials" }
     }

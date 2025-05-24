@@ -1,44 +1,43 @@
-
 import { cookies } from "next/headers"
-import type { NextRequest } from "next/server"
-import { prisma } from "./prisma" // Use relative import since we're in the same directory
-import * as argon2 from 'argon2'
+import { sign, verify } from "jsonwebtoken"
+import { NextRequest } from "next/server"
+import prisma from "./db"
 
-// Define UserRole and UserStatus enums directly if imports are causing issues
-export enum UserRole {
-  STUDENT = "STUDENT",
-  STAFF = "STAFF",
-  ADMIN = "ADMIN"
-}
-
-export enum UserStatus {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-  SUSPENDED = "SUSPENDED"
-}
-
-/**
- * Get the current authenticated user from cookies
- */
 export async function getCurrentUser() {
-  const cookieStore = await cookies()
-  const userId = cookieStore.get("userId")?.value
-
-  if (!userId) {
-    return null
-  }
-
   try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get("auth-token") || cookieStore.get("userId")
+
+    if (!token) {
+      return null
+    }
+
+    let userId: string
+
+    if (token.value.includes('.')) {
+      const decoded = verify(token.value, process.env.JWT_SECRET!) as { userId: string }
+      userId = decoded.userId
+    } else {
+      userId = token.value
+    }
+
     const user = await prisma.user.findUnique({
-      where: { 
-        id: userId,
-        status: "ACTIVE", // Use string literal instead of enum
-      },
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        hostelBlock: true,
+        roomNumber: true,
+        department: true,
+        studentId: true
+      }
     })
-    
+
     return user
   } catch (error) {
-    console.error("Error fetching current user:", error)
+    console.error('Auth error:', error)
     return null
   }
 }
@@ -87,12 +86,13 @@ export async function requireRole(req: NextRequest, roles: string[]) {
  * Hash a password using Argon2
  */
 export async function hashPassword(password: string): Promise<string> {
+  const argon2 = require('argon2');
   try {
     return await argon2.hash(password, {
-      type: argon2.argon2id, // Use argon2id variant (recommended)
-      memoryCost: 2**16, // 64MB
-      timeCost: 3, // Number of iterations
-      parallelism: 1, // Degree of parallelism
+      type: argon2.argon2id,
+      memoryCost: 2**16,
+      timeCost: 3,
+      parallelism: 1,
     });
   } catch (error) {
     console.error("Password hashing error:", error);
@@ -104,6 +104,7 @@ export async function hashPassword(password: string): Promise<string> {
  * Verify a password against a hash using Argon2
  */
 export async function verifyPassword(hashedPassword: string, plainPassword: string): Promise<boolean> {
+  const argon2 = require('argon2');
   try {
     return await argon2.verify(hashedPassword, plainPassword);
   } catch (error) {
@@ -117,11 +118,10 @@ export async function verifyPassword(hashedPassword: string, plainPassword: stri
  */
 export async function loginUser(email: string, password: string) {
   try {
-    // Find the user
     const user = await prisma.user.findUnique({
       where: { 
         email,
-        status: "ACTIVE", // Use string literal instead of enum
+        status: "ACTIVE",
       },
     });
 
@@ -129,19 +129,19 @@ export async function loginUser(email: string, password: string) {
       return null;
     }
 
-    // Verify password
     const passwordValid = await verifyPassword(user.passwordHash, password);
     if (!passwordValid) {
       return null;
     }
 
-    // Update last login time
     await prisma.user.update({
       where: { id: user.id },
       data: { lastLogin: new Date() },
     });
 
-    // Return user without passwordHash
+    // Set the auth cookie after successful login
+    await setAuthCookies(user.id);
+
     const { passwordHash, ...userData } = user;
     return userData;
   } catch (error) {
@@ -151,19 +151,17 @@ export async function loginUser(email: string, password: string) {
 }
 
 /**
- * Set authentication cookies for the user
- */
-import { cookies as nextCookies } from "next/headers";
-
-/**
- * Set authentication cookies for the user
- * Note: This function should be used inside a Server Action or Route Handler where cookies().set is available.
+ * Set authentication cookies - using JWT token approach
  */
 export async function setAuthCookies(userId: string) {
-  const cookieStore = await nextCookies();
+  const cookieStore = await cookies();
+  
+  // Create a JWT token
+  const token = sign({ userId }, process.env.JWT_SECRET!, { expiresIn: '7d' });
+  
   cookieStore.set(
-    "userId",
-    userId,
+    "auth-token", // Match what getCurrentUser() is looking for
+    token,
     {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -176,12 +174,11 @@ export async function setAuthCookies(userId: string) {
 
 /**
  * Clear authentication cookies
- * Note: This function should be used inside a Server Action or Route Handler where cookies().set is available.
  */
 export async function clearAuthCookies() {
-  const cookieStore = await nextCookies();
+  const cookieStore = await cookies();
   cookieStore.set(
-    "userId",
+    "auth-token",
     "",
     {
       path: "/",
@@ -191,10 +188,8 @@ export async function clearAuthCookies() {
 }
 
 /**
- * Generate a JWT token (if you want to use JWT instead of cookies)
+ * Generate a JWT token
  */
 export function generateToken(payload: any): string {
-  // This is a placeholder - you would need to install jsonwebtoken
-  // and implement this function if you want to use JWT
-  throw new Error("JWT implementation not available");
+  return sign(payload, process.env.JWT_SECRET!, { expiresIn: '7d' });
 }

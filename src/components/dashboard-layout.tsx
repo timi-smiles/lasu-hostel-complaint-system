@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -36,9 +36,48 @@ interface DashboardLayoutProps {
   userType: "student" | "staff" | "admin"
 }
 
+interface UserData {
+  id: string
+  fullName: string
+  email: string
+  role: string
+}
+
 export default function DashboardLayout({ children, userType }: DashboardLayoutProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [userData, setUserData] = useState<UserData | null>(null)
+
+  // Fetch current user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("/api/auth/me", {
+          credentials: "include",
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setUserData(data.user)
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error)
+      }
+    }
+
+    fetchUserData()
+  }, [])
+
+  // Generate initials from full name
+  const getInitials = (fullName: string) => {
+    return fullName
+      .split(" ")
+      .slice(0, 2) // Take only first two names
+      .map((name) => name[0])
+      .join("")
+      .toUpperCase()
+  }
 
   const studentNavItems = [
     {
@@ -92,23 +131,21 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
     return pathname === path
   }
 
-  const router = useRouter()
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+      })
 
-const handleLogout = async () => {
-  try {
-    const res = await fetch("/api/auth/logout", {
-      method: "POST",
-    })
-
-    if (res.ok) {
-      router.push("/") // or "/login", depending on your app
-    } else {
-      console.error("Logout failed")
+      if (res.ok) {
+        router.push("/") // or "/login", depending on your app
+      } else {
+        console.error("Logout failed")
+      }
+    } catch (err) {
+      console.error("Logout error:", err)
     }
-  } catch (err) {
-    console.error("Logout error:", err)
   }
-}
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -154,10 +191,6 @@ const handleLogout = async () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
-                {/* <div className="p-6 border-b">
-                  <Logo className="block w-8 h-8" />
-                  <h2 className="text-2xl font-bold text-gray-900">Complaint System</h2>
-                </div> */}
                 <div className="pl-1 p-6 border-b flex items-center gap-3">
                   <Logo className="w-8 h-8" />
                   <h2 className="text-2xl font-bold text-gray-900">Complaint System</h2>
@@ -199,10 +232,14 @@ const handleLogout = async () => {
                 <Button variant="ghost" className="flex items-center gap-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                    <AvatarFallback>{userType === "student" ? "JS" : "ST"}</AvatarFallback>
+                    <AvatarFallback>
+                      {userData?.fullName ? getInitials(userData.fullName) : userType === "student" ? "ST" : "SF"}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium">{userType === "student" ? "John Smith" : "Staff Member"}</p>
+                    <p className="text-sm font-medium">
+                      {userData?.fullName || (userType === "student" ? "Student" : "Staff Member")}
+                    </p>
                     <p className="text-xs text-gray-500 capitalize">{userType}</p>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-500" />
@@ -220,7 +257,6 @@ const handleLogout = async () => {
                 <DropdownMenuSeparator />
                 
                   <DropdownMenuItem onClick={handleLogout}>
-                    {/* <Link href="/logout"> */}
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
                   </DropdownMenuItem>

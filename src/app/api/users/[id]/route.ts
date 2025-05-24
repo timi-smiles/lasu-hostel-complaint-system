@@ -1,26 +1,23 @@
-import { NextResponse } from "next/server"
-import { PrismaClient } from "../../../../generated/prisma"
+import { NextRequest, NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
+import prisma from "@/lib/db"
 
-const prisma = new PrismaClient()
-
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const currentUser = await getCurrentUser()
+    const { id } = await params // Await params before using
 
     if (!currentUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Users can only access their own profile or staff can access any profile
-    if (currentUser.id !== params.id && currentUser.role === "STUDENT") {
+    // Users can only view their own profile or admin can view any profile
+    if (currentUser.id !== id && currentUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     const user = await prisma.user.findUnique({
-      where: {
-        id: params.id,
-      },
+      where: { id }, // Use id instead of params.id
       select: {
         id: true,
         email: true,
@@ -43,61 +40,61 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
     return NextResponse.json({ user })
   } catch (error) {
-    console.error("Error fetching user:", error)
+    console.error("Get user error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const currentUser = await getCurrentUser()
+    const { id } = await params // Await params before using
 
     if (!currentUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Users can only update their own profile or admin can update any profile
-    if (currentUser.id !== params.id && currentUser.role !== "ADMIN") {
+    if (currentUser.id !== id && currentUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const body = await request.json()
-    const { fullName, email, phone, department, hostelBlock, roomNumber } = body
+    const {
+      fullName,
+      phone,
+      department,
+      studentId,
+      hostelBlock,
+      roomNumber,
+      status,
+      role,
+    } = await req.json()
 
     // Validate required fields
-    if (!fullName || !email) {
-      return NextResponse.json({ error: "Full name and email are required" }, { status: 400 })
+    if (!fullName) {
+      return NextResponse.json({ error: "Full name is required" }, { status: 400 })
     }
 
-    // Check if email is already in use by another user
-    if (email !== currentUser.email) {
-      const existingUser = await prisma.user.findUnique({
-        where: {
-          email,
-          NOT: {
-            id: params.id,
-          },
-        },
-      })
-
-      if (existingUser) {
-        return NextResponse.json({ error: "Email already in use" }, { status: 400 })
-      }
+    // Students cannot change their role or status
+    const updateData: any = {
+      fullName,
+      phone,
+      department,
+      studentId,
+      hostelBlock,
+      roomNumber,
+      updatedAt: new Date(),
     }
 
-    // Update user with all fields
+    // Only admins can update role and status
+    if (currentUser.role === "ADMIN") {
+      if (status) updateData.status = status
+      if (role) updateData.role = role
+    }
+
     const updatedUser = await prisma.user.update({
-      where: {
-        id: params.id,
-      },
-      data: {
-        fullName,
-        email,
-        phone: phone || null,
-        department: department || null,
-        hostelBlock: hostelBlock || null,
-        roomNumber: roomNumber || null,
-      },
+      where: { id }, // Use id instead of params.id
+      data: updateData,
       select: {
         id: true,
         email: true,
@@ -121,7 +118,58 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       user: updatedUser,
     })
   } catch (error) {
-    console.error("Error updating user:", error)
+    if (error && typeof error === "object" && "code" in error && error.code === "P2025") {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    console.error("Update user error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const currentUser = await getCurrentUser()
+    const { id } = await params // Await params before using
+
+    if (!currentUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Only admins can delete users
+    if (currentUser.role !== "ADMIN") {
+      return NextResponse.json({ error: "Only administrators can delete users" }, { status: 403 })
+    }
+
+    // Don't allow deleting yourself
+    if (currentUser.id === id) {
+      return NextResponse.json({ error: "You cannot delete your own account" }, { status: 400 })
+    }
+
+    // Delete user's complaints and updates first (cascade delete)
+    await prisma.complaintUpdate.deleteMany({
+      where: { staffId: id },
+    })
+
+    await prisma.complaint.deleteMany({
+      where: { studentId: id },
+    })
+
+    // Then delete the user
+    const deletedUser = await prisma.user.delete({
+      where: { id }, // Use id instead of params.id
+    })
+
+    return NextResponse.json({
+      message: "User deleted successfully",
+      user: deletedUser,
+    })
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "P2025") {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    console.error("Delete user error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
