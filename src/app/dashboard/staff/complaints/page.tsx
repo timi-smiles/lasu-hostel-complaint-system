@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Filter,
   Search,
@@ -37,227 +37,51 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 
-// Types
-type ComplaintStatus = "pending" | "in-progress" | "resolved" | "rejected"
-type ComplaintPriority = "low" | "medium" | "high" | "urgent"
-type ComplaintCategory = "maintenance" | "roommate" | "facilities" | "security" | "other"
+// Updated types to match your database schema
+type ComplaintStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED"
+type ComplaintPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT"
+type ComplaintCategory = "Plumbing" | "Electrical" | "Furniture" | "Cleanliness" | "Noise Complaint" | "Security" | "Internet" | "Other"
+
+interface Student {
+  id: string
+  fullName: string
+  email: string
+  hostelBlock?: string
+  roomNumber?: string
+}
+
+interface ComplaintUpdate {
+  id: string
+  message: string
+  createdAt: string
+  staff?: {
+    id: string
+    fullName: string
+  }
+}
 
 interface Complaint {
   id: string
-  studentId: string
-  studentName: string
-  roomNumber: string
-  category: ComplaintCategory
-  subject: string
+  title: string
   description: string
+  category: ComplaintCategory
   status: ComplaintStatus
   priority: ComplaintPriority
-  dateSubmitted: string
-  lastUpdated: string
-  assignedTo?: string
-  attachments?: string[]
-  comments?: {
+  hostelBlock: string
+  roomNumber: string
+  createdAt: string
+  updatedAt: string
+  student: Student
+  updates: ComplaintUpdate[]
+  assignedTo?: {
     id: string
-    user: string
-    userType: "student" | "staff"
-    text: string
-    timestamp: string
-  }[]
+    fullName: string
+  }
 }
-
-// Mock data
-const mockComplaints: Complaint[] = [
-  {
-    id: "COMP-2023-001",
-    studentId: "STU001",
-    studentName: "John Smith",
-    roomNumber: "A-101",
-    category: "maintenance",
-    subject: "Broken shower head",
-    description:
-      "The shower head in my bathroom is leaking and spraying water in all directions. It needs to be replaced.",
-    status: "pending",
-    priority: "medium",
-    dateSubmitted: "2023-05-10T09:30:00",
-    lastUpdated: "2023-05-10T09:30:00",
-    comments: [
-      {
-        id: "c1",
-        user: "John Smith",
-        userType: "student",
-        text: "I've been waiting for 3 days now. When will this be fixed?",
-        timestamp: "2023-05-13T14:20:00",
-      },
-    ],
-  },
-  {
-    id: "COMP-2023-002",
-    studentId: "STU042",
-    studentName: "Sarah Johnson",
-    roomNumber: "B-205",
-    category: "roommate",
-    subject: "Roommate conflict",
-    description:
-      "My roommate plays loud music late at night and doesn't respect quiet hours. I've tried talking to them but the issue persists.",
-    status: "in-progress",
-    priority: "high",
-    dateSubmitted: "2023-05-08T15:45:00",
-    lastUpdated: "2023-05-09T10:15:00",
-    assignedTo: "Resident Advisor",
-    comments: [
-      {
-        id: "c2",
-        user: "Resident Advisor",
-        userType: "staff",
-        text: "I've scheduled a mediation session for tomorrow at 4pm.",
-        timestamp: "2023-05-09T10:15:00",
-      },
-    ],
-  },
-  {
-    id: "COMP-2023-003",
-    studentId: "STU078",
-    studentName: "Michael Chen",
-    roomNumber: "C-310",
-    category: "facilities",
-    subject: "No hot water",
-    description:
-      "There has been no hot water in my room for the past 2 days. It's very uncomfortable to shower with cold water.",
-    status: "resolved",
-    priority: "high",
-    dateSubmitted: "2023-05-05T08:20:00",
-    lastUpdated: "2023-05-07T11:30:00",
-    assignedTo: "Maintenance Staff",
-    comments: [
-      {
-        id: "c3",
-        user: "Maintenance Staff",
-        userType: "staff",
-        text: "The water heater has been repaired. Please let us know if you still experience issues.",
-        timestamp: "2023-05-07T11:30:00",
-      },
-      {
-        id: "c4",
-        user: "Michael Chen",
-        userType: "student",
-        text: "Hot water is working now. Thank you!",
-        timestamp: "2023-05-07T18:45:00",
-      },
-    ],
-  },
-  {
-    id: "COMP-2023-004",
-    studentId: "STU103",
-    studentName: "Emily Rodriguez",
-    roomNumber: "A-118",
-    category: "security",
-    subject: "Broken door lock",
-    description:
-      "The lock on my door is not working properly. Sometimes it doesn't lock at all which is a security concern.",
-    status: "in-progress",
-    priority: "urgent",
-    dateSubmitted: "2023-05-09T17:10:00",
-    lastUpdated: "2023-05-10T08:45:00",
-    assignedTo: "Security Team",
-    comments: [
-      {
-        id: "c5",
-        user: "Security Team",
-        userType: "staff",
-        text: "A temporary fix has been applied. A new lock will be installed tomorrow.",
-        timestamp: "2023-05-10T08:45:00",
-      },
-    ],
-  },
-  {
-    id: "COMP-2023-005",
-    studentId: "STU056",
-    studentName: "David Wilson",
-    roomNumber: "D-422",
-    category: "maintenance",
-    subject: "Clogged sink",
-    description:
-      "The sink in my bathroom is clogged and drains very slowly. I've tried using drain cleaner but it didn't help.",
-    status: "rejected",
-    priority: "low",
-    dateSubmitted: "2023-05-07T12:30:00",
-    lastUpdated: "2023-05-08T09:20:00",
-    assignedTo: "Maintenance Staff",
-    comments: [
-      {
-        id: "c6",
-        user: "Maintenance Staff",
-        userType: "staff",
-        text: "This is a duplicate complaint. Please refer to COMP-2023-006 which has already been addressed.",
-        timestamp: "2023-05-08T09:20:00",
-      },
-    ],
-  },
-  {
-    id: "COMP-2023-006",
-    studentId: "STU089",
-    studentName: "Jessica Lee",
-    roomNumber: "B-230",
-    category: "facilities",
-    subject: "Heating not working",
-    description:
-      "The heating in my room is not working and it's getting very cold at night. I've checked the thermostat but it seems to be broken.",
-    status: "pending",
-    priority: "high",
-    dateSubmitted: "2023-05-11T10:15:00",
-    lastUpdated: "2023-05-11T10:15:00",
-  },
-  {
-    id: "COMP-2023-007",
-    studentId: "STU125",
-    studentName: "Robert Kim",
-    roomNumber: "C-315",
-    category: "other",
-    subject: "Noisy construction",
-    description:
-      "There is construction work happening right outside my window starting very early in the morning. It's disrupting my sleep and study time.",
-    status: "in-progress",
-    priority: "medium",
-    dateSubmitted: "2023-05-10T14:50:00",
-    lastUpdated: "2023-05-11T09:30:00",
-    assignedTo: "Hostel Manager",
-    comments: [
-      {
-        id: "c7",
-        user: "Hostel Manager",
-        userType: "staff",
-        text: "We're working with the construction company to adjust their hours. In the meantime, we can offer temporary relocation to another room.",
-        timestamp: "2023-05-11T09:30:00",
-      },
-    ],
-  },
-  {
-    id: "COMP-2023-008",
-    studentId: "STU072",
-    studentName: "Olivia Brown",
-    roomNumber: "A-105",
-    category: "maintenance",
-    subject: "Flickering lights",
-    description:
-      "The lights in my room flicker constantly which is causing eye strain and headaches. I think the bulbs or wiring need to be checked.",
-    status: "resolved",
-    priority: "medium",
-    dateSubmitted: "2023-05-06T11:20:00",
-    lastUpdated: "2023-05-08T15:40:00",
-    assignedTo: "Maintenance Staff",
-    comments: [
-      {
-        id: "c8",
-        user: "Maintenance Staff",
-        userType: "staff",
-        text: "The faulty light fixture has been replaced.",
-        timestamp: "2023-05-08T15:40:00",
-      },
-    ],
-  },
-]
 
 // Helper function to format date
 const formatDate = (dateString: string) => {
@@ -269,35 +93,39 @@ const formatDate = (dateString: string) => {
   })
 }
 
+const formatDateTime = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
 // Status badge component
 const StatusBadge = ({ status }: { status: ComplaintStatus }) => {
   switch (status) {
-    case "pending":
+    case "PENDING":
       return (
         <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 flex items-center gap-1">
           <Clock className="h-3 w-3" />
           Pending
         </Badge>
       )
-    case "in-progress":
+    case "IN_PROGRESS":
       return (
         <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1">
           <AlertCircle className="h-3 w-3" />
           In Progress
         </Badge>
       )
-    case "resolved":
+    case "RESOLVED":
       return (
         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1">
           <CheckCircle2 className="h-3 w-3" />
           Resolved
-        </Badge>
-      )
-    case "rejected":
-      return (
-        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 flex items-center gap-1">
-          <XCircle className="h-3 w-3" />
-          Rejected
         </Badge>
       )
   }
@@ -306,54 +134,42 @@ const StatusBadge = ({ status }: { status: ComplaintStatus }) => {
 // Priority badge component
 const PriorityBadge = ({ priority }: { priority: ComplaintPriority }) => {
   switch (priority) {
-    case "low":
+    case "LOW":
       return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">Low</Badge>
-    case "medium":
+    case "MEDIUM":
       return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Medium</Badge>
-    case "high":
+    case "HIGH":
       return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">High</Badge>
-    case "urgent":
+    case "URGENT":
       return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Urgent</Badge>
   }
 }
 
 // Category badge component
 const CategoryBadge = ({ category }: { category: ComplaintCategory }) => {
-  switch (category) {
-    case "maintenance":
-      return (
-        <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-          Maintenance
-        </Badge>
-      )
-    case "roommate":
-      return (
-        <Badge variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
-          Roommate
-        </Badge>
-      )
-    case "facilities":
-      return (
-        <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
-          Facilities
-        </Badge>
-      )
-    case "security":
-      return (
-        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-          Security
-        </Badge>
-      )
-    case "other":
-      return (
-        <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
-          Other
-        </Badge>
-      )
+  const colors = {
+    "Plumbing": "bg-blue-50 text-blue-700 border-blue-200",
+    "Electrical": "bg-yellow-50 text-yellow-700 border-yellow-200",
+    "Furniture": "bg-purple-50 text-purple-700 border-purple-200",
+    "Cleanliness": "bg-green-50 text-green-700 border-green-200",
+    "Noise Complaint": "bg-red-50 text-red-700 border-red-200",
+    "Security": "bg-red-50 text-red-700 border-red-200",
+    "Internet": "bg-indigo-50 text-indigo-700 border-indigo-200",
+    "Other": "bg-gray-50 text-gray-700 border-gray-200"
   }
+
+  return (
+    <Badge variant="outline" className={colors[category]}>
+      {category}
+    </Badge>
+  )
 }
 
 export default function ComplaintsPage() {
+  const { toast } = useToast()
+  const [complaints, setComplaints] = useState<Complaint[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<ComplaintStatus | "all">("all")
   const [priorityFilter, setPriorityFilter] = useState<ComplaintPriority | "all">("all")
@@ -362,15 +178,53 @@ export default function ComplaintsPage() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false)
   const [currentTab, setCurrentTab] = useState("all")
 
+  // Fetch complaints from API
+  useEffect(() => {
+    async function fetchComplaints() {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        const response = await fetch('/api/complaints/all', {
+          credentials: "include",
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch complaints')
+        }
+
+        const data = await response.json()
+        console.log("Fetched complaints:", data)
+        
+        const complaintsData = data.complaints || data || []
+        setComplaints(complaintsData)
+
+      } catch (error) {
+        console.error('Error fetching complaints:', error)
+        setError(error instanceof Error ? error.message : 'Failed to fetch complaints')
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load complaints. Please try again.",
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchComplaints()
+  }, [toast])
+
   // Filter complaints based on search query and filters
-  const filteredComplaints = mockComplaints.filter((complaint) => {
+  const filteredComplaints = complaints.filter((complaint) => {
     // Search filter
     const matchesSearch =
       searchQuery === "" ||
       complaint.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      complaint.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      complaint.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      complaint.roomNumber.toLowerCase().includes(searchQuery.toLowerCase())
+      complaint.student.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      complaint.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      complaint.roomNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      complaint.hostelBlock.toLowerCase().includes(searchQuery.toLowerCase())
 
     // Status filter
     const matchesStatus = statusFilter === "all" || complaint.status === statusFilter
@@ -383,13 +237,13 @@ export default function ComplaintsPage() {
 
     // Tab filter
     if (currentTab === "pending")
-      return complaint.status === "pending" && matchesSearch && matchesPriority && matchesCategory
+      return complaint.status === "PENDING" && matchesSearch && matchesPriority && matchesCategory
     if (currentTab === "in-progress")
-      return complaint.status === "in-progress" && matchesSearch && matchesPriority && matchesCategory
+      return complaint.status === "IN_PROGRESS" && matchesSearch && matchesPriority && matchesCategory
     if (currentTab === "resolved")
-      return complaint.status === "resolved" && matchesSearch && matchesPriority && matchesCategory
+      return complaint.status === "RESOLVED" && matchesSearch && matchesPriority && matchesCategory
     if (currentTab === "urgent")
-      return complaint.priority === "urgent" && matchesSearch && matchesStatus && matchesCategory
+      return complaint.priority === "URGENT" && matchesSearch && matchesStatus && matchesCategory
 
     return matchesSearch && matchesStatus && matchesPriority && matchesCategory
   })
@@ -401,34 +255,82 @@ export default function ComplaintsPage() {
   }
 
   // Handle status update
-  const handleStatusUpdate = (complaintId: string, newStatus: ComplaintStatus) => {
-    // In a real app, this would make an API call to update the status
-    console.log(`Updating complaint ${complaintId} status to ${newStatus}`)
+  const handleStatusUpdate = async (complaintId: string, newStatus: ComplaintStatus) => {
+    try {
+      const response = await fetch(`/api/complaints/${complaintId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus }),
+      })
 
-    // For demo purposes, we'll update the mock data
-    const updatedComplaints = mockComplaints.map((complaint) => {
-      if (complaint.id === complaintId) {
-        return {
-          ...complaint,
-          status: newStatus,
-          lastUpdated: new Date().toISOString(),
-        }
+      if (!response.ok) {
+        throw new Error('Failed to update status')
       }
-      return complaint
-    })
 
-    // Close the dialog
-    setViewDialogOpen(false)
+      // Update local state
+      setComplaints(prev => prev.map(complaint => 
+        complaint.id === complaintId 
+          ? { ...complaint, status: newStatus, updatedAt: new Date().toISOString() }
+          : complaint
+      ))
+
+      toast({
+        title: "Success",
+        description: `Complaint status updated to ${newStatus.toLowerCase().replace('_', ' ')}`,
+      })
+
+      setViewDialogOpen(false)
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update complaint status",
+      })
+    }
+  }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        <Skeleton className="h-8 w-64" />
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2">Failed to Load Complaints</h3>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>Try Again</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
     <div className="p-6 space-y-6">
-        <Link href="/dashboard/staff">
-          <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Dashboard</span>
-          </Button>
-        </Link>
+      <Link href="/dashboard/staff">
+        <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back to Dashboard</span>
+        </Button>
+      </Link>
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Complaints Management</h1>
@@ -448,15 +350,29 @@ export default function ComplaintsPage() {
       </div>
 
       <Tabs defaultValue="all" className="w-full" onValueChange={setCurrentTab}>
-        <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
-          <TabsList>
-            <TabsTrigger value="all">All Complaints</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-            <TabsTrigger value="resolved">Resolved</TabsTrigger>
-            <TabsTrigger value="urgent">Urgent</TabsTrigger>
-          </TabsList>
+        <div className="flex flex-col gap-4 mb-4">
+          {/* Make TabsList horizontally scrollable on mobile */}
+          <div className="w-full overflow-x-auto scrollbar-hide">
+            <TabsList className="w-max min-w-full flex-nowrap justify-start p-1">
+              <TabsTrigger value="all" className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4">
+                All ({complaints.length})
+              </TabsTrigger>
+              <TabsTrigger value="pending" className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4">
+                Pending ({complaints.filter(c => c.status === "PENDING").length})
+              </TabsTrigger>
+              <TabsTrigger value="in-progress" className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4">
+                In Progress ({complaints.filter(c => c.status === "IN_PROGRESS").length})
+              </TabsTrigger>
+              <TabsTrigger value="resolved" className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4">
+                Resolved ({complaints.filter(c => c.status === "RESOLVED").length})
+              </TabsTrigger>
+              <TabsTrigger value="urgent" className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4">
+                Urgent ({complaints.filter(c => c.priority === "URGENT").length})
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
+          {/* Rest of your filters */}
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -478,11 +394,14 @@ export default function ComplaintsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="maintenance">Maintenance</SelectItem>
-                <SelectItem value="roommate">Roommate</SelectItem>
-                <SelectItem value="facilities">Facilities</SelectItem>
-                <SelectItem value="security">Security</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="Plumbing">Plumbing</SelectItem>
+                <SelectItem value="Electrical">Electrical</SelectItem>
+                <SelectItem value="Furniture">Furniture</SelectItem>
+                <SelectItem value="Cleanliness">Cleanliness</SelectItem>
+                <SelectItem value="Noise Complaint">Noise Complaint</SelectItem>
+                <SelectItem value="Security">Security</SelectItem>
+                <SelectItem value="Internet">Internet</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
 
@@ -495,10 +414,10 @@ export default function ComplaintsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Priorities</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="urgent">Urgent</SelectItem>
+                <SelectItem value="LOW">Low</SelectItem>
+                <SelectItem value="MEDIUM">Medium</SelectItem>
+                <SelectItem value="HIGH">High</SelectItem>
+                <SelectItem value="URGENT">Urgent</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -512,8 +431,8 @@ export default function ComplaintsPage() {
                   <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Student</TableHead>
-                    <TableHead>Room</TableHead>
-                    <TableHead>Subject</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Title</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Priority</TableHead>
@@ -531,10 +450,10 @@ export default function ComplaintsPage() {
                   ) : (
                     filteredComplaints.map((complaint) => (
                       <TableRow key={complaint.id}>
-                        <TableCell className="font-medium">{complaint.id}</TableCell>
-                        <TableCell>{complaint.studentName}</TableCell>
-                        <TableCell>{complaint.roomNumber}</TableCell>
-                        <TableCell className="max-w-[200px] truncate">{complaint.subject}</TableCell>
+                        <TableCell className="font-medium">{complaint.id.slice(-8)}</TableCell>
+                        <TableCell>{complaint.student.fullName}</TableCell>
+                        <TableCell>Block {complaint.hostelBlock}, Room {complaint.roomNumber}</TableCell>
+                        <TableCell className="max-w-[200px] truncate">{complaint.title}</TableCell>
                         <TableCell>
                           <CategoryBadge category={complaint.category} />
                         </TableCell>
@@ -544,7 +463,7 @@ export default function ComplaintsPage() {
                         <TableCell>
                           <PriorityBadge priority={complaint.priority} />
                         </TableCell>
-                        <TableCell>{formatDate(complaint.dateSubmitted)}</TableCell>
+                        <TableCell>{formatDate(complaint.createdAt)}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button variant="ghost" size="icon" onClick={() => handleViewComplaint(complaint)}>
@@ -565,22 +484,16 @@ export default function ComplaintsPage() {
                                 <DropdownMenuItem>Assign Staff</DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                  disabled={complaint.status === "in-progress"}
-                                  onClick={() => handleStatusUpdate(complaint.id, "in-progress")}
+                                  disabled={complaint.status === "IN_PROGRESS"}
+                                  onClick={() => handleStatusUpdate(complaint.id, "IN_PROGRESS")}
                                 >
                                   Mark as In Progress
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  disabled={complaint.status === "resolved"}
-                                  onClick={() => handleStatusUpdate(complaint.id, "resolved")}
+                                  disabled={complaint.status === "RESOLVED"}
+                                  onClick={() => handleStatusUpdate(complaint.id, "RESOLVED")}
                                 >
                                   Mark as Resolved
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  disabled={complaint.status === "rejected"}
-                                  onClick={() => handleStatusUpdate(complaint.id, "rejected")}
-                                >
-                                  Reject Complaint
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -594,34 +507,23 @@ export default function ComplaintsPage() {
             </CardContent>
             <CardFooter className="flex items-center justify-between border-t p-4">
               <div className="text-sm text-muted-foreground">
-                Showing <strong>{filteredComplaints.length}</strong> of <strong>{mockComplaints.length}</strong>{" "}
-                complaints
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled>
-                  Previous
-                </Button>
-                <Button variant="outline" size="sm" disabled>
-                  Next
-                </Button>
+                Showing <strong>{filteredComplaints.length}</strong> of <strong>{complaints.length}</strong> complaints
               </div>
             </CardFooter>
           </Card>
         </TabsContent>
 
-        {/* Other tabs have the same content structure */}
+        {/* Other tabs with the same structure but filtered data */}
         <TabsContent value="pending" className="m-0">
           <Card>
             <CardContent className="p-0">
-              {/* Same table structure as "all" tab */}
               <Table>
-                {/* Table content */}
                 <TableHeader>
                   <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Student</TableHead>
-                    <TableHead>Room</TableHead>
-                    <TableHead>Subject</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Title</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Priority</TableHead>
@@ -639,10 +541,10 @@ export default function ComplaintsPage() {
                   ) : (
                     filteredComplaints.map((complaint) => (
                       <TableRow key={complaint.id}>
-                        <TableCell className="font-medium">{complaint.id}</TableCell>
-                        <TableCell>{complaint.studentName}</TableCell>
-                        <TableCell>{complaint.roomNumber}</TableCell>
-                        <TableCell className="max-w-[200px] truncate">{complaint.subject}</TableCell>
+                        <TableCell className="font-medium">{complaint.id.slice(-8)}</TableCell>
+                        <TableCell>{complaint.student.fullName}</TableCell>
+                        <TableCell>Block {complaint.hostelBlock}, Room {complaint.roomNumber}</TableCell>
+                        <TableCell className="max-w-[200px] truncate">{complaint.title}</TableCell>
                         <TableCell>
                           <CategoryBadge category={complaint.category} />
                         </TableCell>
@@ -652,7 +554,7 @@ export default function ComplaintsPage() {
                         <TableCell>
                           <PriorityBadge priority={complaint.priority} />
                         </TableCell>
-                        <TableCell>{formatDate(complaint.dateSubmitted)}</TableCell>
+                        <TableCell>{formatDate(complaint.createdAt)}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button variant="ghost" size="icon" onClick={() => handleViewComplaint(complaint)}>
@@ -672,11 +574,8 @@ export default function ComplaintsPage() {
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>Assign Staff</DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleStatusUpdate(complaint.id, "in-progress")}>
+                                <DropdownMenuItem onClick={() => handleStatusUpdate(complaint.id, "IN_PROGRESS")}>
                                   Mark as In Progress
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleStatusUpdate(complaint.id, "rejected")}>
-                                  Reject Complaint
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -688,32 +587,18 @@ export default function ComplaintsPage() {
                 </TableBody>
               </Table>
             </CardContent>
-            <CardFooter className="flex items-center justify-between border-t p-4">
-              <div className="text-sm text-muted-foreground">
-                Showing <strong>{filteredComplaints.length}</strong> of{" "}
-                <strong>{mockComplaints.filter((c) => c.status === "pending").length}</strong> pending complaints
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled>
-                  Previous
-                </Button>
-                <Button variant="outline" size="sm" disabled>
-                  Next
-                </Button>
-              </div>
-            </CardFooter>
           </Card>
         </TabsContent>
 
-        {/* Other tabs would follow the same pattern */}
+        {/* Similar structure for other tabs */}
         <TabsContent value="in-progress" className="m-0">
-          {/* Similar structure */}
+          {/* Similar table structure */}
         </TabsContent>
         <TabsContent value="resolved" className="m-0">
-          {/* Similar structure */}
+          {/* Similar table structure */}
         </TabsContent>
         <TabsContent value="urgent" className="m-0">
-          {/* Similar structure */}
+          {/* Similar table structure */}
         </TabsContent>
       </Tabs>
 
@@ -724,23 +609,24 @@ export default function ComplaintsPage() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center justify-between">
-                  <span>Complaint {selectedComplaint.id}</span>
+                  <span>Complaint {selectedComplaint.id.slice(-8)}</span>
                   <div className="flex items-center gap-2">
                     <StatusBadge status={selectedComplaint.status} />
                     <PriorityBadge priority={selectedComplaint.priority} />
                   </div>
                 </DialogTitle>
-                <DialogDescription>Submitted on {formatDate(selectedComplaint.dateSubmitted)}</DialogDescription>
+                <DialogDescription>Submitted on {formatDate(selectedComplaint.createdAt)}</DialogDescription>
               </DialogHeader>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-muted-foreground">Student</h4>
-                  <p className="text-sm">{selectedComplaint.studentName}</p>
+                  <p className="text-sm">{selectedComplaint.student.fullName}</p>
+                  <p className="text-xs text-muted-foreground">{selectedComplaint.student.email}</p>
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-muted-foreground">Room Number</h4>
-                  <p className="text-sm">{selectedComplaint.roomNumber}</p>
+                  <h4 className="text-sm font-medium text-muted-foreground">Location</h4>
+                  <p className="text-sm">Block {selectedComplaint.hostelBlock}, Room {selectedComplaint.roomNumber}</p>
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-muted-foreground">Category</h4>
@@ -750,40 +636,36 @@ export default function ComplaintsPage() {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium">{selectedComplaint.subject}</h3>
+                  <h3 className="text-lg font-medium">{selectedComplaint.title}</h3>
                   <p className="mt-2 text-sm text-gray-700">{selectedComplaint.description}</p>
                 </div>
 
                 {selectedComplaint.assignedTo && (
                   <div className="p-3 bg-blue-50 rounded-md">
                     <p className="text-sm text-blue-700">
-                      <span className="font-medium">Assigned to:</span> {selectedComplaint.assignedTo}
+                      <span className="font-medium">Assigned to:</span> {selectedComplaint.assignedTo.fullName}
                     </p>
                   </div>
                 )}
 
-                {selectedComplaint.comments && selectedComplaint.comments.length > 0 && (
+                {selectedComplaint.updates && selectedComplaint.updates.length > 0 && (
                   <div className="space-y-3 mt-6">
-                    <h4 className="text-sm font-medium">Comments</h4>
-                    {selectedComplaint.comments.map((comment) => (
+                    <h4 className="text-sm font-medium">Updates</h4>
+                    {selectedComplaint.updates.map((update) => (
                       <div
-                        key={comment.id}
-                        className={`p-3 rounded-md ${
-                          comment.userType === "staff"
-                            ? "bg-green-50 border-l-4 border-green-500"
-                            : "bg-gray-50 border-l-4 border-gray-300"
-                        }`}
+                        key={update.id}
+                        className="p-3 rounded-md bg-green-50 border-l-4 border-green-500"
                       >
                         <div className="flex justify-between items-center mb-1">
                           <p className="text-sm font-medium">
-                            {comment.user}
-                            <span className="text-xs ml-2 text-muted-foreground capitalize">({comment.userType})</span>
+                            {update.staff?.fullName || 'Staff Member'}
+                            <span className="text-xs ml-2 text-muted-foreground">(Staff)</span>
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(comment.timestamp).toLocaleString()}
+                            {formatDateTime(update.createdAt)}
                           </p>
                         </div>
-                        <p className="text-sm">{comment.text}</p>
+                        <p className="text-sm">{update.message}</p>
                       </div>
                     ))}
                   </div>
@@ -795,16 +677,16 @@ export default function ComplaintsPage() {
                   <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
                     Close
                   </Button>
-                  <Button>Add Comment</Button>
+                  <Button>Add Update</Button>
                 </div>
                 <div className="flex gap-2">
-                  {selectedComplaint.status !== "in-progress" && (
-                    <Button variant="secondary" onClick={() => handleStatusUpdate(selectedComplaint.id, "in-progress")}>
+                  {selectedComplaint.status !== "IN_PROGRESS" && (
+                    <Button variant="secondary" onClick={() => handleStatusUpdate(selectedComplaint.id, "IN_PROGRESS")}>
                       Mark as In Progress
                     </Button>
                   )}
-                  {selectedComplaint.status !== "resolved" && (
-                    <Button variant="default" onClick={() => handleStatusUpdate(selectedComplaint.id, "resolved")}>
+                  {selectedComplaint.status !== "RESOLVED" && (
+                    <Button variant="default" onClick={() => handleStatusUpdate(selectedComplaint.id, "RESOLVED")}>
                       Mark as Resolved
                     </Button>
                   )}

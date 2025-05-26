@@ -5,11 +5,17 @@ import prisma from "@/lib/db"
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser()
-    const { id } = await params // Await params before using
+    const { id } = await params
+
+    console.log("🔍 API: Fetching complaint with ID:", id)
+    console.log("👤 API: Current user:", user?.fullName, "Role:", user?.role)
 
     if (!user) {
+      console.log("❌ API: No user found")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    console.log("✅ API: User found, searching for complaint...")
 
     const complaint = await prisma.complaint.findUnique({
       where: { id },
@@ -18,8 +24,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           select: {
             id: true,
             fullName: true,
+            email: true,
             hostelBlock: true,
-            roomNumber: true
+            roomNumber: true,
+          }
+        },
+        assignedTo: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true
           }
         },
         updates: {
@@ -39,17 +53,41 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     })
 
     if (!complaint) {
+      console.log("❌ API: Complaint not found in database")
       return NextResponse.json({ error: "Complaint not found" }, { status: 404 })
     }
 
-    // If student, check if they own the complaint
-    if (user.role === 'STUDENT' && complaint.studentId !== user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    // ✅ UPDATED AUTHORIZATION: Allow students to view their own complaints
+    if (user.role === 'STUDENT') {
+      // Students can only view their own complaints
+      if (complaint.studentId !== user.id) {
+        console.log("❌ API: Student trying to access complaint that's not theirs")
+        console.log("   Student ID:", user.id)
+        console.log("   Complaint Student ID:", complaint.studentId)
+        return NextResponse.json({ error: "You can only view your own complaints" }, { status: 403 })
+      }
+      console.log("✅ API: Student authorized to view their own complaint")
+    } else if (user.role === 'STAFF' || user.role === 'ADMIN') {
+      // Staff and admin can view all complaints
+      console.log("✅ API: Staff/Admin authorized to view complaint")
+    } else {
+      console.log("❌ API: Unknown user role:", user.role)
+      return NextResponse.json({ error: "Access denied" }, { status: 403 })
     }
 
+    console.log("✅ API: Found complaint:", complaint.title)
+    console.log("📊 API: Complaint details:", {
+      id: complaint.id,
+      title: complaint.title,
+      status: complaint.status,
+      studentName: complaint.student.fullName,
+      updatesCount: complaint.updates.length
+    })
+
     return NextResponse.json({ complaint })
+
   } catch (error) {
-    console.error("Get complaint error:", error)
+    console.error("💥 API Error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -57,14 +95,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser()
-    const { id } = await params // Await params before using
+    const { id } = await params // ✅ Properly await the params Promise
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const complaint = await prisma.complaint.findUnique({
-      where: { id } // Use id instead of params.id
+      where: { id }
     })
 
     if (!complaint) {
@@ -80,10 +118,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // Update complaint
     const updatedComplaint = await prisma.complaint.update({
-      where: { id }, // Use id instead of params.id
+      where: { id },
       data: {
         status,
-        assignedToId: assignedTo, // Changed from assignedTo to assignedToId
+        assignedToId: assignedTo,
         updatedAt: new Date()
       },
       include: {
@@ -91,8 +129,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
           select: {
             id: true,
             fullName: true,
+            email: true,
             hostelBlock: true,
             roomNumber: true
+          }
+        },
+        assignedTo: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true
           }
         },
         updates: {
@@ -116,7 +162,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       await prisma.complaintUpdate.create({
         data: {
           message,
-          complaintId: id, // Use id instead of params.id
+          complaintId: id,
           staffId: user.id
         }
       })
@@ -135,7 +181,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser()
-    const { id } = await params // Await params before using
+    const { id } = await params // ✅ Properly await the params Promise
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -146,14 +192,17 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       return NextResponse.json({ error: "Only administrators can delete complaints" }, { status: 403 })
     }
 
-    // First delete all related updates
-    await prisma.complaintUpdate.deleteMany({
-      where: { complaintId: id } // Use id instead of params.id
-    })
+    // First delete all related records
+    await prisma.$transaction([
+      prisma.complaintUpdate.deleteMany({
+        where: { complaintId: id }
+      }),
+      // Add other related deletions if they exist
+    ])
 
     // Then delete the complaint
     const deletedComplaint = await prisma.complaint.delete({
-      where: { id } // Use id instead of params.id
+      where: { id }
     })
 
     return NextResponse.json({ 
@@ -162,7 +211,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     })
   } catch (error) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
-      // Prisma error code for record not found
       return NextResponse.json({ error: "Complaint not found" }, { status: 404 })
     }
     
