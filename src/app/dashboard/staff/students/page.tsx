@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Search,
   Filter,
@@ -39,289 +39,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 import DashboardLayout from "@/components/dashboard-layout"
+import { useToast } from "@/hooks/use-toast"
 
 // Types
-type StudentStatus = "active" | "inactive" | "suspended"
+type StudentStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED"
 type HostelBlock = "A" | "B" | "C" | "D"
 
 interface Student {
   id: string
   fullName: string
   email: string
-  phone: string
-  studentId: string
-  hostelBlock: HostelBlock
-  roomNumber: string
+  phone?: string
+  studentId?: string
+  hostelBlock?: HostelBlock
+  roomNumber?: string
   status: StudentStatus
-  registrationDate: string
-  department: string
-  year: number
-  gender: "male" | "female"
-  emergencyContact?: {
-    name: string
-    relationship: string
-    phone: string
-  }
-  complaints?: number
-  lastActive?: string
+  createdAt: string
+  department?: string
+  role: string
+  lastLogin?: string
 }
-
-// Mock data
-const mockStudents: Student[] = [
-  {
-    id: "1",
-    fullName: "John Smith",
-    email: "john.smith@university.edu",
-    phone: "+1 (555) 123-4567",
-    studentId: "STU001",
-    hostelBlock: "A",
-    roomNumber: "101",
-    status: "active",
-    registrationDate: "2023-08-15T10:30:00",
-    department: "Computer Science",
-    year: 2,
-    gender: "male",
-    emergencyContact: {
-      name: "Mary Smith",
-      relationship: "Mother",
-      phone: "+1 (555) 987-6543",
-    },
-    complaints: 3,
-    lastActive: "2023-05-12T14:30:00",
-  },
-  {
-    id: "2",
-    fullName: "Emily Johnson",
-    email: "emily.johnson@university.edu",
-    phone: "+1 (555) 234-5678",
-    studentId: "STU042",
-    hostelBlock: "B",
-    roomNumber: "205",
-    status: "active",
-    registrationDate: "2023-08-10T09:15:00",
-    department: "Business Administration",
-    year: 3,
-    gender: "female",
-    emergencyContact: {
-      name: "Robert Johnson",
-      relationship: "Father",
-      phone: "+1 (555) 876-5432",
-    },
-    complaints: 1,
-    lastActive: "2023-05-14T10:45:00",
-  },
-  {
-    id: "3",
-    fullName: "Michael Chen",
-    email: "michael.chen@university.edu",
-    phone: "+1 (555) 345-6789",
-    studentId: "STU078",
-    hostelBlock: "C",
-    roomNumber: "310",
-    status: "inactive",
-    registrationDate: "2023-08-05T14:20:00",
-    department: "Engineering",
-    year: 4,
-    gender: "male",
-    emergencyContact: {
-      name: "Wei Chen",
-      relationship: "Father",
-      phone: "+1 (555) 765-4321",
-    },
-    complaints: 0,
-    lastActive: "2023-04-30T16:20:00",
-  },
-  {
-    id: "4",
-    fullName: "Sarah Wilson",
-    email: "sarah.wilson@university.edu",
-    phone: "+1 (555) 456-7890",
-    studentId: "STU103",
-    hostelBlock: "A",
-    roomNumber: "118",
-    status: "active",
-    registrationDate: "2023-08-12T11:45:00",
-    department: "Psychology",
-    year: 2,
-    gender: "female",
-    emergencyContact: {
-      name: "James Wilson",
-      relationship: "Father",
-      phone: "+1 (555) 654-3210",
-    },
-    complaints: 2,
-    lastActive: "2023-05-15T09:10:00",
-  },
-  {
-    id: "5",
-    fullName: "David Lee",
-    email: "david.lee@university.edu",
-    phone: "+1 (555) 567-8901",
-    studentId: "STU056",
-    hostelBlock: "D",
-    roomNumber: "422",
-    status: "suspended",
-    registrationDate: "2023-08-08T13:30:00",
-    department: "Medicine",
-    year: 5,
-    gender: "male",
-    emergencyContact: {
-      name: "Jennifer Lee",
-      relationship: "Sister",
-      phone: "+1 (555) 543-2109",
-    },
-    complaints: 5,
-    lastActive: "2023-05-01T11:25:00",
-  },
-  {
-    id: "6",
-    fullName: "Jessica Brown",
-    email: "jessica.brown@university.edu",
-    phone: "+1 (555) 678-9012",
-    studentId: "STU089",
-    hostelBlock: "B",
-    roomNumber: "230",
-    status: "active",
-    registrationDate: "2023-08-14T10:00:00",
-    department: "Arts",
-    year: 1,
-    gender: "female",
-    emergencyContact: {
-      name: "Thomas Brown",
-      relationship: "Father",
-      phone: "+1 (555) 432-1098",
-    },
-    complaints: 0,
-    lastActive: "2023-05-14T15:40:00",
-  },
-  {
-    id: "7",
-    fullName: "Robert Kim",
-    email: "robert.kim@university.edu",
-    phone: "+1 (555) 789-0123",
-    studentId: "STU125",
-    hostelBlock: "C",
-    roomNumber: "315",
-    status: "active",
-    registrationDate: "2023-08-09T15:30:00",
-    department: "Physics",
-    year: 3,
-    gender: "male",
-    emergencyContact: {
-      name: "Grace Kim",
-      relationship: "Mother",
-      phone: "+1 (555) 321-0987",
-    },
-    complaints: 1,
-    lastActive: "2023-05-13T12:15:00",
-  },
-  {
-    id: "8",
-    fullName: "Olivia Martinez",
-    email: "olivia.martinez@university.edu",
-    phone: "+1 (555) 890-1234",
-    studentId: "STU072",
-    hostelBlock: "A",
-    roomNumber: "105",
-    status: "active",
-    registrationDate: "2023-08-11T09:45:00",
-    department: "Chemistry",
-    year: 2,
-    gender: "female",
-    emergencyContact: {
-      name: "Carlos Martinez",
-      relationship: "Father",
-      phone: "+1 (555) 210-9876",
-    },
-    complaints: 0,
-    lastActive: "2023-05-15T14:30:00",
-  },
-  {
-    id: "9",
-    fullName: "William Taylor",
-    email: "william.taylor@university.edu",
-    phone: "+1 (555) 901-2345",
-    studentId: "STU114",
-    hostelBlock: "D",
-    roomNumber: "410",
-    status: "active",
-    registrationDate: "2023-08-07T14:15:00",
-    department: "Mathematics",
-    year: 4,
-    gender: "male",
-    emergencyContact: {
-      name: "Elizabeth Taylor",
-      relationship: "Mother",
-      phone: "+1 (555) 109-8765",
-    },
-    complaints: 2,
-    lastActive: "2023-05-10T16:45:00",
-  },
-  {
-    id: "10",
-    fullName: "Sophia Garcia",
-    email: "sophia.garcia@university.edu",
-    phone: "+1 (555) 012-3456",
-    studentId: "STU097",
-    hostelBlock: "B",
-    roomNumber: "215",
-    status: "inactive",
-    registrationDate: "2023-08-13T11:20:00",
-    department: "Biology",
-    year: 3,
-    gender: "female",
-    emergencyContact: {
-      name: "Miguel Garcia",
-      relationship: "Father",
-      phone: "+1 (555) 098-7654",
-    },
-    complaints: 1,
-    lastActive: "2023-04-28T10:30:00",
-  },
-  {
-    id: "11",
-    fullName: "James Wilson",
-    email: "james.wilson@university.edu",
-    phone: "+1 (555) 123-7890",
-    studentId: "STU135",
-    hostelBlock: "C",
-    roomNumber: "320",
-    status: "active",
-    registrationDate: "2023-08-06T10:45:00",
-    department: "Economics",
-    year: 2,
-    gender: "male",
-    emergencyContact: {
-      name: "Patricia Wilson",
-      relationship: "Mother",
-      phone: "+1 (555) 987-1234",
-    },
-    complaints: 0,
-    lastActive: "2023-05-14T09:20:00",
-  },
-  {
-    id: "12",
-    fullName: "Emma Davis",
-    email: "emma.davis@university.edu",
-    phone: "+1 (555) 234-8901",
-    studentId: "STU062",
-    hostelBlock: "A",
-    roomNumber: "112",
-    status: "active",
-    registrationDate: "2023-08-14T13:10:00",
-    department: "Sociology",
-    year: 1,
-    gender: "female",
-    emergencyContact: {
-      name: "George Davis",
-      relationship: "Father",
-      phone: "+1 (555) 876-2345",
-    },
-    complaints: 1,
-    lastActive: "2023-05-15T11:30:00",
-  },
-]
 
 // Helper function to format date
 const formatDate = (dateString: string) => {
@@ -336,21 +75,21 @@ const formatDate = (dateString: string) => {
 // Status badge component
 const StatusBadge = ({ status }: { status: StudentStatus }) => {
   switch (status) {
-    case "active":
+    case "ACTIVE":
       return (
         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1">
           <CheckCircle className="h-3 w-3" />
           Active
         </Badge>
       )
-    case "inactive":
+    case "INACTIVE":
       return (
         <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200 flex items-center gap-1">
           <XCircle className="h-3 w-3" />
           Inactive
         </Badge>
       )
-    case "suspended":
+    case "SUSPENDED":
       return (
         <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 flex items-center gap-1">
           <UserX className="h-3 w-3" />
@@ -361,6 +100,9 @@ const StatusBadge = ({ status }: { status: StudentStatus }) => {
 }
 
 export default function StudentsPage() {
+  const [students, setStudents] = useState<Student[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<StudentStatus | "all">("all")
   const [blockFilter, setBlockFilter] = useState<HostelBlock | "all">("all")
@@ -369,16 +111,76 @@ export default function StudentsPage() {
   const [currentTab, setCurrentTab] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
   const studentsPerPage = 10
+  const { toast } = useToast()
+
+  // Fetch students from API
+  useEffect(() => {
+    fetchStudents()
+  }, [])
+
+  const fetchStudents = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      console.log("🔍 Frontend: Fetching students from /api/users?role=student")
+      
+      const response = await fetch('/api/users?role=student', {
+        credentials: 'include',
+      })
+
+      console.log("📡 Frontend: Response status:", response.status)
+      console.log("📡 Frontend: Response headers:", response.headers)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("❌ Frontend: API Error Response:", errorText)
+        
+        if (response.status === 401) {
+          throw new Error("Unauthorized access - Please log in")
+        }
+        if (response.status === 403) {
+          throw new Error("Forbidden - You don't have permission to view students")
+        }
+        throw new Error(`Failed to fetch students: ${response.status} - ${errorText}`)
+      }
+
+      const data = await response.json()
+      console.log("📊 Frontend: Raw API response:", data)
+      console.log("📊 Frontend: Users array:", data.users)
+      console.log("📊 Frontend: Users length:", data.users?.length || 0)
+      
+      if (data.users && data.users.length > 0) {
+        console.log("📊 Frontend: First user sample:", data.users[0])
+      }
+      
+      const studentsData = data.users || []
+      console.log(`✅ Frontend: Setting ${studentsData.length} students`)
+      
+      setStudents(studentsData)
+
+    } catch (err) {
+      console.error('❌ Frontend: Error fetching students:', err)
+      setError(err instanceof Error ? err.message : "Failed to load students")
+      toast({
+        variant: "destructive", 
+        title: "Error",
+        description: err instanceof Error ? err.message : "Failed to load students. Please try again.",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Filter students based on search query and filters
-  const filteredStudents = mockStudents.filter((student) => {
+  const filteredStudents = students.filter((student) => {
     // Search filter
     const matchesSearch =
       searchQuery === "" ||
       student.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.roomNumber.toLowerCase().includes(searchQuery.toLowerCase())
+      (student.studentId && student.studentId.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (student.roomNumber && student.roomNumber.toLowerCase().includes(searchQuery.toLowerCase()))
 
     // Status filter
     const matchesStatus = statusFilter === "all" || student.status === statusFilter
@@ -387,9 +189,9 @@ export default function StudentsPage() {
     const matchesBlock = blockFilter === "all" || student.hostelBlock === blockFilter
 
     // Tab filter
-    if (currentTab === "active") return student.status === "active" && matchesSearch && matchesBlock
-    if (currentTab === "inactive") return student.status === "inactive" && matchesSearch && matchesBlock
-    if (currentTab === "suspended") return student.status === "suspended" && matchesSearch && matchesBlock
+    if (currentTab === "active") return student.status === "ACTIVE" && matchesSearch && matchesBlock
+    if (currentTab === "inactive") return student.status === "INACTIVE" && matchesSearch && matchesBlock
+    if (currentTab === "suspended") return student.status === "SUSPENDED" && matchesSearch && matchesBlock
 
     return matchesSearch && matchesStatus && matchesBlock
   })
@@ -407,11 +209,110 @@ export default function StudentsPage() {
   }
 
   // Handle status update
-  const handleStatusUpdate = (studentId: string, newStatus: StudentStatus) => {
-    // In a real app, this would make an API call to update the status
-    console.log(`Updating student ${studentId} status to ${newStatus}`)
-    // Close the dialog
-    setViewDialogOpen(false)
+  const handleStatusUpdate = async (studentId: string, newStatus: StudentStatus) => {
+    try {
+      const response = await fetch(`/api/users/${studentId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to update student status")
+      }
+
+      // Update local state
+      setStudents(prev => prev.map(student => 
+        student.id === studentId ? { ...student, status: newStatus } : student
+      ))
+
+      toast({
+        title: "Success",
+        description: `Student status updated to ${newStatus.toLowerCase()}.`,
+      })
+
+      setViewDialogOpen(false)
+    } catch (err) {
+      console.error('Error updating student status:', err)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update student status. Please try again.",
+      })
+    }
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <DashboardLayout userType="staff">
+        <div className="p-6 space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <Skeleton className="h-8 w-64 mb-2" />
+              <Skeleton className="h-4 w-96" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-24" />
+              <Skeleton className="h-9 w-32" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2">
+                  <Skeleton className="h-4 w-24" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-12" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center space-x-4">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-4 w-48" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <DashboardLayout userType="staff">
+        <div className="p-6">
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">Failed to Load Students</h3>
+                <p className="text-muted-foreground mb-4">{error}</p>
+                <Button onClick={fetchStudents}>Try Again</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    )
   }
 
   return (
@@ -424,9 +325,9 @@ export default function StudentsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={fetchStudents}>
               <Filter className="h-4 w-4 mr-2" />
-              Export
+              Refresh
             </Button>
             <Button size="sm">
               <Download className="h-4 w-4 mr-2" />
@@ -441,7 +342,7 @@ export default function StudentsPage() {
               <CardTitle className="text-sm font-medium">Total Students</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{mockStudents.length}</div>
+              <div className="text-2xl font-bold">{students.length}</div>
             </CardContent>
           </Card>
           <Card>
@@ -450,7 +351,7 @@ export default function StudentsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">
-                {mockStudents.filter((s) => s.status === "active").length}
+                {students.filter((s) => s.status === "ACTIVE").length}
               </div>
             </CardContent>
           </Card>
@@ -460,7 +361,7 @@ export default function StudentsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-600">
-                {mockStudents.filter((s) => s.status === "inactive").length}
+                {students.filter((s) => s.status === "INACTIVE").length}
               </div>
             </CardContent>
           </Card>
@@ -470,7 +371,7 @@ export default function StudentsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-red-600">
-                {mockStudents.filter((s) => s.status === "suspended").length}
+                {students.filter((s) => s.status === "SUSPENDED").length}
               </div>
             </CardContent>
           </Card>
@@ -516,9 +417,9 @@ export default function StudentsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="INACTIVE">Inactive</SelectItem>
+                  <SelectItem value="SUSPENDED">Suspended</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -534,7 +435,6 @@ export default function StudentsPage() {
                       <TableHead>ID</TableHead>
                       <TableHead>Hostel</TableHead>
                       <TableHead>Department</TableHead>
-                      <TableHead>Year</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Registered</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
@@ -543,7 +443,7 @@ export default function StudentsPage() {
                   <TableBody>
                     {currentStudents.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                           No students found matching your filters.
                         </TableCell>
                       </TableRow>
@@ -567,16 +467,18 @@ export default function StudentsPage() {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell>{student.studentId}</TableCell>
+                          <TableCell>{student.studentId || "N/A"}</TableCell>
                           <TableCell>
-                            Block {student.hostelBlock}, Room {student.roomNumber}
+                            {student.hostelBlock && student.roomNumber 
+                              ? `Block ${student.hostelBlock}, Room ${student.roomNumber}`
+                              : "Not assigned"
+                            }
                           </TableCell>
-                          <TableCell>{student.department}</TableCell>
-                          <TableCell>Year {student.year}</TableCell>
+                          <TableCell>{student.department || "Not specified"}</TableCell>
                           <TableCell>
                             <StatusBadge status={student.status} />
                           </TableCell>
-                          <TableCell>{formatDate(student.registrationDate)}</TableCell>
+                          <TableCell>{formatDate(student.createdAt)}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               <Button variant="ghost" size="icon" onClick={() => handleViewStudent(student)}>
@@ -599,25 +501,21 @@ export default function StudentsPage() {
                                     <Edit className="h-4 w-4 mr-2" />
                                     Edit Student
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Lock className="h-4 w-4 mr-2" />
-                                    Reset Password
-                                  </DropdownMenuItem>
                                   <DropdownMenuSeparator />
-                                  {student.status !== "active" && (
-                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "active")}>
+                                  {student.status !== "ACTIVE" && (
+                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "ACTIVE")}>
                                       <CheckCircle className="h-4 w-4 mr-2" />
                                       Set as Active
                                     </DropdownMenuItem>
                                   )}
-                                  {student.status !== "inactive" && (
-                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "inactive")}>
+                                  {student.status !== "INACTIVE" && (
+                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "INACTIVE")}>
                                       <XCircle className="h-4 w-4 mr-2" />
                                       Set as Inactive
                                     </DropdownMenuItem>
                                   )}
-                                  {student.status !== "suspended" && (
-                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "suspended")}>
+                                  {student.status !== "SUSPENDED" && (
+                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "SUSPENDED")}>
                                       <UserX className="h-4 w-4 mr-2" />
                                       Suspend Student
                                     </DropdownMenuItem>
@@ -660,143 +558,29 @@ export default function StudentsPage() {
             </Card>
           </TabsContent>
 
-          {/* Other tabs have the same content structure */}
+          {/* Simplified other tabs - they use the same filtered data */}
           <TabsContent value="active" className="m-0">
             <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Student</TableHead>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Hostel</TableHead>
-                      <TableHead>Department</TableHead>
-                      <TableHead>Year</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Registered</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {currentStudents.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                          No active students found matching your filters.
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      currentStudents.map((student) => (
-                        <TableRow key={student.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar>
-                                <AvatarImage src={`/placeholder.svg?height=32&width=32`} alt={student.fullName} />
-                                <AvatarFallback>
-                                  {student.fullName
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <div className="font-medium">{student.fullName}</div>
-                                <div className="text-sm text-muted-foreground">{student.email}</div>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>{student.studentId}</TableCell>
-                          <TableCell>
-                            Block {student.hostelBlock}, Room {student.roomNumber}
-                          </TableCell>
-                          <TableCell>{student.department}</TableCell>
-                          <TableCell>Year {student.year}</TableCell>
-                          <TableCell>
-                            <StatusBadge status={student.status} />
-                          </TableCell>
-                          <TableCell>{formatDate(student.registrationDate)}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="ghost" size="icon" onClick={() => handleViewStudent(student)}>
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem onClick={() => handleViewStudent(student)}>
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    View Details
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Edit Student
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Lock className="h-4 w-4 mr-2" />
-                                    Reset Password
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  {student.status !== "inactive" && (
-                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "inactive")}>
-                                      <XCircle className="h-4 w-4 mr-2" />
-                                      Set as Inactive
-                                    </DropdownMenuItem>
-                                  )}
-                                  {student.status !== "suspended" && (
-                                    <DropdownMenuItem onClick={() => handleStatusUpdate(student.id, "suspended")}>
-                                      <UserX className="h-4 w-4 mr-2" />
-                                      Suspend Student
-                                    </DropdownMenuItem>
-                                  )}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+              <CardContent className="p-6 text-center text-muted-foreground">
+                Active students are displayed in the "All Students" tab with active status filter.
               </CardContent>
-              <CardFooter className="flex items-center justify-between border-t p-4">
-                <div className="text-sm text-muted-foreground">
-                  Showing <strong>{indexOfFirstStudent + 1}</strong> to{" "}
-                  <strong>{Math.min(indexOfLastStudent, filteredStudents.length)}</strong> of{" "}
-                  <strong>{filteredStudents.length}</strong> students
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </CardFooter>
             </Card>
           </TabsContent>
 
-          {/* Other tabs would follow the same pattern */}
           <TabsContent value="inactive" className="m-0">
-            {/* Similar structure */}
+            <Card>
+              <CardContent className="p-6 text-center text-muted-foreground">
+                Inactive students are displayed in the "All Students" tab with inactive status filter.
+              </CardContent>
+            </Card>
           </TabsContent>
+
           <TabsContent value="suspended" className="m-0">
-            {/* Similar structure */}
+            <Card>
+              <CardContent className="p-6 text-center text-muted-foreground">
+                Suspended students are displayed in the "All Students" tab with suspended status filter.
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 
@@ -810,7 +594,7 @@ export default function StudentsPage() {
                     <span>Student Profile</span>
                     <StatusBadge status={selectedStudent.status} />
                   </DialogTitle>
-                  <DialogDescription>Student ID: {selectedStudent.studentId}</DialogDescription>
+                  <DialogDescription>Student ID: {selectedStudent.studentId || "Not assigned"}</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -825,19 +609,20 @@ export default function StudentsPage() {
                       </AvatarFallback>
                     </Avatar>
                     <h3 className="mt-4 text-lg font-semibold">{selectedStudent.fullName}</h3>
-                    <p className="text-muted-foreground">{selectedStudent.department}</p>
-                    <p className="text-sm">Year {selectedStudent.year}</p>
+                    <p className="text-muted-foreground">{selectedStudent.department || "Not specified"}</p>
+                    <p className="text-sm">Student</p>
 
                     <div className="mt-6 w-full space-y-2">
                       <Button variant="outline" className="w-full justify-start" size="sm">
                         <Mail className="mr-2 h-4 w-4" />
                         Send Email
                       </Button>
-                      <Button variant="outline" className="w-full justify-start" size="sm">
-                        <Phone className="mr-2 h-4 w-4" />
-                        Call Student
-                      </Button>
-
+                      {selectedStudent.phone && (
+                        <Button variant="outline" className="w-full justify-start" size="sm">
+                          <Phone className="mr-2 h-4 w-4" />
+                          Call Student
+                        </Button>
+                      )}
                     </div>
                   </div>
 
@@ -847,62 +632,32 @@ export default function StudentsPage() {
                         <p className="text-sm font-medium text-muted-foreground">Email</p>
                         <p>{selectedStudent.email}</p>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Phone</p>
-                        <p>{selectedStudent.phone}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Hostel Block</p>
-                        <p>Block {selectedStudent.hostelBlock}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Room Number</p>
-                        <p>{selectedStudent.roomNumber}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Gender</p>
-                        <p className="capitalize">{selectedStudent.gender}</p>
-                      </div>
+                      {selectedStudent.phone && (
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-muted-foreground">Phone</p>
+                          <p>{selectedStudent.phone}</p>
+                        </div>
+                      )}
+                      {selectedStudent.hostelBlock && (
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-muted-foreground">Hostel Block</p>
+                          <p>Block {selectedStudent.hostelBlock}</p>
+                        </div>
+                      )}
+                      {selectedStudent.roomNumber && (
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-muted-foreground">Room Number</p>
+                          <p>{selectedStudent.roomNumber}</p>
+                        </div>
+                      )}
                       <div className="space-y-1">
                         <p className="text-sm font-medium text-muted-foreground">Registration Date</p>
-                        <p>{formatDate(selectedStudent.registrationDate)}</p>
+                        <p>{formatDate(selectedStudent.createdAt)}</p>
                       </div>
-                    </div>
-
-                    {selectedStudent.emergencyContact && (
-                      <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-2">Emergency Contact</h4>
-                        <div className="bg-gray-50 p-3 rounded-md">
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium text-muted-foreground">Name</p>
-                              <p>{selectedStudent.emergencyContact.name}</p>
-                            </div>
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium text-muted-foreground">Relationship</p>
-                              <p>{selectedStudent.emergencyContact.relationship}</p>
-                            </div>
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium text-muted-foreground">Phone</p>
-                              <p>{selectedStudent.emergencyContact.phone}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Complaint History</h4>
-                      {selectedStudent.complaints === 0 ? (
-                        <p className="text-center py-3 bg-gray-50 rounded-md">No complaints filed</p>
-                      ) : (
-                        <div className="bg-gray-50 p-3 rounded-md">
-                          <p>
-                            <span className="font-medium">{selectedStudent.complaints}</span> complaints filed
-                          </p>
-                          <Button variant="link" className="p-0 h-auto">
-                            View Complaint History
-                          </Button>
+                      {selectedStudent.lastLogin && (
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-muted-foreground">Last Login</p>
+                          <p>{formatDate(selectedStudent.lastLogin)}</p>
                         </div>
                       )}
                     </div>
@@ -917,18 +672,18 @@ export default function StudentsPage() {
                     <Button>Edit Student</Button>
                   </div>
                   <div className="flex gap-2">
-                    {selectedStudent.status !== "active" && (
-                      <Button variant="secondary" onClick={() => handleStatusUpdate(selectedStudent.id, "active")}>
+                    {selectedStudent.status !== "ACTIVE" && (
+                      <Button variant="secondary" onClick={() => handleStatusUpdate(selectedStudent.id, "ACTIVE")}>
                         Set as Active
                       </Button>
                     )}
-                    {selectedStudent.status !== "inactive" && (
-                      <Button variant="secondary" onClick={() => handleStatusUpdate(selectedStudent.id, "inactive")}>
+                    {selectedStudent.status !== "INACTIVE" && (
+                      <Button variant="secondary" onClick={() => handleStatusUpdate(selectedStudent.id, "INACTIVE")}>
                         Set as Inactive
                       </Button>
                     )}
-                    {selectedStudent.status !== "suspended" && (
-                      <Button variant="destructive" onClick={() => handleStatusUpdate(selectedStudent.id, "suspended")}>
+                    {selectedStudent.status !== "SUSPENDED" && (
+                      <Button variant="destructive" onClick={() => handleStatusUpdate(selectedStudent.id, "SUSPENDED")}>
                         Suspend Student
                       </Button>
                     )}

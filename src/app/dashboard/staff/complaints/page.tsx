@@ -481,7 +481,6 @@ export default function ComplaintsPage() {
                                 <DropdownMenuItem onClick={() => handleViewComplaint(complaint)}>
                                   View Details
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>Assign Staff</DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                   disabled={complaint.status === "IN_PROGRESS"}

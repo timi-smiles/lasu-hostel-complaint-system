@@ -1,10 +1,8 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Mail, Phone, Building, Calendar, Shield, Lock, Upload, Edit } from "lucide-react"
+import { Mail, Phone, Building, Calendar, Shield, Lock, Upload, Edit, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,437 +10,531 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import DashboardLayout from "@/components/dashboard-layout"
+import { useToast } from "@/hooks/use-toast"
 
-// Mock staff data
-const mockStaffData = {
-  id: "STF001",
-  name: "Sarah Thompson",
-  email: "sarah.thompson@unihostel.edu",
-  phone: "+1 (555) 987-6543",
-  department: "Hostel Management",
-  role: "Senior Warden",
-  joinDate: "2022-06-15",
-  address: "123 University Avenue, Campus Housing, Building 4",
-  city: "University City",
-  state: "CA",
-  zip: "90210",
-  bio: "Experienced hostel administrator with over 8 years of experience in student accommodation management. Passionate about creating a safe and comfortable living environment for all students.",
-  emergencyContact: {
-    name: "Michael Thompson",
-    relationship: "Spouse",
-    phone: "+1 (555) 123-4567",
-  },
-  notifications: {
-    email: true,
-    push: true,
-    sms: false,
-    newComplaints: true,
-    statusUpdates: true,
-    systemAnnouncements: true,
-  },
-  accountStatus: "active",
-  lastLogin: "2025-05-14T09:30:00",
-  permissions: ["manage_complaints", "view_analytics", "manage_students", "edit_settings"],
+// Types
+interface StaffProfile {
+  id: string
+  email: string
+  fullName: string
+  role: string
+  status: string
+  phone?: string
+  department?: string
+  createdAt: string
+  updatedAt?: string
+  lastLogin?: string
 }
 
 export default function StaffProfilePage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [staffData, setStaffData] = useState(mockStaffData)
-  const [currentPassword, setCurrentPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [userData, setUserData] = useState<StaffProfile | null>(null)
+  const [formData, setFormData] = useState<Partial<StaffProfile>>({})
+  const [error, setError] = useState<string | null>(null)
+
+  // Helper function for safe date formatting
+  const formatDate = (dateString: string | Date | null | undefined, includeTime = false) => {
+    if (!dateString) return 'Date not available'
+    
+    try {
+      let date: Date
+      
+      if (typeof dateString === 'string') {
+        date = new Date(dateString)
+      } else if (dateString instanceof Date) {
+        date = dateString
+      } else {
+        return 'Invalid date format'
+      }
+      
+      if (isNaN(date.getTime())) {
+        return 'Invalid date'
+      }
+      
+      if (includeTime) {
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      } else {
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      }
+    } catch (error) {
+      console.error('Date formatting error:', error, 'for input:', dateString)
+      return 'Invalid date'
+    }
+  }
+
+  // Helper function to generate initials
+  const getInitials = (fullName: string) => {
+    return fullName
+      .split(" ")
+      .slice(0, 2)
+      .map((name) => name[0])
+      .join("")
+      .toUpperCase()
+  }
+
+  // 🎯 Use the SAME fetch logic as student profile
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        console.log("🔍 Staff Profile: Fetching from /api/staff/profile")
+        
+        const response = await fetch("/api/staff/profile", {
+          credentials: "include",
+        })
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            router.push("/login")
+            return
+          }
+          if (response.status === 403) {
+            const errorData = await response.json()
+            console.log("❌ Access denied. User role:", errorData.userRole)
+            toast({
+              variant: "destructive",
+              title: "Access Denied",
+              description: "You don't have permission to access staff profiles.",
+            })
+            router.push("/dashboard/student/profile")
+            return
+          }
+          throw new Error("Failed to fetch staff profile")
+        }
+
+        const data = await response.json()
+        console.log("📊 Staff Profile: Fetched staff data:", data.user)
+        
+        setUserData(data.user)
+        
+        // Initialize form data with only the fields that exist in your schema
+        setFormData({
+          fullName: data.user.fullName || "",
+          email: data.user.email || "",
+          phone: data.user.phone || "",
+          department: data.user.department || "",
+        })
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "An error occurred"
+        setError(errorMessage)
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load staff profile. Please try again.",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [router, toast])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target
-    setStaffData((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [id]: value,
     }))
   }
 
-  const handleNotificationChange = (key: string, checked: boolean) => {
-    setStaffData((prev) => ({
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData((prev) => ({
       ...prev,
-      notifications: {
-        ...prev.notifications,
-        [key]: checked,
-      },
+      [field]: value,
     }))
   }
 
-  const handleSaveProfile = () => {
-    setIsSaving(true)
-    // In a real app, you would save to a backend
-    // For demo purposes, we'll simulate saving
-    setTimeout(() => {
-      setIsSaving(false)
+  // 🎯 Use the SAME save logic as student profile
+  const handleSaveProfile = async () => {
+    if (!userData) return
+
+    setSaving(true)
+    try {
+      console.log("💾 Staff Profile: Saving to /api/staff/profile")
+
+      const response = await fetch("/api/staff/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          phone: formData.phone,
+          department: formData.department,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to update staff profile")
+      }
+
+      const result = await response.json()
+      console.log("✅ Staff Profile: Update successful:", result)
+
+      // Update state with response data
+      const updatedUser = result.user
+      setUserData(updatedUser)
+      
+      setFormData({
+        fullName: updatedUser.fullName || "",
+        email: updatedUser.email || "",
+        phone: updatedUser.phone || "",
+        department: updatedUser.department || "",
+      })
+
       setIsEditing(false)
-    }, 1000)
+
+      toast({
+        title: "Success!",
+        description: "Your staff profile has been updated successfully.",
+      })
+    } catch (err) {
+      console.error("❌ Staff Profile: Save error:", err)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err instanceof Error ? err.message : "Failed to update staff profile.",
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handlePasswordChange = (e: React.FormEvent) => {
-    e.preventDefault()
-    // In a real app, you would validate and update the password
-    // For demo purposes, we'll just reset the form
-    setCurrentPassword("")
-    setNewPassword("")
-    setConfirmPassword("")
-    // Show success message or notification
+  const handleCancelEdit = () => {
+    if (!userData) return
+    
+    // Reset form data to original user data
+    setFormData({
+      fullName: userData.fullName || "",
+      email: userData.email || "",
+      phone: userData.phone || "",
+      department: userData.department || "",
+    })
+    setIsEditing(false)
+  }
+
+  // Loading state (same as student profile)
+  if (loading) {
+    return (
+      <DashboardLayout userType="staff">
+        <div className="p-6 space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+            <Skeleton className="h-9 w-32" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-1">
+              <CardHeader className="text-center">
+                <Skeleton className="h-24 w-24 rounded-full mx-auto mb-4" />
+                <Skeleton className="h-6 w-32 mx-auto mb-2" />
+                <Skeleton className="h-4 w-24 mx-auto" />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <div className="lg:col-span-2">
+              <Skeleton className="h-96 w-full" />
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  // Error state (same as student profile)
+  if (error || !userData) {
+    return (
+      <DashboardLayout userType="staff">
+        <div className="p-6">
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">Failed to Load Profile</h3>
+                <p className="text-muted-foreground mb-4">{error || "Profile not found"}</p>
+                <Button onClick={() => window.location.reload()}>Try Again</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    )
   }
 
   return (
-    <DashboardLayout userType="staff">
-      <div className="p-6 space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Admin Profile</h1>
-            <p className="text-muted-foreground">View and manage your profile information</p>
-          </div>
+      <DashboardLayout userType="staff">
+        <div className="p-6 space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Staff Profile</h1>
+              <p className="text-muted-foreground">View and manage your profile information</p>
+            </div>
 
-          <div className="flex items-center gap-2">
-            {isEditing ? (
-              <>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveProfile} disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Save Changes"}
-                </Button>
-              </>
-            ) : (
-              <Button onClick={() => setIsEditing(true)}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Profile
-              </Button>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Profile Summary Card */}
-          <Card className="lg:col-span-1">
-            <CardHeader className="text-center">
-              <div className="flex justify-center mb-4">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src="/placeholder.svg?height=96&width=96" alt={staffData.name} />
-                  <AvatarFallback className="text-2xl">
-                    {staffData.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <CardTitle>{staffData.name}</CardTitle>
-              <CardDescription>{staffData.role}</CardDescription>
-              <div className="mt-2">
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                  {staffData.department}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span>{staffData.email}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <span>{staffData.phone}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Building className="h-4 w-4 text-muted-foreground" />
-                <span>{staffData.department}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-muted-foreground" />
-                <span>Staff ID: {staffData.id}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span>Joined: {new Date(staffData.joinDate).toLocaleDateString()}</span>
-              </div>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-2">
-              <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard/staff")}>
-                View Dashboard
-              </Button>
-              {isEditing && (
-                <Button variant="secondary" className="w-full">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Photo
+            <div className="flex items-center gap-2">
+              {isEditing ? (
+                <>
+                  <Button variant="outline" onClick={handleCancelEdit} disabled={saving}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSaveProfile} disabled={saving}>
+                    {saving ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={() => setIsEditing(true)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Profile
                 </Button>
               )}
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="personal" className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="personal">Personal Info</TabsTrigger>
-                <TabsTrigger value="account">Account</TabsTrigger>
-              </TabsList>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Profile Summary Card */}
+            <Card className="lg:col-span-1">
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage src="/placeholder.svg?height=96&width=96" alt={userData.fullName} />
+                    <AvatarFallback className="text-2xl">
+                      {getInitials(userData.fullName || "User")}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                <CardTitle>{userData.fullName}</CardTitle>
+                <CardDescription>{userData.role}</CardDescription>
+                <div className="mt-2">
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                    {userData.department || "No Department"}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">{userData.email}</span>
+                </div>
+                {userData.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{userData.phone}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Building className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">{userData.department || "No Department"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">Staff ID: {userData.id}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">Joined: {formatDate(userData.createdAt)}</span>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-2">
+                <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard/staff")}>
+                  View Dashboard
+                </Button>
+                {isEditing && (
+                  <Button variant="secondary" className="w-full">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Photo
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
 
-              {/* Personal Information Tab */}
-              <TabsContent value="personal" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Personal Information</CardTitle>
-                    <CardDescription>Update your personal details</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input id="name" value={staffData.name} onChange={handleInputChange} disabled={!isEditing} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={staffData.email}
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" value={staffData.phone} onChange={handleInputChange} disabled={!isEditing} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="department">Department</Label>
-                        {isEditing ? (
-                          <Select defaultValue={staffData.department}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select department" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Hostel Management">Hostel Management</SelectItem>
-                              <SelectItem value="Maintenance">Maintenance</SelectItem>
-                              <SelectItem value="Security">Security</SelectItem>
-                              <SelectItem value="Administration">Administration</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Input id="department" value={staffData.department} disabled />
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="role">Role</Label>
-                        {isEditing ? (
-                          <Select defaultValue={staffData.role}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select role" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Senior Warden">Senior Warden</SelectItem>
-                              <SelectItem value="Warden">Warden</SelectItem>
-                              <SelectItem value="Assistant Warden">Assistant Warden</SelectItem>
-                              <SelectItem value="Maintenance Supervisor">Maintenance Supervisor</SelectItem>
-                              <SelectItem value="Administrator">Administrator</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Input id="role" value={staffData.role} disabled />
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="joinDate">Join Date</Label>
-                        <Input
-                          id="joinDate"
-                          type="date"
-                          value={staffData.joinDate}
-                          onChange={handleInputChange}
-                          disabled
-                        />
-                      </div>
-                    </div>
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              <Tabs defaultValue="personal" className="w-full">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="personal">Personal Info</TabsTrigger>
+                  <TabsTrigger value="account">Account</TabsTrigger>
+                </TabsList>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="bio">Bio</Label>
-                      <Textarea
-                        id="bio"
-                        rows={4}
-                        value={staffData.bio}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        placeholder="Tell us about yourself"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Contact Information</CardTitle>
-                    <CardDescription>Your address and contact details</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Address</Label>
-                      <Input
-                        id="address"
-                        value={staffData.address}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="city">City</Label>
-                        <Input id="city" value={staffData.city} onChange={handleInputChange} disabled={!isEditing} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="state">State</Label>
-                        <Input id="state" value={staffData.state} onChange={handleInputChange} disabled={!isEditing} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="zip">ZIP Code</Label>
-                        <Input id="zip" value={staffData.zip} onChange={handleInputChange} disabled={!isEditing} />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Emergency Contact</CardTitle>
-                    <CardDescription>Who to contact in case of emergency</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="emergencyName">Name</Label>
-                        <Input
-                          id="emergencyName"
-                          value={staffData.emergencyContact.name}
-                          onChange={(e) =>
-                            setStaffData((prev) => ({
-                              ...prev,
-                              emergencyContact: { ...prev.emergencyContact, name: e.target.value },
-                            }))
-                          }
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="emergencyRelationship">Relationship</Label>
-                        <Input
-                          id="emergencyRelationship"
-                          value={staffData.emergencyContact.relationship}
-                          onChange={(e) =>
-                            setStaffData((prev) => ({
-                              ...prev,
-                              emergencyContact: { ...prev.emergencyContact, relationship: e.target.value },
-                            }))
-                          }
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="emergencyPhone">Phone</Label>
-                        <Input
-                          id="emergencyPhone"
-                          value={staffData.emergencyContact.phone}
-                          onChange={(e) =>
-                            setStaffData((prev) => ({
-                              ...prev,
-                              emergencyContact: { ...prev.emergencyContact, phone: e.target.value },
-                            }))
-                          }
-                          disabled={!isEditing}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Account Tab */}
-              <TabsContent value="account" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Account Information</CardTitle>
-                    <CardDescription>Your account details and status</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Staff ID</Label>
-                        <Input value={staffData.id} disabled />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Account Status</Label>
-                        <div className="flex items-center h-10 px-3 rounded-md border border-input bg-background">
-                          <Badge
-                            variant="outline"
-                            className={`${
-                              staffData.accountStatus === "active"
-                                ? "bg-green-50 text-green-700 border-green-200"
-                                : "bg-red-50 text-red-700 border-red-200"
-                            }`}
-                          >
-                            {staffData.accountStatus === "active" ? "Active" : "Inactive"}
-                          </Badge>
+                {/* Personal Information Tab */}
+                <TabsContent value="personal" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Personal Information</CardTitle>
+                      <CardDescription>Update your personal details</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="fullName">Full Name</Label>
+                          <Input 
+                            id="fullName" 
+                            value={formData.fullName || ""} 
+                            onChange={handleInputChange}
+                            disabled={!isEditing} 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={formData.email || ""}
+                            disabled // Email should not be editable
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone Number</Label>
+                          <Input 
+                            id="phone" 
+                            value={formData.phone || ""} 
+                            onChange={handleInputChange}
+                            disabled={!isEditing} 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="department">Department</Label>
+                          {isEditing ? (
+                            <Select 
+                              value={formData.department || ""} 
+                              onValueChange={(value) => handleSelectChange('department', value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select department" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Hostel Management">Hostel Management</SelectItem>
+                                <SelectItem value="Maintenance">Maintenance</SelectItem>
+                                <SelectItem value="Security">Security</SelectItem>
+                                <SelectItem value="Administration">Administration</SelectItem>
+                                <SelectItem value="IT Support">IT Support</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input id="department" value={formData.department || ""} disabled />
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="role">Role</Label>
+                          <Input id="role" value={userData.role} disabled />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="createdAt">Join Date</Label>
+                          <Input
+                            id="createdAt"
+                            value={formatDate(userData.createdAt)}
+                            disabled
+                          />
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Last Login</Label>
-                        <Input
-                          value={new Date(staffData.lastLogin).toLocaleString()}
-                          disabled
-                          className="text-muted-foreground"
-                        />
-                      </div>
-                    </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-                    <div className="space-y-2">
-                      <Label>Permissions</Label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                        {staffData.permissions.map((permission) => (
-                          <div
-                            key={permission}
-                            className="flex items-center p-2 rounded-md bg-gray-50 border border-gray-200"
-                          >
-                            <Shield className="h-4 w-4 mr-2 text-green-600" />
-                            <span className="text-sm capitalize">{permission.replace(/_/g, " ")}</span>
+                {/* Account Tab */}
+                <TabsContent value="account" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Account Information</CardTitle>
+                      <CardDescription>Your account details and status</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Staff ID</Label>
+                          <Input value={userData.id} disabled />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Account Status</Label>
+                          <div className="flex items-center h-10 px-3 rounded-md border border-input bg-background">
+                            <Badge
+                              variant="outline"
+                              className={`${
+                                userData.status === "ACTIVE"
+                                  ? "bg-green-50 text-green-700 border-green-200"
+                                  : "bg-red-50 text-red-700 border-red-200"
+                              }`}
+                            >
+                              {userData.status === "ACTIVE" ? "Active" : "Inactive"}
+                            </Badge>
                           </div>
-                        ))}
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Last Login</Label>
+                          <Input
+                            value={userData.lastLogin ? formatDate(userData.lastLogin, true) : "Never"}
+                            disabled
+                            className="text-muted-foreground"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Role</Label>
+                          <Input value={userData.role} disabled />
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Account Actions</CardTitle>
-                    <CardDescription>Manage your account settings</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Button variant="outline">Export My Data</Button>
-                      <Button variant="outline">Request Time Off</Button>
-                      <Button variant="outline">View Activity Log</Button>
-                      <Button variant="destructive">Deactivate Account</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-            </Tabs>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Account Actions</CardTitle>
+                      <CardDescription>Manage your account settings</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Button variant="outline">Export My Data</Button>
+                        <Button variant="outline">View Activity Log</Button>
+                        <Button variant="outline" onClick={() => router.push('/change-password')}>
+                          <Lock className="h-4 w-4 mr-2" />
+                          Change Password
+                        </Button>
+                        <Button variant="destructive">Deactivate Account</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
-      </div>
-    </DashboardLayout>
+      </DashboardLayout>
   )
 }

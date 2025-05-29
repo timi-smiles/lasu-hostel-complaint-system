@@ -233,12 +233,12 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
                     <AvatarFallback>
-                      {userData?.fullName ? getInitials(userData.fullName) : userType === "student" ? "ST" : "SF"}
+                      {userData?.fullName ? getInitials(userData.fullName) : userType === "student" ? "" : ""}
                     </AvatarFallback>
                   </Avatar>
                   <div className="hidden md:block text-left">
                     <p className="text-sm font-medium">
-                      {userData?.fullName || (userType === "student" ? "Student" : "Staff Member")}
+                      {userData?.fullName || (userType === "student" ? "Student" : "Admin")}
                     </p>
                     <p className="text-xs text-gray-500 capitalize">{userType}</p>
                   </div>

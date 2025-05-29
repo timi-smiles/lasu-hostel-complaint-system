@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import {
   BarChart,
   Bar,
@@ -18,7 +19,7 @@ import {
   AreaChart,
   Area,
 } from "recharts"
-import { Calendar, Filter, Download, TrendingUp, TrendingDown, Clock, CheckCircle, AlertCircle } from "lucide-react"
+import { Calendar, Filter, Download, TrendingUp, TrendingDown, Clock, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -26,108 +27,106 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
 import DashboardLayout from "@/components/dashboard-layout"
+import { useToast } from "@/hooks/use-toast"
 
-// Mock data for analytics
-const complaintsByCategory = [
-  { name: "Plumbing", value: 35, color: "#8884d8" },
-  { name: "Electrical", value: 25, color: "#82ca9d" },
-  { name: "Furniture", value: 18, color: "#ffc658" },
-  { name: "Cleanliness", value: 15, color: "#ff8042" },
-  { name: "Noise", value: 12, color: "#0088fe" },
-  { name: "Internet", value: 10, color: "#00C49F" },
-  { name: "Security", value: 8, color: "#FFBB28" },
-  { name: "Other", value: 7, color: "#FF8042" },
-]
-
-const complaintsByStatus = [
-  { name: "Resolved", value: 45, color: "#4ade80" },
-  { name: "In Progress", value: 30, color: "#60a5fa" },
-  { name: "Pending", value: 25, color: "#facc15" },
-]
-
-const complaintsByBlock = [
-  { name: "Block A", pending: 10, inProgress: 15, resolved: 20 },
-  { name: "Block B", pending: 8, inProgress: 12, resolved: 18 },
-  { name: "Block C", pending: 5, inProgress: 8, resolved: 12 },
-  { name: "Block D", pending: 2, inProgress: 5, resolved: 10 },
-]
-
-const complaintsOverTime = [
-  { name: "Jan", complaints: 20, resolved: 15 },
-  { name: "Feb", complaints: 25, resolved: 20 },
-  { name: "Mar", complaints: 30, resolved: 22 },
-  { name: "Apr", complaints: 28, resolved: 25 },
-  { name: "May", complaints: 35, resolved: 28 },
-  { name: "Jun", complaints: 32, resolved: 30 },
-  { name: "Jul", complaints: 40, resolved: 35 },
-  { name: "Aug", complaints: 45, resolved: 38 },
-  { name: "Sep", complaints: 50, resolved: 42 },
-  { name: "Oct", complaints: 48, resolved: 45 },
-  { name: "Nov", complaints: 52, resolved: 48 },
-  { name: "Dec", complaints: 60, resolved: 50 },
-]
-
-const resolutionTimeByCategory = [
-  { name: "Plumbing", avgDays: 3.2 },
-  { name: "Electrical", avgDays: 2.5 },
-  { name: "Furniture", avgDays: 4.8 },
-  { name: "Cleanliness", avgDays: 1.5 },
-  { name: "Noise", avgDays: 2.0 },
-  { name: "Internet", avgDays: 1.8 },
-  { name: "Security", avgDays: 1.2 },
-  { name: "Other", avgDays: 3.5 },
-]
-
-const staffPerformance = [
-  { name: "John Doe", resolved: 45, avgResolutionTime: 2.3, satisfaction: 92 },
-  { name: "Jane Smith", resolved: 38, avgResolutionTime: 1.8, satisfaction: 95 },
-  { name: "Robert Johnson", resolved: 32, avgResolutionTime: 2.5, satisfaction: 88 },
-  { name: "Emily Davis", resolved: 28, avgResolutionTime: 3.1, satisfaction: 90 },
-]
-
-const weeklyComplaints = [
-  { day: "Mon", complaints: 12 },
-  { day: "Tue", complaints: 15 },
-  { day: "Wed", complaints: 18 },
-  { day: "Thu", complaints: 14 },
-  { day: "Fri", complaints: 10 },
-  { day: "Sat", complaints: 8 },
-  { day: "Sun", complaints: 5 },
-]
-
-const priorityDistribution = [
-  { name: "Low", value: 30, color: "#4ade80" },
-  { name: "Medium", value: 45, color: "#facc15" },
-  { name: "High", value: 20, color: "#f97316" },
-  { name: "Urgent", value: 5, color: "#ef4444" },
-]
-
-const monthlyTrends = [
-  { month: "Jan", complaints: 20, resolved: 15, satisfaction: 85 },
-  { month: "Feb", complaints: 25, resolved: 20, satisfaction: 87 },
-  { month: "Mar", complaints: 30, resolved: 22, satisfaction: 86 },
-  { month: "Apr", complaints: 28, resolved: 25, satisfaction: 88 },
-  { month: "May", complaints: 35, resolved: 28, satisfaction: 90 },
-  { month: "Jun", complaints: 32, resolved: 30, satisfaction: 92 },
-]
+// Real data interfaces based on your API response
+interface AnalyticsData {
+  totalComplaints: number
+  resolvedComplaints: number
+  pendingComplaints: number
+  inProgressComplaints: number
+  rejectedComplaints: number
+  avgResolutionTime: number
+  satisfactionRate: number
+  complaintsByCategory: Array<{ name: string; value: number; color: string }>
+  complaintsByStatus: Array<{ name: string; value: number; color: string }>
+  complaintsByPriority: Array<{ name: string; value: number; color: string }>
+  complaintsByBlock: Array<{ name: string; value: number }>
+  blockStatusBreakdown: Array<{ name: string; pending: number; inProgress: number; resolved: number; rejected: number }>
+  monthlyTrends: Array<{ month: string; complaints: number; resolved: number; satisfaction: number }>
+  weeklyComplaints: Array<{ day: string; complaints: number }>
+  resolutionTimeByCategory: Array<{ name: string; avgDays: number; count: number }>
+  staffPerformance: Array<{ 
+    id: string
+    name: string
+    department: string
+    totalAssigned: number
+    resolved: number
+    pending: number
+    inProgress: number
+    avgResolutionTime: number
+    satisfaction: number
+    ratingsCount: number
+  }>
+  satisfactionByCategory: Array<{ name: string; satisfaction: number; count: number }>
+  satisfactionByBlock: Array<{ name: string; satisfaction: number; count: number }>
+  activeUsers: number
+  totalStudents: number
+  totalStaff: number
+  recentComplaints: Array<any>
+  performanceTrends: Array<{ month: string; resolutionRate: number; total: number; resolved: number }>
+}
 
 export default function AnalyticsPage() {
+  const router = useRouter()
+  const { toast } = useToast()
   const [timeRange, setTimeRange] = useState("year")
-  const [blockFilter, setBlockFilter] = useState("all")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
 
-  // Calculate key metrics
-  const totalComplaints = 130
-  const resolvedComplaints = 45
-  const pendingComplaints = 25
-  const inProgressComplaints = 30
-  const avgResolutionTime = 2.5
-  const satisfactionRate = 88
+  // Fetch analytics data from your API endpoint
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
 
-  // Calculate percentage changes (mock data)
-  const complaintsChange = 15 // 15% increase from previous period
-  const resolutionTimeChange = -8 // 8% decrease (improvement) from previous period
-  const satisfactionChange = 5 // 5% increase from previous period
+        console.log("🔍 Analytics: Fetching data for time range:", timeRange)
+
+        const response = await fetch(`/api/staff/analytics?timeRange=${timeRange}`, {
+          credentials: "include",
+        })
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            router.push("/login")
+            return
+          }
+          if (response.status === 403) {
+            toast({
+              variant: "destructive",
+              title: "Access Denied",
+              description: "You don't have permission to access analytics.",
+            })
+            router.push("/dashboard")
+            return
+          }
+          throw new Error("Failed to fetch analytics data")
+        }
+
+        const result = await response.json()
+        console.log("📊 Analytics: Successfully fetched data:", result)
+        
+        setAnalyticsData(result.data)
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "An error occurred"
+        console.error("❌ Analytics: Fetch error:", err)
+        setError(errorMessage)
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load analytics data. Please try again.",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalyticsData()
+  }, [timeRange, router, toast])
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -143,8 +142,82 @@ export default function AnalyticsPage() {
       )
     }
     return null
-  } 
+  }
 
+  // Loading state
+  if (loading) {
+    return (
+      <DashboardLayout userType="staff">
+        <div className="p-6 space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <Skeleton className="h-8 w-64 mb-2" />
+              <Skeleton className="h-4 w-96" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-40" />
+              <Skeleton className="h-10 w-10" />
+              <Skeleton className="h-10 w-10" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-20" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-16 mb-2" />
+                  <Skeleton className="h-3 w-40" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-5 w-48" />
+                  <Skeleton className="h-3 w-64" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-80 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  // Error state
+  if (error || !analyticsData) {
+    return (
+      <DashboardLayout userType="staff">
+        <div className="p-6">
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Failed to Load Analytics</h3>
+                <p className="text-muted-foreground mb-4">{error || "Analytics data not found"}</p>
+                <Button onClick={() => window.location.reload()}>Try Again</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  // Calculate percentage changes (you can enhance this with historical data)
+  const resolutionRate = analyticsData.totalComplaints > 0 
+    ? Math.round((analyticsData.resolvedComplaints / analyticsData.totalComplaints) * 100)
+    : 0
 
   return (
     <DashboardLayout userType="staff">
@@ -152,7 +225,14 @@ export default function AnalyticsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Analytics Dashboard</h1>
-            <p className="text-muted-foreground">Comprehensive analysis of complaint data and trends</p>
+            <p className="text-muted-foreground">
+              Comprehensive analysis of complaint data and trends
+              {analyticsData.totalComplaints > 0 && (
+                <span className="ml-2 text-sm">
+                  • {analyticsData.totalComplaints} total complaints
+                </span>
+              )}
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
@@ -185,27 +265,19 @@ export default function AnalyticsPage() {
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="space-y-1">
                 <CardTitle className="text-sm font-medium">Total Complaints</CardTitle>
-                <CardDescription>All time</CardDescription>
+                <CardDescription>All complaints</CardDescription>
               </div>
               <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
                 <AlertCircle className="h-5 w-5 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalComplaints}</div>
+              <div className="text-2xl font-bold">{analyticsData.totalComplaints}</div>
               <div className="flex items-center pt-1">
-                {complaintsChange > 0 ? (
-                  <>
-                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                    <span className="text-xs text-green-500">{complaintsChange}% increase</span>
-                  </>
-                ) : (
-                  <>
-                    <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
-                    <span className="text-xs text-red-500">{Math.abs(complaintsChange)}% decrease</span>
-                  </>
-                )}
-                <span className="text-xs text-muted-foreground ml-1">from last period</span>
+                <TrendingUp className="h-4 w-4 text-blue-500 mr-1" />
+                <span className="text-xs text-muted-foreground">
+                  {analyticsData.totalStudents} active students
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -221,25 +293,24 @@ export default function AnalyticsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{Math.round((resolvedComplaints / totalComplaints) * 100)}%</div>
+              <div className="text-2xl font-bold">{resolutionRate}%</div>
               <Progress
-                value={(resolvedComplaints / totalComplaints) * 100}
+                value={resolutionRate}
                 className="h-2 mt-2"
                 style={{ "--progress-bar": "rgb(34 197 94)" } as React.CSSProperties}
-
               />
               <div className="grid grid-cols-3 gap-1 mt-2">
                 <div className="text-center">
                   <div className="text-xs font-medium text-muted-foreground">Pending</div>
-                  <div className="text-sm font-medium">{pendingComplaints}</div>
+                  <div className="text-sm font-medium">{analyticsData.pendingComplaints}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xs font-medium text-muted-foreground">In Progress</div>
-                  <div className="text-sm font-medium">{inProgressComplaints}</div>
+                  <div className="text-sm font-medium">{analyticsData.inProgressComplaints}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xs font-medium text-muted-foreground">Resolved</div>
-                  <div className="text-sm font-medium">{resolvedComplaints}</div>
+                  <div className="text-sm font-medium">{analyticsData.resolvedComplaints}</div>
                 </div>
               </div>
             </CardContent>
@@ -256,20 +327,12 @@ export default function AnalyticsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{avgResolutionTime} days</div>
+              <div className="text-2xl font-bold">{analyticsData.avgResolutionTime || 0} days</div>
               <div className="flex items-center pt-1">
-                {resolutionTimeChange < 0 ? (
-                  <>
-                    <TrendingDown className="h-4 w-4 text-green-500 mr-1" />
-                    <span className="text-xs text-green-500">{Math.abs(resolutionTimeChange)}% faster</span>
-                  </>
-                ) : (
-                  <>
-                    <TrendingUp className="h-4 w-4 text-red-500 mr-1" />
-                    <span className="text-xs text-red-500">{resolutionTimeChange}% slower</span>
-                  </>
-                )}
-                <span className="text-xs text-muted-foreground ml-1">from last period</span>
+                <TrendingDown className="h-4 w-4 text-green-500 mr-1" />
+                <span className="text-xs text-muted-foreground">
+                  {analyticsData.totalStaff} active staff
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -301,20 +364,10 @@ export default function AnalyticsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{satisfactionRate}%</div>
+              <div className="text-2xl font-bold">{analyticsData.satisfactionRate}%</div>
               <div className="flex items-center pt-1">
-                {satisfactionChange > 0 ? (
-                  <>
-                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                    <span className="text-xs text-green-500">{satisfactionChange}% increase</span>
-                  </>
-                ) : (
-                  <>
-                    <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
-                    <span className="text-xs text-red-500">{Math.abs(satisfactionChange)}% decrease</span>
-                  </>
-                )}
-                <span className="text-xs text-muted-foreground ml-1">from last period</span>
+                <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                <span className="text-xs text-muted-foreground">from feedback ratings</span>
               </div>
             </CardContent>
           </Card>
@@ -338,26 +391,32 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={complaintsByCategory}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        >
-                          {complaintsByCategory.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend layout="vertical" verticalAlign="middle" align="right" />
-                      </PieChart>
-                    </ResponsiveContainer>
+                    {analyticsData.complaintsByCategory.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={analyticsData.complaintsByCategory}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          >
+                            {analyticsData.complaintsByCategory.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend layout="vertical" verticalAlign="middle" align="right" />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No category data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -370,26 +429,32 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={complaintsByStatus}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        >
-                          {complaintsByStatus.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend layout="vertical" verticalAlign="middle" align="right" />
-                      </PieChart>
-                    </ResponsiveContainer>
+                    {analyticsData.complaintsByStatus.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={analyticsData.complaintsByStatus}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          >
+                            {analyticsData.complaintsByStatus.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend layout="vertical" verticalAlign="middle" align="right" />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No status data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -402,18 +467,24 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={complaintsByBlock} barSize={30}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="pending" stackId="a" fill="#facc15" name="Pending" />
-                        <Bar dataKey="inProgress" stackId="a" fill="#60a5fa" name="In Progress" />
-                        <Bar dataKey="resolved" stackId="a" fill="#4ade80" name="Resolved" />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    {analyticsData.blockStatusBreakdown.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={analyticsData.blockStatusBreakdown} barSize={30}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="pending" stackId="a" fill="#facc15" name="Pending" />
+                          <Bar dataKey="inProgress" stackId="a" fill="#60a5fa" name="In Progress" />
+                          <Bar dataKey="resolved" stackId="a" fill="#4ade80" name="Resolved" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No block data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -426,26 +497,32 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={priorityDistribution}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        >
-                          {priorityDistribution.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend layout="vertical" verticalAlign="middle" align="right" />
-                      </PieChart>
-                    </ResponsiveContainer>
+                    {analyticsData.complaintsByPriority.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={analyticsData.complaintsByPriority}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          >
+                            {analyticsData.complaintsByPriority.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend layout="vertical" verticalAlign="middle" align="right" />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No priority data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -458,16 +535,22 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={resolutionTimeByCategory} layout="vertical" barSize={20}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" />
-                        <YAxis dataKey="name" type="category" width={100} />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="avgDays" fill="#8884d8" name="Avg. Days to Resolve" />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    {analyticsData.resolutionTimeByCategory.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={analyticsData.resolutionTimeByCategory} layout="vertical" barSize={20}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis type="number" />
+                          <YAxis dataKey="name" type="category" width={100} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="avgDays" fill="#8884d8" name="Avg. Days to Resolve" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No resolution time data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -484,23 +567,29 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={complaintsOverTime}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line
-                          type="monotone"
-                          dataKey="complaints"
-                          stroke="#8884d8"
-                          activeDot={{ r: 8 }}
-                          name="Total Complaints"
-                        />
-                        <Line type="monotone" dataKey="resolved" stroke="#82ca9d" name="Resolved Complaints" />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    {analyticsData.monthlyTrends.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={analyticsData.monthlyTrends}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey="complaints"
+                            stroke="#8884d8"
+                            activeDot={{ r: 8 }}
+                            name="Total Complaints"
+                          />
+                          <Line type="monotone" dataKey="resolved" stroke="#82ca9d" name="Resolved Complaints" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No trends data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -513,16 +602,22 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={weeklyComplaints} barSize={30}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="day" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="complaints" fill="#8884d8" name="Complaints" />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    {analyticsData.weeklyComplaints.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={analyticsData.weeklyComplaints} barSize={30}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="day" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="complaints" fill="#8884d8" name="Complaints" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No weekly data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -535,38 +630,44 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={monthlyTrends}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Area
-                          type="monotone"
-                          dataKey="complaints"
-                          stackId="1"
-                          stroke="#8884d8"
-                          fill="#8884d8"
-                          name="Complaints"
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="resolved"
-                          stackId="2"
-                          stroke="#82ca9d"
-                          fill="#82ca9d"
-                          name="Resolved"
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="satisfaction"
-                          stroke="#ffc658"
-                          name="Satisfaction %"
-                          yAxisId={1}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    {analyticsData.monthlyTrends.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={analyticsData.monthlyTrends}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Area
+                            type="monotone"
+                            dataKey="complaints"
+                            stackId="1"
+                            stroke="#8884d8"
+                            fill="#8884d8"
+                            name="Complaints"
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="resolved"
+                            stackId="2"
+                            stroke="#82ca9d"
+                            fill="#82ca9d"
+                            name="Resolved"
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="satisfaction"
+                            stroke="#ffc658"
+                            name="Satisfaction %"
+                            yAxisId={1}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No monthly trends data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -581,7 +682,7 @@ export default function AnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
-                  {staffPerformance.map((staff, index) => (
+                  {analyticsData.staffPerformance.map((staff, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="font-medium">{staff.name}</div>
@@ -615,7 +716,7 @@ export default function AnalyticsPage() {
                         </div>
                       </div>
 
-                      {index < staffPerformance.length - 1 && <Separator className="my-4" />}
+                      {index < analyticsData.staffPerformance.length - 1 && <Separator className="my-4" />}
                     </div>
                   ))}
                 </div>
@@ -632,22 +733,28 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={monthlyTrends}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis domain={[70, 100]} />
-                        <Tooltip />
-                        <Legend />
-                        <Line
-                          type="monotone"
-                          dataKey="satisfaction"
-                          stroke="#8884d8"
-                          activeDot={{ r: 8 }}
-                          name="Satisfaction %"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    {analyticsData.monthlyTrends.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={analyticsData.monthlyTrends}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis domain={[70, 100]} />
+                          <Tooltip />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey="satisfaction"
+                            stroke="#8884d8"
+                            activeDot={{ r: 8 }}
+                            name="Satisfaction %"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No satisfaction trend data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -659,28 +766,25 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={[
-                          { name: "Plumbing", satisfaction: 85 },
-                          { name: "Electrical", satisfaction: 90 },
-                          { name: "Furniture", satisfaction: 82 },
-                          { name: "Cleanliness", satisfaction: 88 },
-                          { name: "Noise", satisfaction: 75 },
-                          { name: "Internet", satisfaction: 78 },
-                          { name: "Security", satisfaction: 92 },
-                          { name: "Other", satisfaction: 80 },
-                        ]}
-                        barSize={30}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis domain={[70, 100]} />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="satisfaction" fill="#8884d8" name="Satisfaction %" />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    {analyticsData.satisfactionByCategory.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={analyticsData.satisfactionByCategory}
+                          barSize={30}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis domain={[70, 100]} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="satisfaction" fill="#8884d8" name="Satisfaction %" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No satisfaction by category data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -692,24 +796,25 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={[
-                          { name: "Block A", satisfaction: 87 },
-                          { name: "Block B", satisfaction: 85 },
-                          { name: "Block C", satisfaction: 90 },
-                          { name: "Block D", satisfaction: 92 },
-                        ]}
-                        barSize={30}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis domain={[70, 100]} />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="satisfaction" fill="#82ca9d" name="Satisfaction %" />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    {analyticsData.satisfactionByBlock.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={analyticsData.satisfactionByBlock}
+                          barSize={30}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis domain={[70, 100]} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="satisfaction" fill="#82ca9d" name="Satisfaction %" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        No satisfaction by block data available
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

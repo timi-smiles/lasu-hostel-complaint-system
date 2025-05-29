@@ -1,18 +1,48 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { getCurrentUser } from "@/lib/auth"
+import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
+import { PrismaClient } from "../../../../generated/prisma"
 
-export async function GET(req: NextRequest) {
+const prisma = new PrismaClient()
+
+export async function GET() {
   try {
-    const user = await getCurrentUser()
+    const cookieStore = await cookies()
+    const userId = cookieStore.get("userId")?.value
 
-    if (!user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Return user data (without password)
-    return NextResponse.json({ user })
+    // 🎯 ONLY return basic auth info - no profile data
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        status: true,
+      },
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    // 🎯 Minimal response - just auth verification
+    return NextResponse.json({
+      success: true,
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+      },
+    })
   } catch (error) {
-    console.error("Get current user error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("❌ Auth check error:", error)
+    return NextResponse.json({ error: "Authentication failed" }, { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }
