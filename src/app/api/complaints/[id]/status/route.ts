@@ -5,11 +5,11 @@ import { ComplaintStatus } from '../../../../../generated/prisma'
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // ✅ Fixed: Promise<{ id: string }>
+  { params }: { params: Promise<{ id: string }> } //  Fixed: Promise<{ id: string }>
 ) {
   try {
     const user = await getCurrentUser()
-    const { id } = await params // ✅ Fixed: Await the params
+    const { id } = await params //  Fixed: Await the params
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -33,7 +33,7 @@ export async function PATCH(
 
     // Check if complaint exists
     const existingComplaint = await prisma.complaint.findUnique({
-      where: { id }, // ✅ Fixed: Use id instead of params.id
+      where: { id }, //  Fixed: Use id instead of params.id
       include: {
         student: {
           select: {
@@ -51,7 +51,7 @@ export async function PATCH(
 
     // Update complaint status
     const updatedComplaint = await prisma.complaint.update({
-      where: { id }, // ✅ Fixed: Use id instead of params.id
+      where: { id }, //  Fixed: Use id instead of params.id
       data: {
         status: status,
         updatedAt: new Date(),
@@ -133,18 +133,18 @@ export async function PATCH(
 // GET method to retrieve current status (optional)
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // ✅ Fixed: Promise<{ id: string }>
+  { params }: { params: Promise<{ id: string }> } //  Fixed: Promise<{ id: string }>
 ) {
   try {
     const user = await getCurrentUser()
-    const { id } = await params // ✅ Fixed: Await the params
+    const { id } = await params //  Fixed: Await the params
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const complaint = await prisma.complaint.findUnique({
-      where: { id }, // ✅ Fixed: Use id instead of params.id
+      where: { id }, //  Fixed: Use id instead of params.id
       select: {
         id: true,
         status: true,
@@ -165,7 +165,7 @@ export async function GET(
     // Students can only view their own complaints
     if (user.role === 'STUDENT') {
       const complaintWithStudent = await prisma.complaint.findUnique({
-        where: { id }, // ✅ Fixed: Use id instead of params.id
+        where: { id }, //  Fixed: Use id instead of params.id
         select: { studentId: true }
       })
 

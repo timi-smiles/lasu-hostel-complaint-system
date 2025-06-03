@@ -47,10 +47,10 @@ export async function GET(req: NextRequest) {
         }
       })
 
-      console.log("📊 API: Prisma found", users.length, "students")
+      console.log(" API: Prisma found", users.length, "students")
       
       if (users.length > 0) {
-        console.log("📊 API: First student:", users[0])
+        console.log(" API: First student:", users[0])
       }
 
     } else if (role === "staff") {
@@ -87,15 +87,15 @@ export async function GET(req: NextRequest) {
     if (block) {
       console.log("🔍 API: Filtering by block:", block)
       users = users.filter((u) => u.hostelBlock === block)
-      console.log("📊 API: After block filter:", users.length, "users")
+      console.log(" API: After block filter:", users.length, "users")
     }
 
-    console.log("✅ API: Returning", users.length, "users")
+    console.log(" API: Returning", users.length, "users")
 
     return NextResponse.json({ users })
 
   } catch (error) {
-    console.error("❌ API: Get users error:", error)
+    console.error(" API: Get users error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

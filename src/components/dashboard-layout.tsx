@@ -49,25 +49,49 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [userData, setUserData] = useState<UserData | null>(null)
 
-  // Fetch current user data
+  // Single useEffect that handles both auth check and user data fetching
   useEffect(() => {
-    const fetchUserData = async () => {
+    const verifyDashboardAccessAndFetchUser = async () => {
       try {
-        const response = await fetch("/api/auth/me", {
+        console.log("🔍 DashboardLayout: Verifying access and fetching user data")
+
+        const response = await fetch("/api/auth/check-role", {
           credentials: "include",
         })
 
-        if (response.ok) {
-          const data = await response.json()
-          setUserData(data.user)
+        if (!response.ok) {
+          console.log(" DashboardLayout: Authentication failed - redirecting to login")
+          router.push("/login")
+          return
         }
+
+        const data = await response.json()
+        console.log(" DashboardLayout: Auth check successful -", data.user.fullName, "Role:", data.user.role)
+
+        // Check if user is on correct dashboard type
+        if (userType === "student" && data.user.role !== "STUDENT") {
+          console.log(` Student dashboard accessed by ${data.user.role} - redirecting to staff dashboard`)
+          router.push(data.paths?.dashboard || "/dashboard/staff")
+          return
+        }
+
+        if (userType === "staff" && !["STAFF", "ADMIN"].includes(data.user.role)) {
+          console.log(` Staff dashboard accessed by ${data.user.role} - redirecting to student dashboard`)
+          router.push(data.paths?.dashboard || "/dashboard/student")
+          return
+        }
+
+        //  User is on correct dashboard, set user data
+        console.log(" DashboardLayout: User authorized for", userType, "dashboard")
+        setUserData(data.user)
       } catch (error) {
-        console.error("Failed to fetch user data:", error)
+        console.error(" DashboardLayout: Access verification failed:", error)
+        router.push("/login")
       }
     }
 
-    fetchUserData()
-  }, [])
+    verifyDashboardAccessAndFetchUser()
+  }, [userType, router])
 
   // Generate initials from full name
   const getInitials = (fullName: string) => {

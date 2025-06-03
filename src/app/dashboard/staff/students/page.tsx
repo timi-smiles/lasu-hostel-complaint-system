@@ -134,7 +134,7 @@ export default function StudentsPage() {
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.error("❌ Frontend: API Error Response:", errorText)
+        console.error(" Frontend: API Error Response:", errorText)
         
         if (response.status === 401) {
           throw new Error("Unauthorized access - Please log in")
@@ -146,21 +146,21 @@ export default function StudentsPage() {
       }
 
       const data = await response.json()
-      console.log("📊 Frontend: Raw API response:", data)
-      console.log("📊 Frontend: Users array:", data.users)
-      console.log("📊 Frontend: Users length:", data.users?.length || 0)
+      console.log(" Frontend: Raw API response:", data)
+      console.log(" Frontend: Users array:", data.users)
+      console.log(" Frontend: Users length:", data.users?.length || 0)
       
       if (data.users && data.users.length > 0) {
-        console.log("📊 Frontend: First user sample:", data.users[0])
+        console.log(" Frontend: First user sample:", data.users[0])
       }
       
       const studentsData = data.users || []
-      console.log(`✅ Frontend: Setting ${studentsData.length} students`)
+      console.log(` Frontend: Setting ${studentsData.length} students`)
       
       setStudents(studentsData)
 
     } catch (err) {
-      console.error('❌ Frontend: Error fetching students:', err)
+      console.error(' Frontend: Error fetching students:', err)
       setError(err instanceof Error ? err.message : "Failed to load students")
       toast({
         variant: "destructive", 

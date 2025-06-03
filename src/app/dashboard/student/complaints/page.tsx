@@ -56,31 +56,52 @@ export default function ComplaintsPage() {
   useEffect(() => {
     async function checkAuthAndFetchComplaints() {
       try {
-        // First check authentication
-        const authResponse = await fetch('/api/auth/me')
+        //  Updated to use the new role check endpoint
+        const authResponse = await fetch('/api/auth/check-role', {
+          credentials: "include",
+        })
+        
         if (!authResponse.ok) {
-          setUser(null)
-          return
+          if (authResponse.status === 401) {
+            console.log(" Unauthorized - redirecting to login")
+            setUser(null)
+            return
+          }
+          throw new Error('Failed to verify authentication')
         }
         
         const authData = await authResponse.json()
+        console.log(" Complaints Page: User role:", authData.user.role)
+        
+        //  Verify user is a student
+        if (authData.user.role !== "STUDENT") {
+          console.log(` Non-student accessing student complaints: ${authData.user.role}`)
+          // Redirect to appropriate dashboard
+          window.location.href = authData.paths?.dashboard || "/dashboard/staff"
+          return
+        }
+        
         setUser(authData.user)
         
         // Then fetch complaints
-        const complaintsResponse = await fetch('/api/complaints')
+        const complaintsResponse = await fetch('/api/complaints', {
+          credentials: "include",
+        })
+        
         if (!complaintsResponse.ok) {
           throw new Error('Failed to fetch complaints')
         }
         
         const complaintsData = await complaintsResponse.json()
-        console.log("Full API response:", complaintsData)
+        console.log(" Complaints API response:", complaintsData)
         
         const complaints = complaintsData.complaints || complaintsData || []
         setComplaints(complaints)
         
       } catch (error) {
-        console.error('Error:', error)
+        console.error(' Error in complaints page:', error)
         setComplaints([])
+        setUser(null)
       } finally {
         setAuthLoading(false)
         setIsLoading(false)

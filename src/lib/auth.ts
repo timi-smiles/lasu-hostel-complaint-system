@@ -32,10 +32,10 @@ export async function getCurrentUser() {
         roomNumber: true,
         department: true,
         studentId: true,
-        phone: true,        // ✅ Add this
-        status: true,       // ✅ Add this  
-        createdAt: true,    // ✅ Add this
-        lastLogin: true     // ✅ Add this
+        phone: true,        //  Add this
+        status: true,       //  Add this  
+        createdAt: true,    //  Add this
+        lastLogin: true     //  Add this
       }
     })
 

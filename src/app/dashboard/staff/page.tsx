@@ -33,7 +33,7 @@ interface Complaint {
   description: string
   category: string
   status: "PENDING" | "IN_PROGRESS" | "RESOLVED"
-  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT" // ✅ Added priority
+  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT" //  Added priority
   createdAt: string
   updatedAt: string
   student: Student
@@ -48,7 +48,7 @@ export default function StaffDashboard() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterCategory, setFilterCategory] = useState("all")
   const [filterBlock, setFilterBlock] = useState("all")
-  const [filterPriority, setFilterPriority] = useState("all") // ✅ Added priority filter
+  const [filterPriority, setFilterPriority] = useState("all") //  Added priority filter
 
   // Fetch complaints from API
   useEffect(() => {
@@ -88,7 +88,7 @@ export default function StaffDashboard() {
     }
   }
 
-  // ✅ Refresh function for manual refresh
+  //  Refresh function for manual refresh
   const refreshComplaints = async () => {
     console.log("🔄 Refreshing complaints...")
     await fetchComplaints()
@@ -123,7 +123,7 @@ export default function StaffDashboard() {
     }
   }
 
-  // ✅ Added priority badge function
+  //  Added priority badge function
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case "LOW":
@@ -159,7 +159,7 @@ export default function StaffDashboard() {
     })
   }
 
-  // ✅ Updated filtering with priority
+  //  Updated filtering with priority
   const filteredComplaints = complaints.filter((complaint) => {
     const matchesSearch =
       searchTerm === "" ||
@@ -175,7 +175,7 @@ export default function StaffDashboard() {
     return matchesSearch && matchesCategory && matchesBlock && matchesPriority
   })
 
-  // ✅ Enhanced complaint card component
+  //  Enhanced complaint card component
   const ComplaintCard = ({ complaint }: { complaint: Complaint }) => (
     <Card key={complaint.id}>
       <CardHeader className="pb-2">
@@ -211,7 +211,7 @@ export default function StaffDashboard() {
 
         <p className="text-gray-700">{complaint.description}</p>
 
-        {/* ✅ Enhanced info display */}
+        {/*  Enhanced info display */}
         <div className="mt-2 flex gap-2 text-xs text-gray-500">
           <span>Priority: {complaint.priority}</span>
           <span>•</span>
@@ -356,7 +356,7 @@ export default function StaffDashboard() {
           </Button>
         </div>
 
-        {/* ✅ Status Stats Cards */}
+        {/*  Status Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           <Card className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0">
             <CardHeader className="pb-2">
@@ -401,7 +401,7 @@ export default function StaffDashboard() {
           </Card>
         </div>
 
-        {/* ✅ Enhanced Filter Section */}
+        {/*  Enhanced Filter Section */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">Filter Complaints</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -464,7 +464,7 @@ export default function StaffDashboard() {
           </div>
         </div>
 
-        {/* ✅ Enhanced Tabs */}
+        {/*  Enhanced Tabs */}
         <Tabs defaultValue="all" className="w-full">
           <div className="w-full overflow-x-auto scrollbar-hide mb-4">
             <TabsList className="w-max min-w-full flex-nowrap justify-start p-1">
@@ -544,7 +544,7 @@ export default function StaffDashboard() {
             )}
           </TabsContent>
 
-          {/* ✅ New Urgent Tab */}
+          {/*  New Urgent Tab */}
           <TabsContent value="urgent" className="space-y-4">
             {filteredComplaints.filter((c) => c.priority === "URGENT").length > 0 ? (
               filteredComplaints

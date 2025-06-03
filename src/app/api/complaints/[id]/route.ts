@@ -11,11 +11,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     console.log("👤 API: Current user:", user?.fullName, "Role:", user?.role)
 
     if (!user) {
-      console.log("❌ API: No user found")
+      console.log(" API: No user found")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    console.log("✅ API: User found, searching for complaint...")
+    console.log(" API: User found, searching for complaint...")
 
     const complaint = await prisma.complaint.findUnique({
       where: { id },
@@ -53,30 +53,30 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     })
 
     if (!complaint) {
-      console.log("❌ API: Complaint not found in database")
+      console.log(" API: Complaint not found in database")
       return NextResponse.json({ error: "Complaint not found" }, { status: 404 })
     }
 
-    // ✅ UPDATED AUTHORIZATION: Allow students to view their own complaints
+    //  UPDATED AUTHORIZATION: Allow students to view their own complaints
     if (user.role === 'STUDENT') {
       // Students can only view their own complaints
       if (complaint.studentId !== user.id) {
-        console.log("❌ API: Student trying to access complaint that's not theirs")
+        console.log(" API: Student trying to access complaint that's not theirs")
         console.log("   Student ID:", user.id)
         console.log("   Complaint Student ID:", complaint.studentId)
         return NextResponse.json({ error: "You can only view your own complaints" }, { status: 403 })
       }
-      console.log("✅ API: Student authorized to view their own complaint")
+      console.log(" API: Student authorized to view their own complaint")
     } else if (user.role === 'STAFF' || user.role === 'ADMIN') {
       // Staff and admin can view all complaints
-      console.log("✅ API: Staff/Admin authorized to view complaint")
+      console.log(" API: Staff/Admin authorized to view complaint")
     } else {
-      console.log("❌ API: Unknown user role:", user.role)
+      console.log(" API: Unknown user role:", user.role)
       return NextResponse.json({ error: "Access denied" }, { status: 403 })
     }
 
-    console.log("✅ API: Found complaint:", complaint.title)
-    console.log("📊 API: Complaint details:", {
+    console.log(" API: Found complaint:", complaint.title)
+    console.log(" API: Complaint details:", {
       id: complaint.id,
       title: complaint.title,
       status: complaint.status,
@@ -95,7 +95,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser()
-    const { id } = await params // ✅ Properly await the params Promise
+    const { id } = await params //  Properly await the params Promise
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -181,7 +181,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser()
-    const { id } = await params // ✅ Properly await the params Promise
+    const { id } = await params //  Properly await the params Promise
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

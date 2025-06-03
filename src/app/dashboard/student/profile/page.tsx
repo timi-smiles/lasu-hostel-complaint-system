@@ -95,53 +95,86 @@ export default function StudentProfilePage() {
 
   // 🎯 SAME fetch logic as staff profile with STUDENT protection
   useEffect(() => {
-    const fetchUserData = async () => {
+    const verifyAccessAndFetchProfile = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        console.log("🔍 Student Profile: Fetching from /api/student/profile")
-        
-        // 🎯 Change this from /api/auth/me to /api/student/profile
-        const response = await fetch("/api/student/profile", {
+        // 🎯 STEP 1: Check role first
+        console.log("🔍 Student Profile: Checking role authorization")
+        const roleResponse = await fetch("/api/auth/check-role", {
           credentials: "include",
         })
 
-        if (!response.ok) {
-          if (response.status === 401) {
+        if (!roleResponse.ok) {
+          if (roleResponse.status === 401) {
+            console.log(" Not authenticated - redirecting to login")
             router.push("/login")
             return
           }
-          if (response.status === 403) {
-            const errorData = await response.json()
-            console.log("❌ Access denied. User role:", errorData.userRole)
+          throw new Error("Failed to verify access")
+        }
+
+        const roleData = await roleResponse.json()
+        console.log(" Role Check Result:", roleData.user.role)
+
+        // 🎯 STEP 2: Verify user should be on student profile
+        if (roleData.user.role !== "STUDENT") {
+          console.log(` Access denied. User role: ${roleData.user.role} - redirecting to staff profile`)
+          toast({
+            variant: "destructive",
+            title: "Access Denied",
+            description: "You don't have permission to access student profiles.",
+          })
+          // Use the redirect path from the role check
+          router.push(roleData.paths.profile || "/dashboard/staff/profile")
+          return
+        }
+
+        // 🎯 STEP 3: Role verified, now fetch profile data
+        console.log(" Student access verified - fetching profile from /api/student/profile")
+        
+        const profileResponse = await fetch("/api/student/profile", {
+          credentials: "include",
+        })
+
+        if (!profileResponse.ok) {
+          if (profileResponse.status === 401) {
+            router.push("/login")
+            return
+          }
+          if (profileResponse.status === 403) {
+            const errorData = await profileResponse.json()
+            console.log(" Profile access denied:", errorData.userRole)
             toast({
               variant: "destructive",
               title: "Access Denied",
               description: "You don't have permission to access student profiles.",
             })
-            router.push("/dashboard/staff/profile") // Redirect staff to staff profile
+            router.push(errorData.redirectTo || "/dashboard/staff/profile")
             return
           }
           throw new Error("Failed to fetch student profile")
         }
 
-        const data = await response.json()
-        console.log("📊 Student Profile: Fetched student data:", data.user)
+        const profileData = await profileResponse.json()
+        console.log(" Student Profile: Successfully fetched:", profileData.user.fullName)
         
-        setUserData(data.user)
+        setUserData(profileData.user)
         
-        // Initialize form data
+        // Initialize form data with student-specific fields
         setFormData({
-          fullName: data.user.fullName || "",
-          email: data.user.email || "",
-          phone: data.user.phone || "",
-          department: data.user.department || "",
-          hostelBlock: data.user.hostelBlock || "",
-          roomNumber: data.user.roomNumber || "",
+          fullName: profileData.user.fullName || "",
+          email: profileData.user.email || "",
+          phone: profileData.user.phone || "",
+          department: profileData.user.department || "",
+          hostelBlock: profileData.user.hostelBlock || "",
+          roomNumber: profileData.user.roomNumber || "",
         })
+
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "An error occurred"
+        console.error(" Student Profile Error:", err)
         setError(errorMessage)
         toast({
           variant: "destructive",
@@ -153,7 +186,7 @@ export default function StudentProfilePage() {
       }
     }
 
-    fetchUserData()
+    verifyAccessAndFetchProfile()
   }, [router, toast]) // Same dependencies as staff profile
 
   // Rest of your handlers (same as staff profile)
@@ -201,7 +234,7 @@ export default function StudentProfilePage() {
       }
 
       const result = await response.json()
-      console.log("✅ Student Profile: Update successful:", result)
+      console.log(" Student Profile: Update successful:", result)
 
       // Update state with response data
       const updatedUser = result.user
@@ -223,7 +256,7 @@ export default function StudentProfilePage() {
         description: "Your student profile has been updated successfully.",
       })
     } catch (err) {
-      console.error("❌ Student Profile: Save error:", err)
+      console.error(" Student Profile: Save error:", err)
       toast({
         variant: "destructive",
         title: "Error",

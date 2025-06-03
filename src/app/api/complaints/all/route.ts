@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
     const complaints = await prisma.complaint.findMany({
       include: {
-        student: {  // ✅ Changed from 'user' to 'student'
+        student: {  //  Changed from 'user' to 'student'
           select: {
             id: true,
             fullName: true,

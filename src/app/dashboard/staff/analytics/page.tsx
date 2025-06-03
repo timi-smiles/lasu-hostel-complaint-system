@@ -108,12 +108,12 @@ export default function AnalyticsPage() {
         }
 
         const result = await response.json()
-        console.log("📊 Analytics: Successfully fetched data:", result)
+        console.log(" Analytics: Successfully fetched data:", result)
         
         setAnalyticsData(result.data)
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "An error occurred"
-        console.error("❌ Analytics: Fetch error:", err)
+        console.error(" Analytics: Fetch error:", err)
         setError(errorMessage)
         toast({
           variant: "destructive",

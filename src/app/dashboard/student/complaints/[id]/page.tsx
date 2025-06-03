@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
-import DashboardLayout from "@/components/dashboard-layout" // ✅ Add this import
-import { useToast } from "@/hooks/use-toast" // ✅ Add this import
+import DashboardLayout from "@/components/dashboard-layout" //  Add this import
+import { useToast } from "@/hooks/use-toast" //  Add this import
 import { AlertCircle, ArrowLeft, Calendar, Clock, FileText, MessageSquare } from 'lucide-react'
 
 interface ComplaintUpdate {
@@ -39,7 +39,7 @@ interface Complaint {
 export default function ComplaintDetailPage() {
   const params = useParams()
   const id = params.id as string
-  const { toast } = useToast() // ✅ Add toast
+  const { toast } = useToast() //  Add toast
   
   const [complaint, setComplaint] = useState<Complaint | null>(null)
   const [loading, setLoading] = useState(true)
@@ -116,7 +116,7 @@ export default function ComplaintDetailPage() {
     }
   }
 
-  // ✅ Add priority badge function
+  //  Add priority badge function
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case "LOW":
@@ -163,7 +163,7 @@ export default function ComplaintDetailPage() {
   // Loading state
   if (loading) {
     return (
-      <DashboardLayout userType="student"> {/* ✅ Wrap in DashboardLayout */}
+      <DashboardLayout userType="student"> {/*  Wrap in DashboardLayout */}
         <div className="p-6">
           <div className="flex items-center gap-2 mb-6">
             <Skeleton className="h-10 w-40" />
@@ -223,10 +223,10 @@ export default function ComplaintDetailPage() {
   // Error state
   if (error || !complaint) {
     return (
-      <DashboardLayout userType="student"> {/* ✅ Wrap in DashboardLayout */}
+      <DashboardLayout userType="student"> {/*  Wrap in DashboardLayout */}
         <div className="p-6">
           <div className="mb-4">
-            <Link href="/dashboard/student"> {/* ✅ Fix link path */}
+            <Link href="/dashboard/student"> {/*  Fix link path */}
               <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back to Dashboard</span>
@@ -260,7 +260,7 @@ export default function ComplaintDetailPage() {
   }
 
   return (
-    <DashboardLayout userType="student"> {/* ✅ Wrap in DashboardLayout */}
+    <DashboardLayout userType="student"> {/*  Wrap in DashboardLayout */}
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-6 max-w-4xl">
           {/* Header with Back Button */}
@@ -307,7 +307,7 @@ export default function ComplaintDetailPage() {
                   </div>
                   <div className="flex gap-2">
                     {getStatusBadge(complaint.status)}
-                    {getPriorityBadge(complaint.priority)} {/* ✅ Add priority badge */}
+                    {getPriorityBadge(complaint.priority)} {/*  Add priority badge */}
                   </div>
                 </div>
               </CardHeader>

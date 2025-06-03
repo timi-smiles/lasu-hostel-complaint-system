@@ -419,7 +419,7 @@ export async function GET(request: NextRequest) {
       performanceTrends: await getPerformanceTrends(timeRange === "all" ? undefined : startDate)
     }
 
-    console.log("✅ Analytics API: Successfully processed analytics data")
+    console.log(" Analytics API: Successfully processed analytics data")
 
     return NextResponse.json({
       success: true,
@@ -432,7 +432,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error("❌ Analytics API Error:", error)
+    console.error(" Analytics API Error:", error)
     return NextResponse.json(
       { error: "Failed to fetch analytics data" },
       { status: 500 }
