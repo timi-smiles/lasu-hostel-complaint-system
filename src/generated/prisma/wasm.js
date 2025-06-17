@@ -155,6 +155,7 @@ exports.Prisma.ComplaintScalarFieldEnum = {
 exports.Prisma.ComplaintUpdateScalarFieldEnum = {
   id: 'id',
   message: 'message',
+  isRead: 'isRead',
   createdAt: 'createdAt',
   complaintId: 'complaintId',
   staffId: 'staffId'
@@ -197,6 +198,18 @@ exports.Prisma.NotificationPreferenceScalarFieldEnum = {
   statusUpdates: 'statusUpdates',
   announcements: 'announcements',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  isRead: 'isRead',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  complaintId: 'complaintId',
+  triggeredById: 'triggeredById'
 };
 
 exports.Prisma.SortOrder = {
@@ -250,6 +263,13 @@ exports.ComplaintPriority = exports.$Enums.ComplaintPriority = {
   URGENT: 'URGENT'
 };
 
+exports.NotificationType = exports.$Enums.NotificationType = {
+  NEW_COMPLAINT: 'NEW_COMPLAINT',
+  COMPLAINT_UPDATE: 'COMPLAINT_UPDATE',
+  STATUS_CHANGE: 'STATUS_CHANGE',
+  ASSIGNMENT: 'ASSIGNMENT'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Complaint: 'Complaint',
@@ -257,7 +277,8 @@ exports.Prisma.ModelName = {
   ComplaintAttachment: 'ComplaintAttachment',
   ComplaintFeedback: 'ComplaintFeedback',
   ComplaintStatusLog: 'ComplaintStatusLog',
-  NotificationPreference: 'NotificationPreference'
+  NotificationPreference: 'NotificationPreference',
+  Notification: 'Notification'
 };
 
 /**

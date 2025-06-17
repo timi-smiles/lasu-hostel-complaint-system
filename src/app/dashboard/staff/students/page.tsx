@@ -123,7 +123,7 @@ export default function StudentsPage() {
       setLoading(true)
       setError(null)
       
-      console.log("🔍 Frontend: Fetching students from /api/users?role=student")
+      console.log("Frontend: Fetching students from /api/users?role=student")
       
       const response = await fetch('/api/users?role=student', {
         credentials: 'include',

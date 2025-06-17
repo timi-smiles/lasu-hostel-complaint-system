@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import prisma from '@/lib/db'
 import { ComplaintPriority, ComplaintStatus } from '../../../generated/prisma'
+import { NotificationService } from "@/lib/notification-service"
 
 export async function GET(req: NextRequest) {
   try {
@@ -126,6 +127,12 @@ export async function POST(req: NextRequest) {
         updates: true,
       },
     })
+
+    // Create notifications for staff
+    await NotificationService.createNewComplaintNotification(
+      newComplaint.id,
+      user.id // student ID
+    )
 
     return NextResponse.json(
       {

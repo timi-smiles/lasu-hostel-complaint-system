@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const timeRange = searchParams.get("timeRange") || "year"
 
-    console.log(`🔍 Analytics: Fetching data for ${user.fullName} with time range: ${timeRange}`)
+    console.log(`Analytics: Fetching data for ${user.fullName} with time range: ${timeRange}`)
 
     // Calculate date range
     const now = new Date()

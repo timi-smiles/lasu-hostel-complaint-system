@@ -98,7 +98,7 @@ export default function StaffProfilePage() {
         setError(null)
         
         // 🎯 STEP 1: Check role first
-        console.log("🔍 Staff Profile: Checking role authorization")
+        console.log("Staff Profile: Checking role authorization")
         const roleResponse = await fetch("/api/auth/check-role", {
           credentials: "include",
         })

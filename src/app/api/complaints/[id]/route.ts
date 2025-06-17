@@ -1,26 +1,26 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { cookies } from "next/headers"
 import { getCurrentUser } from "@/lib/auth"
 import prisma from "@/lib/db"
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const user = await getCurrentUser()
     const { id } = await params
+    const cookieStore = await cookies()
+    const userId = cookieStore.get("userId")?.value
 
-    console.log("🔍 API: Fetching complaint with ID:", id)
-    console.log("👤 API: Current user:", user?.fullName, "Role:", user?.role)
-
-    if (!user) {
-      console.log(" API: No user found")
+    if (!userId) {  
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    console.log(" API: User found, searching for complaint...")
-
+    // FIX: Include student data in the query
     const complaint = await prisma.complaint.findUnique({
       where: { id },
       include: {
-        student: {
+        student: {  // ADD THIS - Include student data
           select: {
             id: true,
             fullName: true,
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             roomNumber: true,
           }
         },
-        assignedTo: {
+        assignedTo: {  // ADD THIS - Include assigned staff
           select: {
             id: true,
             fullName: true,
@@ -40,58 +40,58 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           include: {
             staff: {
               select: {
-                id: true,
+                id: true,  // ADD ID
                 fullName: true
               }
             }
           },
           orderBy: {
-            createdAt: 'asc'
+            createdAt: 'desc'
           }
         }
       }
     })
 
     if (!complaint) {
-      console.log(" API: Complaint not found in database")
       return NextResponse.json({ error: "Complaint not found" }, { status: 404 })
     }
 
-    //  UPDATED AUTHORIZATION: Allow students to view their own complaints
-    if (user.role === 'STUDENT') {
-      // Students can only view their own complaints
-      if (complaint.studentId !== user.id) {
-        console.log(" API: Student trying to access complaint that's not theirs")
-        console.log("   Student ID:", user.id)
-        console.log("   Complaint Student ID:", complaint.studentId)
-        return NextResponse.json({ error: "You can only view your own complaints" }, { status: 403 })
-      }
-      console.log(" API: Student authorized to view their own complaint")
-    } else if (user.role === 'STAFF' || user.role === 'ADMIN') {
-      // Staff and admin can view all complaints
-      console.log(" API: Staff/Admin authorized to view complaint")
-    } else {
-      console.log(" API: Unknown user role:", user.role)
+    // Verify student can only see their own complaints
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true }
+    })
+
+    if (user?.role === "STUDENT" && complaint.studentId !== userId) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 })
     }
 
-    console.log(" API: Found complaint:", complaint.title)
-    console.log(" API: Complaint details:", {
+    // ADD LOGGING to debug
+    console.log("Complaint found:", {
       id: complaint.id,
       title: complaint.title,
-      status: complaint.status,
-      studentName: complaint.student.fullName,
-      updatesCount: complaint.updates.length
+      studentName: complaint.student?.fullName,
+      studentId: complaint.student?.id,
+      updatesCount: complaint.updates?.length || 0
     })
 
-    return NextResponse.json({ complaint })
+    return NextResponse.json({
+      success: true,
+      complaint
+    })
 
   } catch (error) {
-    console.error("💥 API Error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error(" Error fetching complaint:", error)
+    return NextResponse.json({ 
+      error: "Failed to fetch complaint",
+      details: process.env.NODE_ENV !== "production" ? (error instanceof Error ? error.message : String(error)) : undefined
+    }, { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }
 
+// Keep your existing PUT and DELETE methods as they are - they look good!
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser()
@@ -131,7 +131,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             fullName: true,
             email: true,
             hostelBlock: true,
-            roomNumber: true
+            roomNumber: true,
           }
         },
         assignedTo: {
@@ -159,11 +159,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // Add an update message if provided
     if (message) {
+      // When staff adds an update, ensure isRead is set to false
       await prisma.complaintUpdate.create({
         data: {
           message,
           complaintId: id,
-          staffId: user.id
+          staffId: user.id,
+          isRead: false // Ensure new updates are unread
         }
       })
     }

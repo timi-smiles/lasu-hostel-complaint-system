@@ -24,7 +24,7 @@ export default function ProtectedRoute({
 
     const checkAuthorization = async () => {
       try {
-        console.log("🔍 ProtectedRoute: Checking authorization...")
+        console.log("ProtectedRoute: Checking authorization...")
         
         //  Updated to use the new role check endpoint
         const response = await fetch("/api/auth/check-role", {

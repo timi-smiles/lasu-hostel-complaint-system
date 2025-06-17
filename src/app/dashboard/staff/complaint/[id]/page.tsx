@@ -57,42 +57,99 @@ interface Complaint {
   }
 }
 
+interface UserData {
+  id: string
+  fullName: string
+  email: string
+  role: string
+}
+
 export default function ComplaintDetailPage({ 
   params 
 }: { 
   params: Promise<{ id: string }> 
 }) {
   const resolvedParams = use(params)
-  
   const router = useRouter()
   const { toast } = useToast()
+  
+  // SEPARATE LOADING STATES
   const [complaint, setComplaint] = useState<Complaint | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<UserData | null>(null)
+  const [isLoadingComplaint, setIsLoadingComplaint] = useState(true)
+  const [isLoadingUser, setIsLoadingUser] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [status, setStatus] = useState<ComplaintStatus>("PENDING")
   const [updateMessage, setUpdateMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Fetch complaint details
+  // FETCH USER DATA FIRST
   useEffect(() => {
-    async function fetchComplaint() {
+    const fetchUser = async () => {
       try {
-        setIsLoading(true)
+        setIsLoadingUser(true)
+        const response = await fetch("/api/auth/check-role", {
+          credentials: "include",
+          cache: "no-store"
+        })
+
+        if (!response.ok) {
+          router.push("/login")
+          return
+        }
+
+        const data = await response.json()
+        
+        if (!data?.user?.fullName || !data?.user?.role) {
+          console.error(" Incomplete user data:", data.user)
+          router.push("/login")
+          return
+        }
+
+        // Check if user is staff/admin
+        if (!["STAFF", "ADMIN"].includes(data.user.role)) {
+          router.push("/dashboard/student")
+          return
+        }
+
+        setUser(data.user)
+      } catch (error) {
+        console.error(" Failed to fetch user:", error)
+        router.push("/login")
+      } finally {
+        setIsLoadingUser(false)
+      }
+    }
+
+    fetchUser()
+  }, [router])
+
+  // FETCH COMPLAINT DATA AFTER USER IS LOADED
+  useEffect(() => {
+    if (!user || !resolvedParams.id) return
+
+    const fetchComplaint = async () => {
+      try {
+        setIsLoadingComplaint(true)
         setError(null)
 
         const response = await fetch(`/api/complaints/${resolvedParams.id}`, {
           credentials: "include",
+          cache: "no-store"
         })
 
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error('Complaint not found')
+            setError('Complaint not found')
+            return
           }
           if (response.status === 403) {
-            throw new Error('Access denied - insufficient permissions')
+            setError('Access denied - insufficient permissions')
+            return
           }
           if (response.status === 401) {
-            throw new Error('Unauthorized - please log in')
+            setError('Unauthorized - please log in')
+            return
           }
           throw new Error(`Failed to fetch complaint: ${response.status}`)
         }
@@ -100,27 +157,33 @@ export default function ComplaintDetailPage({
         const data = await response.json()
         const complaintData = data.complaint || data
         
+        // VALIDATE COMPLAINT DATA
+        if (!complaintData || !complaintData.student || !complaintData.student.fullName) {
+          setError('Invalid complaint data received')
+          return
+        }
+        
         setComplaint(complaintData)
         setStatus(complaintData.status)
 
       } catch (error) {
-        console.error('Error fetching complaint:', error)
-        setError(error instanceof Error ? error.message : 'Failed to fetch complaint')
+        console.error(' Error fetching complaint:', error)
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch complaint'
+        setError(errorMessage)
         toast({
           variant: "destructive",
           title: "Error",
-          description: error instanceof Error ? error.message : "Failed to load complaint details",
+          description: errorMessage,
         })
       } finally {
-        setIsLoading(false)
+        setIsLoadingComplaint(false)
       }
     }
 
-    if (resolvedParams.id) {
-      fetchComplaint()
-    }
-  }, [resolvedParams.id, toast])
+    fetchComplaint()
+  }, [user, resolvedParams.id, toast])
 
+  // UTILITY FUNCTIONS - KEEP AS IS
   const getStatusBadge = (status: ComplaintStatus) => {
     switch (status) {
       case "PENDING":
@@ -160,16 +223,21 @@ export default function ComplaintDetailPage({
   }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    } catch {
+      return 'Invalid date'
+    }
   }
 
+  // EVENT HANDLERS - KEEP AS IS
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -323,8 +391,8 @@ export default function ComplaintDetailPage({
     }
   }
 
-  // Loading state
-  if (isLoading) {
+  // LOADING STATE - Show while either user or complaint is loading
+  if (isLoadingUser || isLoadingComplaint) {
     return (
       <DashboardLayout userType="staff">
         <div className="p-6">
@@ -364,8 +432,8 @@ export default function ComplaintDetailPage({
     )
   }
 
-  // Error state
-  if (error || !complaint) {
+  // ERROR STATE
+  if (error || !complaint || !user) {
     return (
       <DashboardLayout userType="staff">
         <div className="p-6">
@@ -373,7 +441,9 @@ export default function ComplaintDetailPage({
             <CardContent className="flex flex-col items-center justify-center py-12">
               <div className="text-center">
                 <h3 className="text-lg font-semibold mb-2">Failed to Load Complaint</h3>
-                <p className="text-muted-foreground mb-4">{error || 'Complaint not found'}</p>
+                <p className="text-muted-foreground mb-4">
+                  {error || 'Complaint not found or missing data'}
+                </p>
                 <div className="flex gap-2">
                   <Button onClick={() => window.location.reload()}>Try Again</Button>
                   <Link href="/dashboard/staff">
@@ -388,13 +458,13 @@ export default function ComplaintDetailPage({
     )
   }
 
+  // MAIN RENDER - Only when both user and complaint data are available
   return (
     <DashboardLayout userType="staff">
       <div className="min-h-screen bg-gray-50 overflow-x-hidden">
         <div className="container mx-auto px-4 py-6 max-w-7xl">
-          {/* Header - Mobile-first with back button at top */}
+          {/* Header */}
           <div className="mb-6">
-            {/* Mobile: Back button at very top */}
             <div className="block sm:hidden mb-4">
               <Link href="/dashboard/staff">
                 <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
@@ -404,13 +474,11 @@ export default function ComplaintDetailPage({
               </Link>
             </div>
             
-            {/* Title and desktop back button */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h1 className="text-2xl font-bold">Complaint #{complaint.id.slice(-8)}</h1>
                 <p className="text-muted-foreground">Submitted on {formatDate(complaint.createdAt)}</p>
               </div>
-              {/* Desktop: Back button on the right */}
               <div className="hidden sm:block">
                 <Link href="/dashboard/staff">
                   <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-gray-100">
@@ -422,7 +490,6 @@ export default function ComplaintDetailPage({
             </div>
           </div>
 
-          {/* Main Grid - Fixed */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
@@ -543,7 +610,7 @@ export default function ComplaintDetailPage({
               </Card>
             </div>
 
-            {/* Sidebar - Fixed */}
+            {/* Sidebar */}
             <div className="space-y-4 lg:sticky lg:top-6">
               {/* Student Information */}
               <Card>
@@ -600,14 +667,12 @@ export default function ComplaintDetailPage({
                     Contact Student
                   </Button>
                   
-                  {/* Enhanced Phone Button - Always show but handle missing phone */}
                   <Button 
                     className="w-full justify-start" 
                     variant="outline"
                     disabled={!complaint.student.phoneNumber}
                     onClick={() => {
                       if (complaint.student.phoneNumber) {
-                        console.log("📞 Calling:", complaint.student.phoneNumber)
                         window.location.href = `tel:${complaint.student.phoneNumber}`
                       } else {
                         toast({
@@ -620,7 +685,7 @@ export default function ComplaintDetailPage({
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     {complaint.student.phoneNumber ? 
-                      `Call Student (${complaint.student.phoneNumber})` : 
+                      `Call Student` : 
                       "No Phone Available"
                     }
                   </Button>
@@ -685,7 +750,6 @@ export default function ComplaintDetailPage({
             </div>
           </div>
 
-          {/* Add bottom spacing */}
           <div className="h-8"></div>
         </div>
       </div>

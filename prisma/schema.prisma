@@ -51,6 +51,13 @@ enum UserStatus {
   SUSPENDED
 }
 
+enum NotificationType {
+  NEW_COMPLAINT
+  COMPLAINT_UPDATE
+  STATUS_CHANGE
+  ASSIGNMENT
+}
+
 model User {
   id                   String                 @id @default(cuid())
   email                String                 @unique
@@ -77,6 +84,8 @@ model User {
   complaintUpdates     ComplaintUpdate[]
   notificationPreference NotificationPreference?
   statusChanges        ComplaintStatusLog[]
+  notifications         Notification[]
+  triggeredNotifications Notification[]         @relation("NotificationTriggeredBy")
 
   @@index([email])
   @@index([studentId])
@@ -110,6 +119,7 @@ model Complaint {
   attachments   ComplaintAttachment[]
   feedback      ComplaintFeedback?
   statusLogs    ComplaintStatusLog[]
+  notifications Notification[]
 
   @@index([studentId])
   @@index([assignedToId])
@@ -122,6 +132,8 @@ model Complaint {
 model ComplaintUpdate {
   id            String     @id @default(cuid())
   message       String
+  isRead        Boolean    @default(false) // NEW: Track if notification is read
+
   
   // Timestamps
   createdAt     DateTime   @default(now())
@@ -192,4 +204,31 @@ model NotificationPreference {
   
   // Timestamps
   updatedAt     DateTime  @updatedAt
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  type        NotificationType
+  title       String
+  message     String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  userId      String   // Who receives the notification
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Optional reference to complaint
+  complaintId String?
+  complaint   Complaint? @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  
+  // Who triggered the notification (student/staff)
+  triggeredById String?
+  triggeredBy   User?   @relation("NotificationTriggeredBy", fields: [triggeredById], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([isRead])
+  @@index([type])
+  @@index([createdAt])
+  @@map("notifications")
 }

@@ -18,12 +18,12 @@ export async function GET(req: NextRequest) {
     const role = url.searchParams.get("role")
     const block = url.searchParams.get("block")
 
-    console.log("🔍 API: Query params - role:", role, "block:", block)
+    console.log("API: Query params - role:", role, "block:", block)
 
     let users = []
 
     if (role === "student") {
-      console.log("🔍 API: Fetching students from Prisma database...")
+      console.log("API: Fetching students from Prisma database...")
       
       // Use Prisma to get real students from database
       users = await prisma.user.findMany({
@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
 
     // Filter by hostel block if provided
     if (block) {
-      console.log("🔍 API: Filtering by block:", block)
+      console.log("API: Filtering by block:", block)
       users = users.filter((u) => u.hostelBlock === block)
       console.log(" API: After block filter:", users.length, "users")
     }

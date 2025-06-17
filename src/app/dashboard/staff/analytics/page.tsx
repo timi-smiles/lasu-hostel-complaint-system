@@ -84,7 +84,7 @@ export default function AnalyticsPage() {
         setLoading(true)
         setError(null)
 
-        console.log("🔍 Analytics: Fetching data for time range:", timeRange)
+        console.log("Analytics: Fetching data for time range:", timeRange)
 
         const response = await fetch(`/api/staff/analytics?timeRange=${timeRange}`, {
           credentials: "include",

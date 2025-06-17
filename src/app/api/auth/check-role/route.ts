@@ -9,7 +9,7 @@ export async function GET() {
     const cookieStore = await cookies()
     const userId = cookieStore.get("userId")?.value
 
-    console.log("🔍 Role Check: Checking authentication for userId:", userId)
+    console.log("Role Check: Checking authentication for userId:", userId)
 
     if (!userId) {
       console.log(" Role Check: No user session found")

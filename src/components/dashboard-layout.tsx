@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -30,6 +29,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Logo } from "./ui/Logo"
+import NotificationBell from "@/components/ui/notification-bell"
+import StaffNotificationBell from "@/components/ui/staff-notification-bell"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -48,15 +49,18 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [userData, setUserData] = useState<UserData | null>(null)
+  const [isLoading, setIsLoading] = useState(true) // ADD LOADING STATE
 
-  // Single useEffect that handles both auth check and user data fetching
+  // IMPROVED useEffect with loading state
   useEffect(() => {
     const verifyDashboardAccessAndFetchUser = async () => {
       try {
-        console.log("🔍 DashboardLayout: Verifying access and fetching user data")
+        setIsLoading(true) // Set loading to true
+        console.log("DashboardLayout: Verifying access and fetching user data")
 
         const response = await fetch("/api/auth/check-role", {
           credentials: "include",
+          cache: "no-store", // Prevent caching
         })
 
         if (!response.ok) {
@@ -66,41 +70,96 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
         }
 
         const data = await response.json()
-        console.log(" DashboardLayout: Auth check successful -", data.user.fullName, "Role:", data.user.role)
+        
+        // VALIDATE DATA BEFORE USING
+        if (!data.user || !data.user.fullName || !data.user.role) {
+          console.error(" Incomplete user data received:", data.user)
+          router.push("/login")
+          return
+        }
+
+        console.log("DashboardLayout: Auth check successful -", data.user.fullName, "Role:", data.user.role)
 
         // Check if user is on correct dashboard type
         if (userType === "student" && data.user.role !== "STUDENT") {
-          console.log(` Student dashboard accessed by ${data.user.role} - redirecting to staff dashboard`)
-          router.push(data.paths?.dashboard || "/dashboard/staff")
+          console.log(`🔄 Student dashboard accessed by ${data.user.role} - redirecting to staff dashboard`)
+          router.push("/dashboard/staff")
           return
         }
 
         if (userType === "staff" && !["STAFF", "ADMIN"].includes(data.user.role)) {
-          console.log(` Staff dashboard accessed by ${data.user.role} - redirecting to student dashboard`)
-          router.push(data.paths?.dashboard || "/dashboard/student")
+          console.log(`🔄 Staff dashboard accessed by ${data.user.role} - redirecting to student dashboard`)
+          router.push("/dashboard/student")
           return
         }
 
-        //  User is on correct dashboard, set user data
-        console.log(" DashboardLayout: User authorized for", userType, "dashboard")
+        // User is on correct dashboard, set user data
+        console.log("DashboardLayout: User authorized for", userType, "dashboard")
         setUserData(data.user)
       } catch (error) {
         console.error(" DashboardLayout: Access verification failed:", error)
         router.push("/login")
+      } finally {
+        setIsLoading(false) // Always set loading to false
       }
     }
 
     verifyDashboardAccessAndFetchUser()
   }, [userType, router])
 
-  // Generate initials from full name
-  const getInitials = (fullName: string) => {
-    return fullName
-      .split(" ")
-      .slice(0, 2) // Take only first two names
-      .map((name) => name[0])
-      .join("")
-      .toUpperCase()
+  // IMPROVED getInitials function with null checks
+  const getInitials = (fullName: string | undefined | null): string => {
+    if (!fullName || typeof fullName !== 'string') {
+      return "?" // Return question mark instead of processing undefined
+    }
+    
+    const names = fullName.trim().split(" ")
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase()
+    }
+    return names[0][0]?.toUpperCase() || "?"
+  }
+
+  // ADD LOADING COMPONENT
+  if (isLoading) {
+    return (
+      <div className="flex h-screen bg-gray-100">
+        {/* Loading Sidebar */}
+        <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200">
+          <div className="flex items-center justify-between p-4">
+            <div className="w-8 h-8 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+          <nav className="flex-1 px-4 space-y-1">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-12 bg-gray-200 rounded-md animate-pulse"></div>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Loading Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <header className="bg-white border-b border-gray-200 flex items-center justify-between p-4 md:p-6">
+            <div className="w-8 h-8 bg-gray-200 rounded animate-pulse md:hidden"></div>
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+            </div>
+          </header>
+          <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
+            <div className="space-y-4">
+              <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-64 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
+
+  // RENDER ONLY WHEN DATA IS LOADED
+  if (!userData) {
+    return null // Don't render anything if no user data
   }
 
   const studentNavItems = [
@@ -157,17 +216,21 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
 
   const handleLogout = async () => {
     try {
+      setIsLoading(true) // Show loading during logout
       const res = await fetch("/api/auth/logout", {
         method: "POST",
+        credentials: "include", // Include credentials
       })
 
       if (res.ok) {
-        router.push("/") // or "/login", depending on your app
+        router.push("/login")
       } else {
         console.error("Logout failed")
       }
     } catch (err) {
       console.error("Logout error:", err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -176,7 +239,7 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
       {/* Sidebar for desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200">
         <div className="flex items-center justify-between p-4">
-          <Logo className=" w-8 h-8" />
+          <Logo className="w-8 h-8" />
           <h2 className="text-2xl font-bold text-gray-900">Complaint System</h2>
         </div>
 
@@ -196,10 +259,10 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
         </nav>
 
         <div className="p-4 border-t border-gray-200">
-            <Button onClick={handleLogout} variant="outline" className="w-full justify-start" size="sm">
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+          <Button onClick={handleLogout} variant="outline" className="w-full justify-start" size="sm">
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </aside>
 
@@ -236,54 +299,63 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
                   ))}
                 </nav>
                 <div className="p-4 border-t border-gray-200">
-                    <Button onClick={handleLogout} variant="outline" className="w-full justify-start" size="sm">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </Button>
+                  <Button onClick={handleLogout} variant="outline" className="w-full justify-start" size="sm">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-            </Button>
-
+          <div className="flex items-center gap-4">
+            {/* NOTIFICATION BELLS - Only render when userData exists */}
+            {userType === "student" && userData && (
+              <NotificationBell userId={userData.id} />
+            )}
+            
+            {userType === "staff" && userData && (
+              <StaffNotificationBell userId={userData.id} />
+            )}
+            
+            {/* IMPROVED AVATAR DROPDOWN */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2">
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                    <AvatarFallback>
-                      {userData?.fullName ? getInitials(userData.fullName) : userType === "student" ? "" : ""}
+                    <AvatarImage 
+                      src="/placeholder.svg?height=32&width=32" 
+                      alt={userData.fullName} 
+                    />
+                    <AvatarFallback className="text-sm font-medium">
+                      {getInitials(userData.fullName)}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium">
-                      {userData?.fullName || (userType === "student" ? "Student" : "Admin")}
-                    </p>
-                    <p className="text-xs text-gray-500 capitalize">{userType}</p>
-                  </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {userData.fullName}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {userData.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <Link href={`/dashboard/${userType}/profile`}>
-                <DropdownMenuItem>
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
-                </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </DropdownMenuItem>
                 </Link>
                 <DropdownMenuSeparator />
-                
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
-                  </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
