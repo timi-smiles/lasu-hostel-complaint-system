@@ -15,11 +15,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // ✅ ADD: Get time range from query params
+    // ADD: Get time range from query params
     const url = new URL(request.url)
     const timeRange = url.searchParams.get('timeRange') || 'month'
     
-    // ✅ ADD: Calculate date range for filtering
+    // ADD: Calculate date range for filtering
     const getDateFilter = (range: string) => {
       const now = new Date()
       const startDate = new Date()
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
 
     const dateFilter = getDateFilter(timeRange)
 
-    // ✅ ENHANCED: More comprehensive analytics queries
+    // ENHANCED: More comprehensive analytics queries
     const [
       totalComplaints,
       complaintsByStatus,
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
         where: dateFilter
       }),
 
-      // ✅ ADD: Complaints by hostel block
+      // ADD: Complaints by hostel block
       prisma.complaint.groupBy({
         by: ['hostelBlock'],
         _count: {
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
         where: dateFilter
       }),
 
-      // ✅ ADD: Monthly trends (last 12 months for trending)
+      // ADD: Monthly trends (last 12 months for trending)
       prisma.complaint.findMany({
         where: {
           createdAt: {
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
         }
       }),
 
-      // ✅ ADD: Average resolution time for resolved complaints
+      // ADD: Average resolution time for resolved complaints
       prisma.complaint.findMany({
         where: {
           status: 'RESOLVED',
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
         }
       }),
 
-      // ✅ ADD: Staff performance metrics
+      // ADD: Staff performance metrics
       prisma.complaint.groupBy({
         by: ['assignedToId'],
         _count: {
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
         }
       }),
 
-      // ✅ ADD: Satisfaction rating (if you have feedback table)
+      // ADD: Satisfaction rating (if you have feedback table)
       prisma.complaintFeedback?.findMany({
         where: {
           complaint: dateFilter
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
       })
     ])
 
-    // ✅ ADD: Process monthly trends data
+    // ADD: Process monthly trends data
     const processMonthlyTrends = (complaints: any[]) => {
       const monthlyData: Record<string, any> = {}
       
@@ -219,7 +219,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // ✅ ADD: Calculate resolution time metrics
+    // ADD: Calculate resolution time metrics
     const calculateResolutionMetrics = (resolvedComplaints: any[]) => {
       if (resolvedComplaints.length === 0) {
         return {
@@ -260,7 +260,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // ✅ ADD: Calculate satisfaction metrics
+    // ADD: Calculate satisfaction metrics
     const calculateSatisfactionMetrics = (feedbackData: any[]) => {
       if (!feedbackData || feedbackData.length === 0) {
         return {
@@ -292,7 +292,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // ✅ ENHANCED: Return comprehensive analytics data
+    // ENHANCED: Return comprehensive analytics data
     const analyticsData = {
       // Basic metrics
       totalComplaints,
@@ -312,7 +312,7 @@ export async function GET(request: NextRequest) {
         percentage: Math.round((item._count.id / totalComplaints) * 100)
       })),
       
-      // ✅ NEW: Enhanced metrics
+      // NEW: Enhanced metrics
       complaintsByBlock: complaintsByBlock.map(item => ({
         block: item.hostelBlock,
         count: item._count.id
@@ -334,7 +334,7 @@ export async function GET(request: NextRequest) {
         timeAgo: getTimeAgo(complaint.createdAt)
       })),
       
-      // ✅ ADD: Meta information
+      // ADD: Meta information
       metadata: {
         timeRange,
         generatedAt: new Date().toISOString(),
@@ -361,7 +361,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// ✅ ADD: Helper function for time ago
+// ADD: Helper function for time ago
 function getTimeAgo(date: string | Date): string {
   const now = new Date()
   const created = new Date(date)

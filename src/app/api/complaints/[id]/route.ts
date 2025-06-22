@@ -85,7 +85,7 @@ export async function GET(
     console.error(" Error fetching complaint:", error)
     return NextResponse.json({ 
       error: "Failed to fetch complaint",
-      details: process.env.NODE_ENV !== "production" ? (error instanceof Error ? error.message : String(error)) : undefined
+      details: process.env.NEXT_PUBLIC_NODE_ENV !== "production" ? (error instanceof Error ? error.message : String(error)) : undefined
     }, { status: 500 })
   } finally {
     await prisma.$disconnect()

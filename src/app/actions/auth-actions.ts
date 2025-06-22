@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 
 // Define UserRole type if not imported from elsewhere
-type UserRole = "student" | "staff" | "admin";
+type UserRole = "STUDENT" | "STAFF" | "ADMIN";
 
 export async function login(formData: FormData) {
   try {
@@ -26,28 +26,25 @@ const user = await db.users.findByEmail(email)
       return { error: "Invalid account type" }
     }
 
-    const isPasswordValid = await db.users.verifyPassword(user, password)
+    const isPasswordValid = await db.users.verifyPassword(user.passwordHash, password)
 
     if (!isPasswordValid) {
       return { error: "Invalid credentials" }
     }
 
-    // Update last login
-    await db.users.update(user.id, { lastLogin: new Date().toISOString() })
-
     // Set cookie
     const cookieStore = await cookies()
       cookieStore.set('userId', user.id, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
     maxAge: 60 * 60 * 24 * 7,
     path: '/',
   });
 
     // Redirect based on user role
-    if (user.role === "student") {
+    if ((user.role as UserRole) === "STUDENT") {
       redirect("/dashboard/student")
-    } else if (user.role === "staff") {
+    } else if ((user.role as UserRole) === "STAFF") {
       redirect("/dashboard/staff")
     } else {
       redirect("/dashboard/admin")
@@ -80,7 +77,7 @@ export async function register(formData: FormData) {
     }
 
     // Validate student-specific fields
-    if (userType === "student" && (!studentId || !hostelBlock || !roomNumber)) {
+    if (userType === "STUDENT" && (!studentId || !hostelBlock || !roomNumber)) {
       return { error: "Student ID, hostel block, and room number are required for students" }
     }
 
@@ -96,9 +93,9 @@ export async function register(formData: FormData) {
       email,
       password,
       role: userType as UserRole,
-      studentId: userType === "student" ? studentId : undefined,
-      hostelBlock: userType === "student" ? hostelBlock : undefined,
-      roomNumber: userType === "student" ? roomNumber : undefined,
+      studentId: userType === "STUDENT" ? studentId : undefined,
+      hostelBlock: userType === "STUDENT" ? hostelBlock : undefined,
+      roomNumber: userType === "STUDENT" ? roomNumber : undefined,
     })
 
     return { success: true }

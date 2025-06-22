@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db"; // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db"; // FIXED: Use singleton instead!
 import { hash } from "argon2";
 
 export async function POST(req: Request) {
@@ -12,12 +12,12 @@ export async function POST(req: Request) {
       studentId,
       hostelBlock,
       roomNumber,
-      phoneNumber, // ✅ ADD: Phone number field
-      department, // ✅ ADD: Department for staff
+      phoneNumber, // ADD: Phone number field
+      department, // ADD: Department for staff
       userType,
     } = await req.json();
 
-    // ✅ ENHANCED: Better validation
+    // ENHANCED: Better validation
     if (!fullName?.trim() || !email?.trim() || !password || !confirmPassword || !userType) {
       return NextResponse.json(
         { error: "Full name, email, password, and user type are required" },
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ ENHANCED: Student-specific validation
+    // ENHANCED: Student-specific validation
     if (userType === "student") {
       if (!studentId?.trim() || !hostelBlock?.trim() || !roomNumber?.trim()) {
         return NextResponse.json(
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // ✅ ENHANCED: Staff-specific validation
+    // ENHANCED: Staff-specific validation
     if (userType === "staff" && !department?.trim()) {
       return NextResponse.json(
         { error: "Department is required for staff members" },
@@ -43,13 +43,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ ENHANCED: Email validation
+    // ENHANCED: Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json({ error: "Please provide a valid email address" }, { status: 400 });
     }
 
-    // ✅ ENHANCED: Password strength validation
+    // ENHANCED: Password strength validation
     if (password.length < 8) {
       return NextResponse.json({ error: "Password must be at least 8 characters long" }, { status: 400 });
     }
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Passwords do not match" }, { status: 400 });
     }
 
-    // ✅ ENHANCED: Check for existing users in a single query
+    // ENHANCED: Check for existing users in a single query
     const existingChecks = await Promise.all([
       // Check email
       prisma.user.findUnique({
@@ -85,14 +85,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Student ID already registered" }, { status: 409 });
     }
 
-    // ✅ ENHANCED: Hash password with proper options
+    // ENHANCED: Hash password with proper options
     const hashedPassword = await hash(password, {
       memoryCost: 2 ** 16, // 64 MB
       timeCost: 3, // 3 iterations
       parallelism: 1, // 1 thread
     });
 
-    // ✅ ENHANCED: Create user with transaction for data consistency
+    // ENHANCED: Create user with transaction for data consistency
     const newUser = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
           hostelBlock: userType === "student" ? hostelBlock.trim() : null,
           roomNumber: userType === "student" ? roomNumber.trim() : null,
           department: userType === "staff" ? department?.trim() : null,
-          status: "ACTIVE", // ✅ ADD: Set initial status
+          status: "ACTIVE", // ADD: Set initial status
         },
         select: {
           id: true,
@@ -119,15 +119,15 @@ export async function POST(req: Request) {
         },
       });
 
-      // ✅ ADD: Create welcome notification
+      // ADD: Create welcome notification
 
 
       return user;
     });
 
-    // ✅ ENHANCED: Log successful registration
+    // ENHANCED: Log successful registration
     console.log(
-      `✅ New ${userType} registered:`,
+      `New ${userType} registered:`,
       {
         id: newUser.id,
         email: newUser.email,
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
       }
     );
 
-    // ✅ ENHANCED: Return comprehensive user data
+    // ENHANCED: Return comprehensive user data
     return NextResponse.json(
       {
         success: true,
@@ -167,7 +167,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Registration error:", error);
 
-    // ✅ ENHANCED: Better error handling
+    // ENHANCED: Better error handling
     if (error instanceof Error) {
       if (error.message.includes("unique constraint")) {
         return NextResponse.json({ error: "User with this information already exists" }, { status: 409 });
@@ -188,7 +188,7 @@ export async function POST(req: Request) {
   }
 }
 
-// ✅ ADD: Input validation helper
+// ADD: Input validation helper
 function validateInput(data: any): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 

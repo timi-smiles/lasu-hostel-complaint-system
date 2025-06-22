@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db" // FIXED: Use singleton instead!
 import { getUserIdFromRequest } from "@/lib/auth"
+import { $Enums } from "@/generated/prisma"
 
 
 export async function GET(request: NextRequest) {
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // ✅ OPTIMIZED: Use Promise.all for parallel queries
+    // OPTIMIZED: Use Promise.all for parallel queries
     const [
       totalComplaints,
       complaintsByStatus,
@@ -362,6 +363,9 @@ export async function GET(request: NextRequest) {
       monthlyTrends: processMonthlyTrends(monthlyComplaints),
       weeklyComplaints: processWeeklyData(monthlyComplaints),
 
+      // ADD: Resolution time by category
+      resolutionTimeByCategory: calculateResolutionTimeByCategory(resolvedComplaintsWithLogs),
+
       // Staff performance
       staffPerformance: staffMetrics.sort((a, b) => b.resolved - a.resolved),
 
@@ -381,7 +385,7 @@ export async function GET(request: NextRequest) {
       performanceTrends: await getPerformanceTrends(timeRange === "all" ? undefined : startDate)
     }
 
-    console.log("✅ Analytics API: Successfully processed analytics data")
+    console.log("Analytics API: Successfully processed analytics data")
 
     return NextResponse.json({
       success: true,
@@ -666,4 +670,31 @@ async function getPerformanceTrends(startDate?: Date) {
     total: performance[month]?.total || 0,
     resolved: performance[month]?.resolved || 0
   }))
+}
+
+// ADD: Resolution time by category calculation
+function calculateResolutionTimeByCategory(resolvedComplaints: any[]): Array<{ name: string; avgDays: number; count: number }> {
+  const categoryStats: { [key: string]: { totalDays: number; count: number } } = {}
+
+  resolvedComplaints.forEach(complaint => {
+    if (complaint.statusLogs && complaint.statusLogs.length > 0) {
+      const category = complaint.category
+      const resolvedDate = new Date(complaint.statusLogs[0].createdAt)
+      const createdDate = new Date(complaint.createdAt)
+      const days = Math.abs(resolvedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
+      
+      if (!categoryStats[category]) {
+        categoryStats[category] = { totalDays: 0, count: 0 }
+      }
+      
+      categoryStats[category].totalDays += days
+      categoryStats[category].count++
+    }
+  })
+
+  return Object.entries(categoryStats).map(([category, stats]) => ({
+    name: formatCategoryName(category),
+    avgDays: stats.count > 0 ? Math.round((stats.totalDays / stats.count) * 10) / 10 : 0,
+    count: stats.count
+  })).filter(item => item.count > 0) // Only include categories with resolved complaints
 }

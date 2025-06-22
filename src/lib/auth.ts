@@ -71,7 +71,7 @@ export async function setJWTCookie(token: string) {
   
   cookieStore.set(JWT_CONFIG.COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NEXT_PUBLIC_NODE_ENV === "production",
     sameSite: "lax",
     maxAge: JWT_CONFIG.EXPIRES_IN,
     path: "/",

@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/ui/Logo"
 import { Menu, X } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -41,28 +42,32 @@ export default function Home() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-64 p-0">
-                <div className="flex flex-col h-full">
-                  {/* Mobile Menu Header - Remove the close button */}
-                  <div className="flex items-center p-4 border-b">
-                    <div className="flex items-center gap-2">
-                      <Logo className="w-6 h-6" />
-                      <h2 className="text-lg font-bold text-gray-900">Menu</h2>
-                    </div>
-                    {/* Remove this entire SheetClose section */}
+                {/* Keep: SheetHeader with accessible title and styled close button */}
+                <SheetHeader className="flex flex-row items-center justify-between p-4 border-b space-y-0">
+                  <div className="flex items-center gap-2">
+                    <Logo className="w-6 h-6" />
+                    <SheetTitle className="text-lg font-bold text-gray-900">Menu</SheetTitle>
                   </div>
+                  {/* The automatic close button will appear here due to flex layout */}
+                </SheetHeader>
 
+                <div className="flex flex-col h-full">
                   {/* Mobile Menu Content */}
                   <div className="flex flex-col gap-4 p-6">
-                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full justify-center">
-                        Login
-                      </Button>
-                    </Link>
-                    <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button className="w-full justify-center">
-                        Register
-                      </Button>
-                    </Link>
+                    <SheetClose asChild>
+                      <Link href="/login">
+                        <Button variant="outline" className="w-full justify-center">
+                          Login
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link href="/register">
+                        <Button className="w-full justify-center">
+                          Register
+                        </Button>
+                      </Link>
+                    </SheetClose>
                   </div>
 
                   {/* Mobile Menu Footer */}

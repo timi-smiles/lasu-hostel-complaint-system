@@ -1,4 +1,4 @@
-import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db" // FIXED: Use singleton instead!
 
 export class NotificationService {
   

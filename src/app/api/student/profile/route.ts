@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db" // FIXED: Use singleton instead!
 import { getUserIdFromRequest } from "@/lib/auth"
 
 

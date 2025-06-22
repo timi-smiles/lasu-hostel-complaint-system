@@ -1,6 +1,6 @@
 "use server"
 
-import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db" // FIXED: Use singleton instead!
 // ❌ REMOVE: import { prisma } from "@/lib/prisma"
 
 import { getCurrentUser } from "@/lib/auth"
@@ -23,7 +23,7 @@ export async function submitComplaint(formData: FormData) {
     const category = formData.get("category") as string
     const description = formData.get("description") as string
 
-    // ✅ ENHANCED: Better validation
+    // ENHANCED: Better validation
     if (!title?.trim() || !category?.trim() || !description?.trim()) {
       return { error: "All fields are required" }
     }
@@ -41,7 +41,7 @@ export async function submitComplaint(formData: FormData) {
       return { error: "Your profile is missing hostel information. Please update your profile." }
     }
 
-    // ✅ ENHANCED: Add priority detection based on category
+    // ENHANCED: Add priority detection based on category
     const getPriorityByCategory = (category: string): ComplaintPriority => {
       const urgentCategories = ['ELECTRICAL', 'PLUMBING', 'SECURITY']
       const highCategories = ['INTERNET', 'FURNITURE']
@@ -51,7 +51,7 @@ export async function submitComplaint(formData: FormData) {
       return ComplaintPriority.LOW
     }
 
-    // ✅ ENHANCED: Transaction for data consistency
+    // ENHANCED: Transaction for data consistency
     const result = await prisma.$transaction(async (tx) => {
       // Create complaint
       const newComplaint = await tx.complaint.create({
@@ -67,7 +67,7 @@ export async function submitComplaint(formData: FormData) {
         },
       })
 
-      // ✅ ADD: Create initial status log
+      // ADD: Create initial status log
       await tx.complaintStatusLog.create({
         data: {
           complaintId: newComplaint.id,
@@ -91,7 +91,7 @@ export async function submitComplaint(formData: FormData) {
   } catch (error) {
     console.error("Submit complaint error:", error)
     
-    // ✅ ENHANCED: Better error handling
+    // ENHANCED: Better error handling
     if (error instanceof Error) {
       if (error.message.includes('unique constraint')) {
         return { error: "A similar complaint already exists" }
@@ -117,7 +117,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
       return { error: "Students cannot update complaint status" }
     }
 
-    // ✅ ENHANCED: Validate inputs
+    // ENHANCED: Validate inputs
     if (!complaintId?.trim()) {
       return { error: "Invalid complaint ID" }
     }
@@ -126,7 +126,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
       return { error: "Status is required" }
     }
 
-    // ✅ ENHANCED: Check complaint exists and get current status
+    // ENHANCED: Check complaint exists and get current status
     const complaint = await prisma.complaint.findUnique({
       where: { id: complaintId },
       select: {
@@ -144,7 +144,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
     // Convert status string to enum
     const statusEnum = status.toUpperCase().replace("-", "_") as ComplaintStatus
 
-    // ✅ ENHANCED: Validate status transition
+    // ENHANCED: Validate status transition
     const validStatusTransitions: Record<ComplaintStatus, ComplaintStatus[]> = {
       [ComplaintStatus.PENDING]: [ComplaintStatus.IN_PROGRESS, ComplaintStatus.REJECTED],
       [ComplaintStatus.IN_PROGRESS]: [ComplaintStatus.RESOLVED, ComplaintStatus.PENDING],
@@ -156,7 +156,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
       return { error: `Cannot change status from ${complaint.status} to ${statusEnum}` }
     }
 
-    // ✅ ENHANCED: Use transaction for consistency
+    // ENHANCED: Use transaction for consistency
     const result = await prisma.$transaction(async (tx) => {
       // Update complaint status
       const updatedComplaint = await tx.complaint.update({
@@ -178,7 +178,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
           },
         })
       }
-      // ✅ ADD: Create status log
+      // ADD: Create status log
       await tx.complaintStatusLog.create({
         data: {
           complaintId,
@@ -191,7 +191,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
         console.log("Status log table not available")
       })
 
-      // ✅ ADD: Create notification
+      // ADD: Create notification
       await tx.notification.create({
         data: {
           userId: complaint.studentId,
@@ -207,7 +207,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
       return updatedComplaint
     })
 
-    // ✅ ENHANCED: More specific revalidation paths
+    // ENHANCED: More specific revalidation paths
     revalidatePath("/dashboard/staff")
     revalidatePath("/dashboard/staff/complaints")
     revalidatePath(`/dashboard/staff/complaints/${complaintId}`)
@@ -219,7 +219,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
   } catch (error) {
     console.error("Update complaint status error:", error)
     
-    // ✅ ENHANCED: Better error handling
+    // ENHANCED: Better error handling
     if (error instanceof Error) {
       if (error.message.includes('unique constraint')) {
         return { error: "Duplicate status update detected" }
@@ -236,7 +236,7 @@ export async function updateComplaintStatus(complaintId: string, status: string,
   }
 }
 
-// ✅ ADD: New action for assigning complaints to staff
+// ADD: New action for assigning complaints to staff
 export async function assignComplaint(complaintId: string, staffId: string) {
   try {
     const user = await getCurrentUser()
@@ -290,7 +290,7 @@ export async function assignComplaint(complaintId: string, staffId: string) {
   }
 }
 
-// ✅ ADD: New action for bulk status updates
+// ADD: New action for bulk status updates
 export async function bulkUpdateStatus(complaintIds: string[], status: string, message?: string) {
   try {
     const user = await getCurrentUser()

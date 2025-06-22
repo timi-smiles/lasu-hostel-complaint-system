@@ -391,7 +391,7 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    {analyticsData.complaintsByCategory.length > 0 ? (
+                    {analyticsData?.complaintsByCategory?.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -535,7 +535,7 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    {analyticsData.resolutionTimeByCategory.length > 0 ? (
+                    {analyticsData?.resolutionTimeByCategory?.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={analyticsData.resolutionTimeByCategory} layout="vertical" barSize={20}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -567,7 +567,7 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    {analyticsData.monthlyTrends.length > 0 ? (
+                    {analyticsData?.monthlyTrends?.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={analyticsData.monthlyTrends}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -630,7 +630,7 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    {analyticsData.monthlyTrends.length > 0 ? (
+                    {analyticsData?.monthlyTrends?.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={analyticsData.monthlyTrends}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -682,43 +682,49 @@ export default function AnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
-                  {analyticsData.staffPerformance.map((staff, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">{staff.name}</div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          {staff.resolved} Resolved
-                        </Badge>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Avg. Resolution Time</span>
-                            <span>{staff.avgResolutionTime} days</span>
-                          </div>
-                          <Progress
-                            value={100 - (staff.avgResolutionTime / 5) * 100}
-                            className="h-2"
-                              style={{ "--progress-bar": "rgb(59 130 246)" } as React.CSSProperties} // bg-blue-500
-                          />
+                  {analyticsData?.staffPerformance?.length > 0 ? (
+                    analyticsData.staffPerformance.map((staff, index) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium">{staff.name}</div>
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                            {staff.resolved} Resolved
+                          </Badge>
                         </div>
 
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Satisfaction Rate</span>
-                            <span>{staff.satisfaction}%</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">Avg. Resolution Time</span>
+                              <span>{staff.avgResolutionTime} days</span>
+                            </div>
+                            <Progress
+                              value={100 - (staff.avgResolutionTime / 5) * 100}
+                              className="h-2"
+                                style={{ "--progress-bar": "rgb(59 130 246)" } as React.CSSProperties} // bg-blue-500
+                            />
                           </div>
-                          <Progress value={staff.satisfaction} 
-                          className="h-2" 
-                          style={{ "--progress-bar": "rgb(34 197 94)" } as React.CSSProperties } // Tailwind's green-500
-                          />
-                        </div>
-                      </div>
 
-                      {index < analyticsData.staffPerformance.length - 1 && <Separator className="my-4" />}
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">Satisfaction Rate</span>
+                              <span>{staff.satisfaction}%</span>
+                            </div>
+                            <Progress value={staff.satisfaction} 
+                            className="h-2" 
+                            style={{ "--progress-bar": "rgb(34 197 94)" } as React.CSSProperties } // Tailwind's green-500
+                            />
+                          </div>
+                        </div>
+
+                        {index < analyticsData.staffPerformance.length - 1 && <Separator className="my-4" />}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                      No staff performance data available
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>

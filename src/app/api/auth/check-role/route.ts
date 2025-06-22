@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db" // FIXED: Use singleton instead!
 import { getUserIdFromRequest } from "@/lib/auth"
 
 export async function GET() {
@@ -26,7 +26,7 @@ export async function GET() {
         role: true,
         status: true,
         fullName: true,
-        // ✅ ADD: Additional user data for better UX
+        // ADD: Additional user data for better UX
         hostelBlock: true,
         roomNumber: true,
         department: true
@@ -41,7 +41,7 @@ export async function GET() {
       }, { status: 404 })
     }
 
-    // ✅ ENHANCED: Check user status
+    // ENHANCED: Check user status
     if (user.status !== 'ACTIVE') {
       console.log("Role Check: User account is not active -", user.status)
       return NextResponse.json({ 
@@ -52,7 +52,7 @@ export async function GET() {
 
     console.log("Role Check: User authenticated -", user.fullName, "Role:", user.role)
 
-    // ✅ ENHANCED: Better role-based paths
+    // ENHANCED: Better role-based paths
     const redirectPaths = {
       STUDENT: {
         dashboard: "/dashboard/student",
@@ -81,7 +81,7 @@ export async function GET() {
       }
     }
 
-    // ✅ ADD: Get user's recent activity for dashboard
+    // ADD: Get user's recent activity for dashboard
     const recentActivity = await prisma.complaint.findMany({
       where: user.role === 'STUDENT' 
         ? { studentId: user.id }
@@ -109,11 +109,11 @@ export async function GET() {
         department: user.department
       },
       paths: redirectPaths[user.role as keyof typeof redirectPaths] || redirectPaths.STUDENT,
-      recentActivity, // ✅ ADD: For dashboard quick access
-      timestamp: new Date().toISOString() // ✅ ADD: For cache debugging
+      recentActivity, // ADD: For dashboard quick access
+      timestamp: new Date().toISOString() // ADD: For cache debugging
     }, {
       headers: {
-        // ✅ ADD: Cache control for auth checks
+        // ADD: Cache control for auth checks
         'Cache-Control': 'private, no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'

@@ -31,14 +31,14 @@ import {
   Sheet, 
   SheetContent, 
   SheetTrigger,
-  SheetTitle,  // ✅ ADD THIS
-  SheetHeader   // ✅ ADD THIS
+  SheetTitle,  // ADD THIS
+  SheetHeader   // ADD THIS
 } from "@/components/ui/sheet"
 import { Logo } from "./ui/Logo"
 import NotificationBell from "@/components/ui/notification-bell"
 import StaffNotificationBell from "@/components/ui/staff-notification-bell"
 
-// ✅ ADD THE ICON WRAPPER COMPONENT
+// ADD THE ICON WRAPPER COMPONENT
 interface IconWrapperProps {
   children: React.ReactNode
   className?: string
@@ -88,7 +88,7 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
   const [isLoading, setIsLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
 
-  // ✅ ADD MOUNTED STATE
+  // ADD MOUNTED STATE
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -160,7 +160,7 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
     return names[0][0]?.toUpperCase() || "?"
   }
 
-  // ✅ DON'T RENDER UNTIL MOUNTED
+  // DON'T RENDER UNTIL MOUNTED
   if (!mounted) {
     return (
       <div className="flex h-screen bg-gray-100">
@@ -348,7 +348,7 @@ export default function DashboardLayout({ children, userType }: DashboardLayoutP
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
-                {/* ✅ ADD THIS: Proper DialogTitle for accessibility */}
+                {/* ADD THIS: Proper DialogTitle for accessibility */}
                 <SheetHeader className="sr-only">
                   <SheetTitle>Navigation Menu</SheetTitle>
                 </SheetHeader>

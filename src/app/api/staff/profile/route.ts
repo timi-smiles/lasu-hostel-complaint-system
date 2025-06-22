@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db" // FIXED: Use singleton instead!
 import { getUserIdFromRequest } from "@/lib/auth"
 
 // GET - Fetch Staff Profile
@@ -33,7 +33,7 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    // ✅ STRICT staff-only protection
+    // STRICT staff-only protection
     if (user.role !== "STAFF" && user.role !== "ADMIN") {
       console.log(`❌ Staff Profile: Access denied for role: ${user.role}`)
       return NextResponse.json({ 
@@ -43,7 +43,7 @@ export async function GET() {
       }, { status: 403 })
     }
 
-    // ✅ ADD: Get additional staff metrics for enhanced profile
+    // ADD: Get additional staff metrics for enhanced profile
     const [assignedComplaints, resolvedComplaints, averageRating] = await Promise.all([
       // Total complaints assigned to this staff
       prisma.complaint.count({
@@ -71,13 +71,13 @@ export async function GET() {
       }).catch(() => ({ _avg: { rating: null } })) // Handle if feedback table doesn't exist
     ])
 
-    console.log("✅ Staff Profile API: Successfully fetched for:", user.fullName)
+    console.log("Staff Profile API: Successfully fetched for:", user.fullName)
 
     return NextResponse.json({
       success: true,
       user: {
         ...user,
-        // ✅ ADD: Staff performance metrics
+        // ADD: Staff performance metrics
         metrics: {
           totalAssigned: assignedComplaints,
           totalResolved: resolvedComplaints,
@@ -95,7 +95,7 @@ export async function GET() {
       timestamp: new Date().toISOString()
     }, {
       headers: {
-        // ✅ ADD: Cache for profile data (can be cached briefly)
+        // ADD: Cache for profile data (can be cached briefly)
         'Cache-Control': 'private, max-age=300' // 5 minutes cache
       }
     })
@@ -138,7 +138,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { fullName, phone, phoneNumber, department } = body
 
-    // ✅ ENHANCED: Input validation
+    // ENHANCED: Input validation
     if (!fullName?.trim()) {
       return NextResponse.json({ 
         error: "Full name is required" 
@@ -157,7 +157,7 @@ export async function PUT(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // ✅ ENHANCED: Use transaction for profile update with audit log
+    // ENHANCED: Use transaction for profile update with audit log
     const result = await prisma.$transaction(async (tx) => {
       // Update user profile
       const updatedUser = await tx.user.update({
@@ -182,14 +182,14 @@ export async function PUT(request: NextRequest) {
         },
       })
 
-      // ✅ REMOVED: Audit log functionality (table doesn't exist in schema)
+      // REMOVED: Audit log functionality (table doesn't exist in schema)
       // Can be re-enabled after adding auditLog model to Prisma schema
       console.log("Profile updated for user:", userId)
 
       return updatedUser
     })
 
-    console.log("✅ Staff Profile API: Successfully updated for:", result.fullName)
+    console.log("Staff Profile API: Successfully updated for:", result.fullName)
 
     return NextResponse.json({
       success: true,
@@ -198,14 +198,14 @@ export async function PUT(request: NextRequest) {
       timestamp: new Date().toISOString()
     }, {
       headers: {
-        // ✅ Clear cache after update
+        // Clear cache after update
         'Cache-Control': 'no-cache, no-store, must-revalidate'
       }
     })
   } catch (error) {
     console.error("❌ Staff Profile Update Error:", error)
     
-    // ✅ ENHANCED: Better error handling
+    // ENHANCED: Better error handling
     if (error instanceof Error) {
       if (error.message.includes('unique constraint')) {
         return NextResponse.json({ 
@@ -227,7 +227,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// ✅ ADD: Password change endpoint for staff
+// ADD: Password change endpoint for staff
 export async function PATCH(request: NextRequest) {
   try {
     const cookieStore = await cookies()
@@ -296,7 +296,7 @@ export async function PATCH(request: NextRequest) {
       }
     })
 
-    console.log("✅ Staff password updated for:", user.fullName)
+    console.log("Staff password updated for:", user.fullName)
 
     return NextResponse.json({
       success: true,

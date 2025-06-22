@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import prisma from "@/lib/db" // FIXED: Use singleton instead!
 import { getUserIdFromRequest } from "@/lib/auth"
 
 export async function GET() {
@@ -21,7 +21,7 @@ export async function GET() {
       return NextResponse.json({ error: "Access denied" }, { status: 403 })
     }
 
-    // ✅ ENHANCED: Get notifications with error handling
+    // ENHANCED: Get notifications with error handling
     const notifications = await prisma.notification.findMany({
       where: {
         userId: userId,
@@ -83,10 +83,10 @@ export async function GET() {
         } : null
       })),
       unreadCount,
-      timestamp: new Date().toISOString() // ✅ ADD: For cache debugging
+      timestamp: new Date().toISOString() // ADD: For cache debugging
     }, {
       headers: {
-        // ✅ ADD: Proper cache headers for real-time data
+        // ADD: Proper cache headers for real-time data
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
@@ -114,7 +114,7 @@ export async function PUT(request: Request) {
     const body = await request.json()
     const { notificationIds } = body
 
-    // ✅ ENHANCED: Better validation
+    // ENHANCED: Better validation
     if (notificationIds && Array.isArray(notificationIds) && notificationIds.length > 0) {
       // Validate all IDs are strings
       const validIds = notificationIds.filter(id => typeof id === 'string' && id.trim().length > 0)
@@ -173,7 +173,7 @@ export async function PUT(request: Request) {
   }
 }
 
-// ✅ ADD: Delete notifications endpoint
+// ADD: Delete notifications endpoint
 export async function DELETE(request: Request) {
   try {
     const cookieStore = await cookies()
