@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import DashboardLayout from "@/components/dashboard-layout"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/hooks/use-toast"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 // Define types based on your Prisma schema
 interface ComplaintUpdate {
@@ -36,10 +37,21 @@ interface Complaint {
   updates: ComplaintUpdate[]
 }
 
+interface PaginationData {
+  page: number
+  limit: number
+  totalCount: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+}
+
 export default function StudentDashboard() {
   const [complaints, setComplaints] = useState<Complaint[]>([])
+  const [pagination, setPagination] = useState<PaginationData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -58,13 +70,13 @@ export default function StudentDashboard() {
       window.history.replaceState({}, document.title, window.location.pathname)
     }
 
-    fetchComplaints()
-  }, [])
+    fetchComplaints(currentPage)
+  }, [currentPage])
 
-  const fetchComplaints = async () => {
+  const fetchComplaints = async (page: number = 1) => {
     try {
       setLoading(true)
-      const response = await fetch("/api/complaints", {
+      const response = await fetch(`/api/complaints?page=${page}&limit=10`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -82,6 +94,7 @@ export default function StudentDashboard() {
 
       const data = await response.json()
       setComplaints(data.complaints || [])
+      setPagination(data.pagination)
     } catch (err) {
       console.error("Error fetching complaints:", err)
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -93,6 +106,10 @@ export default function StudentDashboard() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
   }
 
   const getStatusBadge = (status: string) => {
@@ -160,37 +177,28 @@ export default function StudentDashboard() {
             ))}
           </div>
 
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="all">All Complaints</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-              <TabsTrigger value="resolved">Resolved</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="all" className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Card key={i}>
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <Skeleton className="h-6 w-48 mb-2" />
-                        <Skeleton className="h-4 w-32" />
-                      </div>
-                      <Skeleton className="h-6 w-24" />
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <Skeleton className="h-6 w-48 mb-2" />
+                      <Skeleton className="h-4 w-32" />
                     </div>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-4 w-3/4" />
-                  </CardContent>
-                  <CardFooter>
-                    <Skeleton className="h-9 w-24" />
-                  </CardFooter>
-                </Card>
-              ))}
-            </TabsContent>
-          </Tabs>
+                    <Skeleton className="h-6 w-24" />
+                  </div>
+                </CardHeader>
+                <CardContent className="pb-2">
+                  <Skeleton className="h-4 w-full mb-2" />
+                  <Skeleton className="h-4 w-3/4" />
+                </CardContent>
+                <CardFooter>
+                  <Skeleton className="h-9 w-24" />
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -218,7 +226,7 @@ export default function StudentDashboard() {
                 className="mt-4"
                 onClick={() => {
                   setError(null)
-                  fetchComplaints()
+                  fetchComplaints(currentPage)
                 }}
               >
                 Try Again
@@ -256,7 +264,7 @@ export default function StudentDashboard() {
               <CardTitle className="text-lg text-white">Total Complaints</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-white">{complaints.length}</p>
+              <p className="text-3xl font-bold text-white">{pagination?.totalCount || 0}</p>
             </CardContent>
           </Card>
 
@@ -323,46 +331,96 @@ export default function StudentDashboard() {
                 </CardContent>
               </Card>
             ) : (
-              complaints.map((complaint) => (
-                <Card key={complaint.id}>
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle>{complaint.title}</CardTitle>
-                        <CardDescription>
-                          {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.createdAt)}
-                        </CardDescription>
-                      </div>
-                      {getStatusBadge(complaint.status)}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <p className="text-gray-700">{complaint.description}</p>
-
-                    {complaint.updates.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="font-semibold mb-2">Updates:</h4>
-                        <div className="space-y-2">
-                          {complaint.updates.map((update) => (
-                            <div key={update.id} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
-                              <p className="text-gray-500">{new Date(update.createdAt).toLocaleString()}</p>
-                              <p>{update.message}</p>
-                              {update.staff && <p className="text-xs text-gray-500">- {update.staff.fullName}</p>}
-                            </div>
-                          ))}
+              <>
+                {complaints.map((complaint) => (
+                  <Card key={complaint.id}>
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle>{complaint.title}</CardTitle>
+                          <CardDescription>
+                            {complaint.category} • Complaint #{complaint.id} • {formatDate(complaint.createdAt)}
+                          </CardDescription>
                         </div>
+                        {getStatusBadge(complaint.status)}
                       </div>
-                    )}
-                  </CardContent>
-                  <CardFooter>
-                    <Link href={`/dashboard/student/complaints/${complaint.id}`}>
-                      <Button variant="outline" size="sm">
-                        View Details
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <p className="text-gray-700">{complaint.description}</p>
+
+                      {complaint.updates.length > 0 && (
+                        <div className="mt-4">
+                          <h4 className="font-semibold mb-2">Updates:</h4>
+                          <div className="space-y-2">
+                            {complaint.updates.map((update) => (
+                              <div key={update.id} className="text-sm border-l-2 border-gray-200 pl-3 py-1">
+                                <p className="text-gray-500">{new Date(update.createdAt).toLocaleString()}</p>
+                                <p>{update.message}</p>
+                                {update.staff && <p className="text-xs text-gray-500">- {update.staff.fullName}</p>}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                    <CardFooter>
+                      <Link href={`/dashboard/student/complaints/${complaint.id}`}>
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                ))}
+
+                {/* ADD PAGINATION CONTROLS */}
+                {pagination && pagination.totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-6">
+                    <div className="text-sm text-gray-600">
+                      Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.totalCount)} of {pagination.totalCount} complaints
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(pagination.page - 1)}
+                        disabled={!pagination.hasPrev}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
                       </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              ))
+
+                      <div className="flex items-center space-x-1">
+                        {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                          const pageNum = i + 1
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={pageNum === pagination.page ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => handlePageChange(pageNum)}
+                              className="w-8 h-8"
+                            >
+                              {pageNum}
+                            </Button>
+                          )
+                        })}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(pagination.page + 1)}
+                        disabled={!pagination.hasNext}
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </TabsContent>
 

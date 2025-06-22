@@ -1,199 +1,144 @@
 import { cookies } from "next/headers"
-import { sign, verify } from "jsonwebtoken"
-import { NextRequest } from "next/server"
+import { verify, sign } from "jsonwebtoken"
 import prisma from "./db"
+import { getJWTSecret, JWT_CONFIG } from "./jwt-config"
 
+// JWT payload interface
+interface JWTPayload {
+  userId: string
+  email: string
+  role: string
+  exp: number
+  iat?: number
+}
+
+// GET CURRENT USER - JWT ONLY
 export async function getCurrentUser() {
   try {
     const cookieStore = await cookies()
-    const token = cookieStore.get("auth-token") || cookieStore.get("userId")
+    const token = cookieStore.get(JWT_CONFIG.COOKIE_NAME)?.value
 
     if (!token) {
       return null
     }
 
-    let userId: string
+    // Verify JWT token
+    const decoded = verify(token, getJWTSecret()) as JWTPayload
 
-    if (token.value.includes('.')) {
-      const decoded = verify(token.value, process.env.JWT_SECRET!) as { userId: string }
-      userId = decoded.userId
-    } else {
-      userId = token.value
+    // Check if token is expired (extra safety check)
+    if (decoded.exp && decoded.exp < Math.floor(Date.now() / 1000)) {
+      return null
     }
 
+    // Get fresh user data from database
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: decoded.userId },
       select: {
         id: true,
         email: true,
         fullName: true,
         role: true,
+        studentId: true,
         hostelBlock: true,
         roomNumber: true,
-        department: true,
-        studentId: true,
-        phone: true,        //  Add this
-        status: true,       //  Add this  
-        createdAt: true,    //  Add this
-        lastLogin: true     //  Add this
       }
     })
 
     return user
+
   } catch (error) {
-    console.error('Auth error:', error)
+    console.error('JWT Auth error:', error)
     return null
   }
 }
 
-/**
- * Require authentication middleware
- */
-export async function requireAuth(req: NextRequest) {
-  const user = await getCurrentUser()
-
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-  }
-
-  return user
-}
-
-/**
- * Require specific role middleware
- */
-export async function requireRole(req: NextRequest, roles: string[]) {
-  const user = await requireAuth(req)
-
-  if (user instanceof Response) {
-    return user
-  }
-
-  if (!roles.includes(user.role)) {
-    return new Response(JSON.stringify({ error: "Forbidden" }), {
-      status: 403,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-  }
-
-  return user
-}
-
-/**
- * Hash a password using Argon2
- */
-export async function hashPassword(password: string): Promise<string> {
-  const argon2 = require('argon2');
-  try {
-    return await argon2.hash(password, {
-      type: argon2.argon2id,
-      memoryCost: 2**16,
-      timeCost: 3,
-      parallelism: 1,
-    });
-  } catch (error) {
-    console.error("Password hashing error:", error);
-    throw new Error("Failed to hash password");
-  }
-}
-
-/**
- * Verify a password against a hash using Argon2
- */
-export async function verifyPassword(hashedPassword: string, plainPassword: string): Promise<boolean> {
-  const argon2 = require('argon2');
-  try {
-    return await argon2.verify(hashedPassword, plainPassword);
-  } catch (error) {
-    console.error("Password verification error:", error);
-    return false;
-  }
-}
-
-/**
- * Login a user and set cookies
- */
-export async function loginUser(email: string, password: string) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { 
-        email,
-        status: "ACTIVE",
-      },
-    });
-
-    if (!user) {
-      return null;
-    }
-
-    const passwordValid = await verifyPassword(user.passwordHash, password);
-    if (!passwordValid) {
-      return null;
-    }
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLogin: new Date() },
-    });
-
-    // Set the auth cookie after successful login
-    await setAuthCookies(user.id);
-
-    const { passwordHash, ...userData } = user;
-    return userData;
-  } catch (error) {
-    console.error("Login error:", error);
-    return null;
-  }
-}
-
-/**
- * Set authentication cookies - using JWT token approach
- */
-export async function setAuthCookies(userId: string) {
-  const cookieStore = await cookies();
-  
-  // Create a JWT token
-  const token = sign({ userId }, process.env.JWT_SECRET!, { expiresIn: '7d' });
-  
-  cookieStore.set(
-    "auth-token", // Match what getCurrentUser() is looking for
-    token,
+// CREATE JWT TOKEN
+export function createJWTToken(user: { id: string; email: string; role: string }): string {
+  return sign(
     {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-    }
-  );
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      exp: Math.floor(Date.now() / 1000) + JWT_CONFIG.EXPIRES_IN
+    },
+    getJWTSecret()
+  )
 }
 
-/**
- * Clear authentication cookies
- */
-export async function clearAuthCookies() {
-  const cookieStore = await cookies();
-  cookieStore.set(
-    "auth-token",
-    "",
-    {
-      path: "/",
-      expires: new Date(0),
-    }
-  );
+// SET JWT COOKIE
+export async function setJWTCookie(token: string) {
+  const cookieStore = await cookies()
+  
+  cookieStore.set(JWT_CONFIG.COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: JWT_CONFIG.EXPIRES_IN,
+    path: "/",
+  })
+
+  // 🗑️ CLEAN UP OLD COOKIES
+  cookieStore.delete("userId")
 }
 
-/**
- * Generate a JWT token
- */
-export function generateToken(payload: any): string {
-  return sign(payload, process.env.JWT_SECRET!, { expiresIn: '7d' });
+// CLEAR JWT COOKIE
+export async function clearJWTCookie() {
+  const cookieStore = await cookies()
+  
+  cookieStore.delete(JWT_CONFIG.COOKIE_NAME)
+  
+  // 🗑️ CLEAN UP OLD COOKIES
+  cookieStore.delete("userId")
+}
+
+// VERIFY JWT TOKEN
+export function verifyJWTToken(token: string): JWTPayload | null {
+  try {
+    const decoded = verify(token, getJWTSecret()) as JWTPayload
+    
+    // Check expiration
+    if (decoded.exp < Math.floor(Date.now() / 1000)) {
+      return null
+    }
+    
+    return decoded
+  } catch (error) {
+    return null
+  }
+}
+
+// GET USER ID FROM JWT (for API routes)
+export async function getUserIdFromRequest(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get(JWT_CONFIG.COOKIE_NAME)?.value
+
+    if (!token) {
+      return null
+    }
+
+    const decoded = verifyJWTToken(token)
+    return decoded?.userId || null
+
+  } catch (error) {
+    return null
+  }
+}
+
+// GET USER ROLE FROM JWT
+export async function getUserRoleFromRequest(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get(JWT_CONFIG.COOKIE_NAME)?.value
+
+    if (!token) {
+      return null
+    }
+
+    const decoded = verifyJWTToken(token)
+    return decoded?.role || null
+
+  } catch (error) {
+    return null
+  }
 }

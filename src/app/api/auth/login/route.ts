@@ -1,94 +1,94 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { cookies } from "next/headers"
-import { prisma } from "@/lib/prisma"
-import { verifyPassword } from "@/lib/auth"
-import { UserRole, UserStatus } from "@/generated/prisma"
+import { NextRequest, NextResponse } from "next/server"
+import { verify } from "argon2"
+import prisma from "@/lib/db"
+import { createJWTToken, setJWTCookie } from "@/lib/auth"
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password, userType } = await req.json()
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
+    // Validate input
+    if (!email || !password || !userType) {
+      return NextResponse.json({ 
+        status: "error",
+        error: "All fields are required" 
+      }, { status: 400 })
     }
 
+    // Find user by email
     const user = await prisma.user.findUnique({
-      where: {
-        email,
-        status: UserStatus.ACTIVE,
-      },
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        passwordHash: true,
+        role: true,
+        studentId: true,
+        hostelBlock: true,
+        roomNumber: true,
+      }
     })
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+      return NextResponse.json({ 
+        status: "error",
+        error: "Invalid credentials" 
+      }, { status: 401 })
     }
 
-    // Check if userType is provided and valid
-    if (userType) {
-      const role = userType.trim().toUpperCase() as UserRole
-      const validRoles = Object.values(UserRole)
-
-      if (!validRoles.includes(role)) {
-        return NextResponse.json({ error: "Invalid role" }, { status: 400 })
-      }
-
-      if (user.role !== role) {
-        return NextResponse.json({ error: "Invalid account type" }, { status: 401 })
-      }
+    // Verify password
+    const isValidPassword = await verify(user.passwordHash, password)
+    if (!isValidPassword) {
+      return NextResponse.json({ 
+        status: "error",
+        error: "Invalid credentials" 
+      }, { status: 401 })
     }
 
-    const isPasswordValid = await verifyPassword(user.passwordHash, password)
-
-    if (!isPasswordValid) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+    // Check user type matches role
+    const expectedRole = userType === "student" ? "STUDENT" : "STAFF"
+    if (user.role !== expectedRole) {
+      return NextResponse.json({ 
+        status: "error",
+        error: "Invalid account type" 
+      }, { status: 401 })
     }
 
-    // Update last login timestamp
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLogin: new Date() },
+    // CREATE & SET JWT TOKEN
+    const token = createJWTToken({
+      id: user.id,
+      email: user.email,
+      role: user.role
     })
 
-    // Set secure cookie
-    const cookieStore = await cookies()
-    cookieStore.set("userId", user.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax", // ADD THIS - Required for modern browsers
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    })
+    await setJWTCookie(token)
 
-    // FIX: Also set userRole cookie for faster role checks
-    cookieStore.set("userRole", user.role, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax", // ADD THIS
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-    })
+    // Return user data (without password)
+    const userData = {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      studentId: user.studentId,
+      hostelBlock: user.hostelBlock,
+      roomNumber: user.roomNumber,
+    }
+    console.log("Login successful - JWT token set")
 
-    // FIX: Remove password hash from response and ensure complete user data
-    const { passwordHash, ...userData } = user
-
-    console.log(`Login successful: ${user.fullName} (${user.role})`) // ADD LOGGING
-
-    return NextResponse.json({
-      success: true, // ADD success flag
+    return NextResponse.json({ 
+      status: "success",
       message: "Login successful",
-      user: {
-        id: userData.id,
-        email: userData.email,
-        fullName: userData.fullName, // Ensure fullName is included
-        role: userData.role
-      },
+      user: userData 
     })
 
   } catch (error) {
-    console.error(" Login error:", error) // Better error logging
-    return NextResponse.json({
-      error: "Internal server error",
-      details: process.env.NODE_ENV !== "production" && error instanceof Error ? error.message : undefined,
+    console.error("Login error:", error)
+    return NextResponse.json({ 
+      status: "error",
+      error: "Internal server error" 
     }, { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }

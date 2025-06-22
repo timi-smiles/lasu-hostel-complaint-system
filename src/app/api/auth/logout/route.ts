@@ -1,14 +1,20 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { cookies } from "next/headers"
+import { NextResponse } from "next/server"
+import { clearJWTCookie } from "@/lib/auth"
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
-    // Clear the auth cookie
-    (await cookies()).delete("userId")
-
-    return NextResponse.json({ message: "Logout successful" })
+    // Clear JWT cookie
+    await clearJWTCookie()
+    
+    return NextResponse.json({ 
+      status: "success",
+      message: "Logged out successfully" 
+    })
   } catch (error) {
     console.error("Logout error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json({ 
+      status: "error",
+      error: "Internal server error" 
+    }, { status: 500 })
   }
 }

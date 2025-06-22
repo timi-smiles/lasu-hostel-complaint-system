@@ -88,8 +88,8 @@ model User {
   triggeredNotifications Notification[]          @relation("NotificationTriggeredBy")
 
   @@index([email])
-  @@index([studentId])
   @@index([role])
+  @@index([status])
 }
 
 model Complaint {
@@ -121,12 +121,13 @@ model Complaint {
   statusLogs    ComplaintStatusLog[]
   notifications Notification[]
 
-  @@index([studentId])
-  @@index([assignedToId])
   @@index([status])
-  @@index([category])
-  @@index([hostelBlock])
   @@index([createdAt])
+  @@index([assignedToId])
+  @@index([studentId])
+  @@index([hostelBlock])
+  @@index([category])
+  @@index([priority])
 }
 
 model ComplaintUpdate {

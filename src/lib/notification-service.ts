@@ -1,6 +1,4 @@
-import { PrismaClient } from "../generated/prisma"
-
-const prisma = new PrismaClient()
+import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
 
 export class NotificationService {
   

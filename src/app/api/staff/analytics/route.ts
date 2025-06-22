@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import { PrismaClient } from "../../../../generated/prisma"
+import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import { getUserIdFromRequest } from "@/lib/auth"
 
-const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies()
-    const userId = cookieStore.get("userId")?.value
-
+    const userId = await getUserIdFromRequest()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -52,145 +51,168 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // 1. Total complaints count
-    const totalComplaints = await prisma.complaint.count({
-      where: {
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
-        }
-      }
-    })
-
-    // 2. Complaints by status with detailed counts
-    const complaintsByStatus = await prisma.complaint.groupBy({
-      by: ['status'],
-      _count: {
-        id: true
-      },
-      where: {
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
-        }
-      }
-    })
-
-    // 3. Complaints by category
-    const complaintsByCategory = await prisma.complaint.groupBy({
-      by: ['category'],
-      _count: {
-        id: true
-      },
-      where: {
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
-        }
-      }
-    })
-
-    // 4. Complaints by priority
-    const complaintsByPriority = await prisma.complaint.groupBy({
-      by: ['priority'],
-      _count: {
-        id: true
-      },
-      where: {
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
-        }
-      }
-    })
-
-    // 5. Complaints by hostel block
-    const complaintsByBlock = await prisma.complaint.groupBy({
-      by: ['hostelBlock'],
-      _count: {
-        id: true
-      },
-      where: {
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
-        }
-      }
-    })
-
-    // 6. Block status breakdown for stacked chart
-    const blockStatusBreakdown = await prisma.complaint.groupBy({
-      by: ['hostelBlock', 'status'],
-      _count: {
-        id: true
-      },
-      where: {
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
-        }
-      }
-    })
-
-    // 7. Monthly trend data
-    const monthlyComplaints = await prisma.complaint.findMany({
-      where: {
-        createdAt: {
-          gte: startDate
-        }
-      },
-      select: {
-        id: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        feedback: {
-          select: {
-            rating: true
+    // ✅ OPTIMIZED: Use Promise.all for parallel queries
+    const [
+      totalComplaints,
+      complaintsByStatus,
+      complaintsByCategory,
+      complaintsByPriority,
+      complaintsByBlock,
+      blockStatusBreakdown,
+      monthlyComplaints,
+      resolvedComplaintsWithLogs,
+      staffAssignments,
+      satisfactionData
+    ] = await Promise.all([
+      // 1. Total complaints count
+      prisma.complaint.count({
+        where: {
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
           }
         }
-      }
-    })
+      }),
 
-    // 8. Resolution time analysis (using status logs for accurate timing)
-    const resolvedComplaintsWithLogs = await prisma.complaint.findMany({
-      where: {
-        status: "RESOLVED",
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
+      // 2. Complaints by status
+      prisma.complaint.groupBy({
+        by: ['status'],
+        _count: { id: true },
+        where: {
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
+          }
         }
-      },
-      select: {
-        id: true,
-        category: true,
-        createdAt: true,
-        statusLogs: {
-          where: {
-            newStatus: "RESOLVED"
-          },
-          select: {
-            createdAt: true
-          },
-          orderBy: {
-            createdAt: "desc"
-          },
-          take: 1
-        }
-      }
-    })
+      }),
 
-    // 9. Staff performance metrics
-    const staffAssignments = await prisma.complaint.groupBy({
-      by: ['assignedToId'],
-      _count: {
-        id: true
-      },
-      where: {
-        assignedToId: { not: null },
-        createdAt: {
-          gte: timeRange === "all" ? undefined : startDate
+      // 3. Complaints by category
+      prisma.complaint.groupBy({
+        by: ['category'],
+        _count: { id: true },
+        where: {
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
+          }
         }
-      }
-    })
+      }),
 
-    // Get staff details and their resolved complaints
+      // 4. Complaints by priority
+      prisma.complaint.groupBy({
+        by: ['priority'],
+        _count: { id: true },
+        where: {
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
+          }
+        }
+      }),
+
+      // 5. Complaints by hostel block
+      prisma.complaint.groupBy({
+        by: ['hostelBlock'],
+        _count: { id: true },
+        where: {
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
+          }
+        }
+      }),
+
+      // 6. Block status breakdown
+      prisma.complaint.groupBy({
+        by: ['hostelBlock', 'status'],
+        _count: { id: true },
+        where: {
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
+          }
+        }
+      }),
+
+      // 7. Monthly trend data
+      prisma.complaint.findMany({
+        where: {
+          createdAt: {
+            gte: startDate
+          }
+        },
+        select: {
+          id: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          feedback: {
+            select: {
+              rating: true
+            }
+          }
+        }
+      }),
+
+      // 8. Resolution time analysis
+      prisma.complaint.findMany({
+        where: {
+          status: "RESOLVED",
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
+          }
+        },
+        select: {
+          id: true,
+          category: true,
+          createdAt: true,
+          statusLogs: {
+            where: {
+              newStatus: "RESOLVED"
+            },
+            select: {
+              createdAt: true
+            },
+            orderBy: {
+              createdAt: "desc"
+            },
+            take: 1
+          }
+        }
+      }),
+
+      // 9. Staff performance metrics
+      prisma.complaint.groupBy({
+        by: ['assignedToId'],
+        _count: { id: true },
+        where: {
+          assignedToId: { not: null },
+          createdAt: {
+            gte: timeRange === "all" ? undefined : startDate
+          }
+        }
+      }),
+
+      // 10. Satisfaction data
+      prisma.complaintFeedback.findMany({
+        where: {
+          complaint: {
+            createdAt: {
+              gte: timeRange === "all" ? undefined : startDate
+            }
+          }
+        },
+        select: {
+          rating: true,
+          createdAt: true,
+          complaint: {
+            select: {
+              category: true,
+              hostelBlock: true
+            }
+          }
+        }
+      }).catch(() => []) // Handle if feedback table doesn't exist
+    ])
+
+    // Get staff details for performance metrics
     const staffIds = staffAssignments.map(sa => sa.assignedToId).filter(Boolean) as string[]
     
-    const staffDetails = await prisma.user.findMany({
+    const staffDetails = staffIds.length > 0 ? await prisma.user.findMany({
       where: {
         id: { in: staffIds }
       },
@@ -199,7 +221,7 @@ export async function GET(request: NextRequest) {
         fullName: true,
         department: true
       }
-    })
+    }) : []
 
     // Calculate detailed staff metrics
     const staffMetrics = await Promise.all(
@@ -283,75 +305,18 @@ export async function GET(request: NextRequest) {
       })
     )
 
-    // 10. Category resolution time analysis
-    const categoryResolutionData = await Promise.all(
-      ["PLUMBING", "ELECTRICAL", "FURNITURE", "CLEANLINESS", "NOISE_COMPLAINT", "SECURITY", "INTERNET", "OTHER"].map(async (category) => {
-        const categoryComplaints = await prisma.complaint.findMany({
-          where: {
-            category: category as any,
-            status: "RESOLVED",
-            createdAt: {
-              gte: timeRange === "all" ? undefined : startDate
-            }
-          },
-          select: {
-            createdAt: true,
-            statusLogs: {
-              where: {
-                newStatus: "RESOLVED"
-              },
-              select: {
-                createdAt: true
-              },
-              orderBy: {
-                createdAt: "desc"
-              },
-              take: 1
-            }
-          }
-        })
-
-        let totalDays = 0
-        let count = 0
-
-        categoryComplaints.forEach(complaint => {
-          if (complaint.statusLogs.length > 0) {
-            const resolvedDate = complaint.statusLogs[0].createdAt
-            const createdDate = complaint.createdAt
-            const days = Math.abs(resolvedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
-            totalDays += days
-            count++
-          }
-        })
-
-        return {
-          name: formatCategoryName(category),
-          avgDays: count > 0 ? Math.round((totalDays / count) * 10) / 10 : 0,
-          count
-        }
-      })
-    )
-
-    // 11. Satisfaction analysis
-    const satisfactionData = await prisma.complaintFeedback.findMany({
-      where: {
-        complaint: {
-          createdAt: {
-            gte: timeRange === "all" ? undefined : startDate
-          }
-        }
-      },
-      select: {
-        rating: true,
-        createdAt: true,
-        complaint: {
-          select: {
-            category: true,
-            hostelBlock: true
-          }
-        }
-      }
-    })
+    // Get additional metrics
+    const [
+      activeUsers,
+      totalStudents,
+      totalStaff,
+      recentComplaints
+    ] = await Promise.all([
+      prisma.user.count({ where: { status: "ACTIVE" } }),
+      prisma.user.count({ where: { role: "STUDENT" } }),
+      prisma.user.count({ where: { role: "STAFF" } }),
+      getRecentComplaints(timeRange === "all" ? undefined : startDate)
+    ])
 
     // Process the data for frontend consumption
     const processedData = {
@@ -397,9 +362,6 @@ export async function GET(request: NextRequest) {
       monthlyTrends: processMonthlyTrends(monthlyComplaints),
       weeklyComplaints: processWeeklyData(monthlyComplaints),
 
-      // Resolution analysis
-      resolutionTimeByCategory: categoryResolutionData.filter(item => item.count > 0),
-
       // Staff performance
       staffPerformance: staffMetrics.sort((a, b) => b.resolved - a.resolved),
 
@@ -408,18 +370,18 @@ export async function GET(request: NextRequest) {
       satisfactionByBlock: processSatisfactionByBlock(satisfactionData),
 
       // Additional insights
-      activeUsers: await prisma.user.count({ where: { status: "ACTIVE" } }),
-      totalStudents: await prisma.user.count({ where: { role: "STUDENT" } }),
-      totalStaff: await prisma.user.count({ where: { role: "STAFF" } }),
+      activeUsers,
+      totalStudents,
+      totalStaff,
       
       // Recent activity
-      recentComplaints: await getRecentComplaints(timeRange === "all" ? undefined : startDate),
+      recentComplaints,
       
       // Performance trends
       performanceTrends: await getPerformanceTrends(timeRange === "all" ? undefined : startDate)
     }
 
-    console.log(" Analytics API: Successfully processed analytics data")
+    console.log("✅ Analytics API: Successfully processed analytics data")
 
     return NextResponse.json({
       success: true,
@@ -429,16 +391,18 @@ export async function GET(request: NextRequest) {
         generatedAt: new Date().toISOString(),
         totalRecords: totalComplaints
       }
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=150'
+      }
     })
 
   } catch (error) {
-    console.error(" Analytics API Error:", error)
+    console.error("❌ Analytics API Error:", error)
     return NextResponse.json(
       { error: "Failed to fetch analytics data" },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

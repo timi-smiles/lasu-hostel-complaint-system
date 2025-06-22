@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import { PrismaClient } from "../../../../generated/prisma"
+import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import { getUserIdFromRequest } from "@/lib/auth"
 
-const prisma = new PrismaClient()
 
 export async function GET() {
   try {
     const cookieStore = await cookies()
-    const userId = cookieStore.get("userId")?.value
-
+    const userId = await getUserIdFromRequest()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -55,16 +54,13 @@ export async function GET() {
   } catch (error) {
     console.error(" Student Profile API Error:", error)
     return NextResponse.json({ error: "Failed to fetch student profile" }, { status: 500 })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
     const cookieStore = await cookies()
-    const userId = cookieStore.get("userId")?.value
-
+    const userId = await getUserIdFromRequest()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -126,7 +122,5 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error(" Student Profile Update Error:", error)
     return NextResponse.json({ error: "Failed to update student profile" }, { status: 500 })
-  } finally {
-    await prisma.$disconnect()
   }
 }

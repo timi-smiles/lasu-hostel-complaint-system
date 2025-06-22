@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Logo } from "@/components/ui/Logo" // ✅ Import your Logo component
+import { Logo } from "@/components/ui/Logo" // Import your Logo component
 import { Eye, EyeOff, Mail, Lock, User, Shield, GraduationCap, Users } from "lucide-react"
 
 export default function LoginPage() {
@@ -67,11 +67,11 @@ export default function LoginPage() {
       </div>
 
       <div className="relative w-full max-w-md">
-        {/* Logo/Header Section - ✅ Updated to use your LASU Logo */}
+        {/* Logo/Header Section - Updated to use your LASU Logo */}
         <div className="text-center mb-8">
           <div className="mx-auto mb-6 flex justify-center">
             <div className="p-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-900/10 border border-slate-200/50">
-              <Logo className="w-24 h-16" /> {/* ✅ Using your Logo component */}
+              <Logo className="w-24 h-16" /> {/* Using your Logo component */}
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>

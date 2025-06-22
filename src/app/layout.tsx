@@ -1,13 +1,20 @@
+import type { Metadata } from "next"
 import type React from "react"
-// This file is used to define the root layout of the application.
 import { Inter } from "next/font/google"
-// import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
+import { Toaster } from "@/components/ui/toaster"
 import { Providers } from "@/components/providers"
 
-// Initialize font
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap',
+  variable: '--font-inter'
+})
+
+export const metadata: Metadata = {
+  title: "LASU Hostel Complaint System",
+  description: "Manage hostel complaints efficiently",
+}
 
 export default function RootLayout({
   children,
@@ -16,7 +23,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-background`}>
+      <head>
+        <meta name="darkreader-lock" />
+      </head>
+      <body 
+        className={`${inter.variable} font-sans min-h-screen bg-background antialiased`}
+        suppressHydrationWarning
+      >
         <Providers>
           {children}
           <Toaster />

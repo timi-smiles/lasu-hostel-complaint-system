@@ -17,14 +17,18 @@ export async function GET(req: NextRequest) {
     const status = url.searchParams.get("status")
     const category = url.searchParams.get("category")
     const block = url.searchParams.get("block")
+    
+    // ADD PAGINATION
+    const page = parseInt(url.searchParams.get("page") || "1")
+    const limit = parseInt(url.searchParams.get("limit") || "20")
+    const skip = (page - 1) * limit
 
     // Base query - ALWAYS filter by user for students
     const where: any = {}
 
     // If student, ONLY return their complaints
-    // Change userId to studentId to match your schema
     if (user.role === 'STUDENT') {
-      where.studentId = user.id  // Changed from userId to studentId
+      where.studentId = user.id
     }
 
     // Add other filters
@@ -38,43 +42,69 @@ export async function GET(req: NextRequest) {
       where.hostelBlock = block
     }
 
-    const complaints = await prisma.complaint.findMany({
-      where,
-      include: {
-        student: {  // Changed from user to student to match your schema
-          select: {
-            id: true,
-            fullName: true,
-            hostelBlock: true,
-            roomNumber: true
-          }
-        },
-        updates: {
-          include: {
-            staff: {
-              select: {
-                id: true,
-                fullName: true
-              }
+    // OPTIMIZED: Get complaints with pagination and total count
+    const [complaints, totalCount] = await Promise.all([
+      prisma.complaint.findMany({
+        where,
+        include: {
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+              hostelBlock: true,
+              roomNumber: true
             }
           },
-          orderBy: {
-            createdAt: 'asc'
+          updates: {
+            include: {
+              staff: {
+                select: {
+                  id: true,
+                  fullName: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'asc'
+            }
           }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
+        },
+        orderBy: {
+          createdAt: 'desc'
+        },
+        take: limit,
+        skip: skip
+      }),
+
+      // Count total complaints for pagination
+      prisma.complaint.count({ where })
+    ])
+
+    const totalPages = Math.ceil(totalCount / limit)
+
+    return NextResponse.json({
+      complaints,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30'
       }
     })
 
-    return NextResponse.json({ complaints })
   } catch (error) {
     console.error('Error fetching complaints:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
+// POST method remains the same...
 export async function POST(req: NextRequest) {
   try {
     const user = await getCurrentUser()
@@ -111,12 +141,12 @@ export async function POST(req: NextRequest) {
         description,
         status: ComplaintStatus.PENDING,
         priority,
-        studentId: user.id,  // Changed from userId to studentId
+        studentId: user.id,
         hostelBlock: user.hostelBlock,
         roomNumber: user.roomNumber,
       },
       include: {
-        student: {  // Changed from user to student
+        student: {
           select: {
             id: true,
             fullName: true,
@@ -131,7 +161,7 @@ export async function POST(req: NextRequest) {
     // Create notifications for staff
     await NotificationService.createNewComplaintNotification(
       newComplaint.id,
-      user.id // student ID
+      user.id
     )
 
     return NextResponse.json(

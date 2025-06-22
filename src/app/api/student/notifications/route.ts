@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import { PrismaClient } from "../../../../generated/prisma"
-
-const prisma = new PrismaClient()
+import prisma from "@/lib/db" // ✅ FIXED: Use singleton instead!
+import { getUserIdFromRequest } from "@/lib/auth"
 
 export async function GET() {
   try {
     const cookieStore = await cookies()
-    const userId = cookieStore.get("userId")?.value
-
+    const userId = await getUserIdFromRequest()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -72,8 +70,6 @@ export async function GET() {
   } catch (error) {
     console.error(" Notifications fetch error:", error)
     return NextResponse.json({ error: "Failed to fetch notifications" }, { status: 500 })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -81,8 +77,7 @@ export async function GET() {
 export async function PUT() {
   try {
     const cookieStore = await cookies()
-    const userId = cookieStore.get("userId")?.value
-
+    const userId = await getUserIdFromRequest()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -105,7 +100,5 @@ export async function PUT() {
   } catch (error) {
     console.error(" Mark notifications read error:", error)
     return NextResponse.json({ error: "Failed to mark notifications as read" }, { status: 500 })
-  } finally {
-    await prisma.$disconnect()
   }
 }

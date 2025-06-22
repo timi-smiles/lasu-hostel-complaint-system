@@ -4,20 +4,16 @@
 import { hash, verify } from "argon2"
 import { PrismaClient } from '../generated/prisma'
 
-declare global {
-  var __prisma: PrismaClient | undefined
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
 }
 
-let prisma: PrismaClient
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+  log: ['error'], // Only log errors in production
+  errorFormat: 'minimal'
+})
 
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
-} else {
-  if (!global.__prisma) {
-    global.__prisma = new PrismaClient()
-  }
-  prisma = global.__prisma
-}
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 export default prisma
 
@@ -28,7 +24,7 @@ const complaints: Complaint[] = []
 // Types
 export type UserRole = "student" | "staff" | "admin"
 
-export interface User {
+export interface User { 
   id: string
   fullName: string
   email: string
