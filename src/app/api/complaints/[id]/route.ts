@@ -93,10 +93,15 @@ export async function GET(
 }
 
 // Keep your existing PUT and DELETE methods as they are - they look good!
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  req: NextRequest, 
+  context: { params: Promise<{ id: string }> }
+) {
+  const { params } = context
+  const { id } = await params
+
   try {
     const user = await getCurrentUser()
-    const { id } = await params //  Properly await the params Promise
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

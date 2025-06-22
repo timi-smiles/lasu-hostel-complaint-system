@@ -5,11 +5,13 @@ import { ComplaintStatus } from '../../../../../generated/prisma'
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } //  Fixed: Promise<{ id: string }>
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { params } = context
+  const { id } = await params
+
   try {
     const user = await getCurrentUser()
-    const { id } = await params //  Fixed: Await the params
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -33,7 +35,7 @@ export async function PATCH(
 
     // Check if complaint exists
     const existingComplaint = await prisma.complaint.findUnique({
-      where: { id }, //  Fixed: Use id instead of params.id
+      where: { id },
       include: {
         student: {
           select: {
@@ -51,7 +53,7 @@ export async function PATCH(
 
     // Update complaint status
     const updatedComplaint = await prisma.complaint.update({
-      where: { id }, //  Fixed: Use id instead of params.id
+      where: { id },
       data: {
         status: status,
         updatedAt: new Date(),

@@ -3,10 +3,15 @@ import { getCurrentUser } from "@/lib/auth"
 import prisma from "@/lib/db" //  Use Prisma directly
 import { NotificationService } from "@/lib/notification-service"
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+  req: NextRequest, 
+  context: { params: Promise<{ id: string }> }
+) {
+  const { params } = context
+  const { id } = await params
+
   try {
     const user = await getCurrentUser()
-    const { id } = await params //  Await params Promise
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -73,10 +78,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 }
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: NextRequest, 
+  context: { params: Promise<{ id: string }> }
+) {
+  const { params } = context
+  const { id } = await params
+
   try {
     const user = await getCurrentUser()
-    const { id } = await params
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

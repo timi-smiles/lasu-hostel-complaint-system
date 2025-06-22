@@ -5,11 +5,13 @@ import { ComplaintPriority } from '../../../../../generated/prisma'
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { params } = context
+  const { id } = await params
+
   try {
     const user = await getCurrentUser()
-    const { id } = await params
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -2,7 +2,12 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
 import { db } from "@/lib/db"
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest, 
+  context: { params: { id: string } }
+) {
+  const { params } = context
+
   try {
     const currentUser = await getCurrentUser()
 
@@ -11,7 +16,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Users can only change their own password or admin can change any password
-    if (currentUser.id !== params.id && currentUser.role !== "admin") {
+    if (currentUser.id !== params.id && currentUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
@@ -24,12 +29,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const { currentPassword, newPassword } = await req.json()
 
     // If not admin, verify current password
-    if (currentUser.role !== "admin") {
+    if (currentUser.role !== "ADMIN") {
       if (!currentPassword) {
         return NextResponse.json({ error: "Current password is required" }, { status: 400 })
       }
 
-      const isPasswordValid = await db.users.verifyPassword(user, currentPassword)
+      const isPasswordValid = await db.users.verifyPassword(user.passwordHash, currentPassword)
 
       if (!isPasswordValid) {
         return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 })
