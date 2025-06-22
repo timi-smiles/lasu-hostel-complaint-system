@@ -4,9 +4,10 @@ import { db } from "@/lib/db"
 
 export async function PUT(
   req: NextRequest, 
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const { params } = context
+  const { id } = await params
 
   try {
     const currentUser = await getCurrentUser()
@@ -16,11 +17,11 @@ export async function PUT(
     }
 
     // Users can only change their own password or admin can change any password
-    if (currentUser.id !== params.id && currentUser.role !== "ADMIN") {
+    if (currentUser.id !== id && currentUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const user = await db.users.findById(params.id)
+    const user = await db.users.findById(id)
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
@@ -46,7 +47,7 @@ export async function PUT(
     }
 
     // Update password
-    const success = await db.users.updatePassword(params.id, newPassword)
+    const success = await db.users.updatePassword(id, newPassword)
 
     if (!success) {
       return NextResponse.json({ error: "Failed to update password" }, { status: 500 })

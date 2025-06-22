@@ -116,7 +116,13 @@ export async function GET(
 }
 
 // When staff updates a complaint
-export async function PUT(request: NextRequest) {
+export async function PUT(
+  req: NextRequest, 
+  context: { params: Promise<{ id: string }> }
+) {
+  const { params } = context
+  const { id } = await params
+
   try {
     const user = await getCurrentUser()
 
@@ -124,7 +130,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { complaintId, status, message } = await request.json()
+    const { complaintId, status, message } = await req.json()
 
     if (user.role !== 'STAFF' && user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
