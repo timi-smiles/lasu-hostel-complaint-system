@@ -14,6 +14,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "LASU Hostel Complaint System",
   description: "Manage hostel complaints efficiently",
+    icons: {
+    icon: '/favicon.png',
+    apple: '/apple-touch-icon.png',
+  },
 }
 
 export default function RootLayout({
