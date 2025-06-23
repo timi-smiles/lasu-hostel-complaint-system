@@ -19,7 +19,8 @@ export const prisma = new PrismaClient({
 if (process.env.NEXT_PUBLIC_NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 // ✅ Use Prisma types directly - no custom types needed
-export type { User, Complaint, ComplaintStatus, ComplaintPriority, UserRole } from '../generated/prisma'
+export type { User, Complaint, ComplaintStatus, ComplaintPriority, UserRole, ComplaintCategory } from '../generated/prisma'
+import type { ComplaintCategory, ComplaintPriority } from '../generated/prisma'
 
 // ✅ Database operations using Prisma ONLY
 export const db = {
@@ -48,7 +49,8 @@ export const db = {
       phone?: string
     }) => {
       const passwordHash = await hash(userData.password)
-      const { password, ...data } = userData
+      // ✅ Fix: Remove unused password variable
+      const { password: _, ...data } = userData
       
       return await prisma.user.create({
         data: {
@@ -159,8 +161,9 @@ export const db = {
         data: {
           title: complaintData.title,
           description: complaintData.description,
-          category: categoryEnum as any,
-          priority: priorityEnum as any,
+          // ✅ Fix: Use proper enum types instead of any
+          category: categoryEnum as ComplaintCategory,
+          priority: priorityEnum as ComplaintPriority,
           studentId: complaintData.studentId,
           hostelBlock: complaintData.hostelBlock,
           roomNumber: complaintData.roomNumber,

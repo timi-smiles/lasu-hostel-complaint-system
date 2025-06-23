@@ -102,7 +102,7 @@ export function verifyJWTToken(token: string): JWTPayload | null {
     }
     
     return decoded
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -120,7 +120,7 @@ export async function getUserIdFromRequest(): Promise<string | null> {
     const decoded = verifyJWTToken(token)
     return decoded?.userId || null
 
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -138,7 +138,7 @@ export async function getUserRoleFromRequest(): Promise<string | null> {
     const decoded = verifyJWTToken(token)
     return decoded?.role || null
 
-  } catch (error) {
+  } catch {
     return null
   }
 }

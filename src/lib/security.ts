@@ -1,6 +1,6 @@
 // lib/security.ts - Add these immediately
 import rateLimit from 'express-rate-limit'
-import helmet from 'helmet'
+
 
 // Rate limiting for API routes
 export const apiLimiter = rateLimit({
