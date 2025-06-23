@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import DashboardLayout from "@/components/dashboard-layout"
@@ -24,7 +22,6 @@ interface StaffProfile {
   role: string
   status: string
   phone?: string
-  department?: string
   createdAt: string
   updatedAt?: string
   lastLogin?: string
@@ -90,14 +87,12 @@ export default function StaffProfilePage() {
       .toUpperCase()
   }
 
-  // 🎯 Use the SAME fetch logic as student profile
   useEffect(() => {
     const verifyAccessAndFetchProfile = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        // 🎯 STEP 1: Check role first
         console.log("Staff Profile: Checking role authorization")
         const roleResponse = await fetch("/api/auth/check-role", {
           credentials: "include",
@@ -115,7 +110,6 @@ export default function StaffProfilePage() {
         const roleData = await roleResponse.json()
         console.log(" Role Check Result:", roleData.user.role)
 
-        // 🎯 STEP 2: Verify user should be on staff profile
         if (!["STAFF", "ADMIN"].includes(roleData.user.role)) {
           console.log(` Access denied. User role: ${roleData.user.role} - redirecting to student profile`)
           toast({
@@ -123,12 +117,10 @@ export default function StaffProfilePage() {
             title: "Access Denied",
             description: "You don't have permission to access staff profiles.",
           })
-          // Use the redirect path from the role check
           router.push(roleData.paths.profile || "/dashboard/student/profile")
           return
         }
 
-        // 🎯 STEP 3: Role verified, now fetch profile data
         console.log(" Staff access verified - fetching profile from /api/staff/profile")
         
         const profileResponse = await fetch("/api/staff/profile", {
@@ -159,12 +151,11 @@ export default function StaffProfilePage() {
         
         setUserData(profileData.user)
         
-        // Initialize form data
+        // Initialize form data (removed department)
         setFormData({
           fullName: profileData.user.fullName || "",
           email: profileData.user.email || "",
           phone: profileData.user.phone || "",
-          department: profileData.user.department || "",
         })
 
       } catch (err) {
@@ -192,14 +183,6 @@ export default function StaffProfilePage() {
     }))
   }
 
-  const handleSelectChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
-
-  // 🎯 Use the SAME save logic as student profile
   const handleSaveProfile = async () => {
     if (!userData) return
 
@@ -216,7 +199,7 @@ export default function StaffProfilePage() {
         body: JSON.stringify({
           fullName: formData.fullName,
           phone: formData.phone,
-          department: formData.department,
+          // Removed department from save payload
         }),
       })
 
@@ -228,7 +211,6 @@ export default function StaffProfilePage() {
       const result = await response.json()
       console.log(" Staff Profile: Update successful:", result)
 
-      // Update state with response data
       const updatedUser = result.user
       setUserData(updatedUser)
       
@@ -236,7 +218,7 @@ export default function StaffProfilePage() {
         fullName: updatedUser.fullName || "",
         email: updatedUser.email || "",
         phone: updatedUser.phone || "",
-        department: updatedUser.department || "",
+        // Removed department from form data
       })
 
       setIsEditing(false)
@@ -260,17 +242,15 @@ export default function StaffProfilePage() {
   const handleCancelEdit = () => {
     if (!userData) return
     
-    // Reset form data to original user data
     setFormData({
       fullName: userData.fullName || "",
       email: userData.email || "",
       phone: userData.phone || "",
-      department: userData.department || "",
+      // Removed department reset
     })
     setIsEditing(false)
   }
 
-  // Loading state (same as student profile)
   if (loading) {
     return (
       <DashboardLayout userType="staff">
@@ -309,7 +289,6 @@ export default function StaffProfilePage() {
     )
   }
 
-  // Error state (same as student profile)
   if (error || !userData) {
     return (
       <DashboardLayout userType="staff">
@@ -333,7 +312,7 @@ export default function StaffProfilePage() {
         <div className="p-6 space-y-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Staff Profile</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Admin Profile</h1>
               <p className="text-muted-foreground">View and manage your profile information</p>
             </div>
 
@@ -376,10 +355,9 @@ export default function StaffProfilePage() {
                   </Avatar>
                 </div>
                 <CardTitle>{userData.fullName}</CardTitle>
-                <CardDescription>{userData.role}</CardDescription>
                 <div className="mt-2">
                   <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                    {userData.department || "No Department"}
+                    {"ADMIN"}
                   </Badge>
                 </div>
               </CardHeader>
@@ -395,12 +373,8 @@ export default function StaffProfilePage() {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Building className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{userData.department || "No Department"}</span>
-                </div>
-                <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Staff ID: {userData.id}</span>
+                  <span className="text-sm">ADMIN ID: {userData.id}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -464,31 +438,10 @@ export default function StaffProfilePage() {
                             disabled={!isEditing} 
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="department">Department</Label>
-                          {isEditing ? (
-                            <Select 
-                              value={formData.department || ""} 
-                              onValueChange={(value) => handleSelectChange('department', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select department" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Hostel Management">Hostel Management</SelectItem>
-                                <SelectItem value="Maintenance">Maintenance</SelectItem>
-                                <SelectItem value="Security">Security</SelectItem>
-                                <SelectItem value="Administration">Administration</SelectItem>
-                                <SelectItem value="IT Support">IT Support</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            <Input id="department" value={formData.department || ""} disabled />
-                          )}
-                        </div>
+                        {/* ✅ REMOVED: Department field completely */}
                         <div className="space-y-2">
                           <Label htmlFor="role">Role</Label>
-                          <Input id="role" value={userData.role} disabled />
+                          <Input id="role" value={"ADMIN"} disabled />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="createdAt">Join Date</Label>
@@ -513,7 +466,7 @@ export default function StaffProfilePage() {
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>Staff ID</Label>
+                          <Label>ADMIN ID</Label>
                           <Input value={userData.id} disabled />
                         </div>
                         <div className="space-y-2">
@@ -541,7 +494,7 @@ export default function StaffProfilePage() {
                         </div>
                         <div className="space-y-2">
                           <Label>Role</Label>
-                          <Input value={userData.role} disabled />
+                          <Input value={"ADMIN"} disabled />
                         </div>
                       </div>
                     </CardContent>
@@ -555,7 +508,6 @@ export default function StaffProfilePage() {
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Button variant="outline">Export My Data</Button>
-                        <Button variant="outline">View Activity Log</Button>
                         <Button variant="outline" onClick={() => router.push('/change-password')}>
                           <Lock className="h-4 w-4 mr-2" />
                           Change Password
