@@ -97,6 +97,7 @@ const nextConfig: NextConfig = {
   env: {
     APP_NAME: 'LASU Hostel Complaint System',
     APP_VERSION: '1.0.0',
+    DATABASE_URL: process.env.DATABASE_URL,
   },
 
   // ✅ Output Configuration for Production
