@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db"; // FIXED: Use singleton instead!
+import prisma from "@/lib/db";
 import { hash } from "argon2";
 
 export async function POST(req: Request) {
@@ -12,12 +12,11 @@ export async function POST(req: Request) {
       studentId,
       hostelBlock,
       roomNumber,
-      phoneNumber, // ADD: Phone number field
-      department, // ADD: Department for staff
+      phoneNumber, // Keep phone for all roles
       userType,
     } = await req.json();
 
-    // ENHANCED: Better validation
+    // ✅ Basic validation
     if (!fullName?.trim() || !email?.trim() || !password || !confirmPassword || !userType) {
       return NextResponse.json(
         { error: "Full name, email, password, and user type are required" },
@@ -25,7 +24,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ENHANCED: Student-specific validation
+    // ✅ Only validate student fields for students
     if (userType === "student") {
       if (!studentId?.trim() || !hostelBlock?.trim() || !roomNumber?.trim()) {
         return NextResponse.json(
@@ -35,21 +34,13 @@ export async function POST(req: Request) {
       }
     }
 
-    // ENHANCED: Staff-specific validation
-    if (userType === "staff" && !department?.trim()) {
-      return NextResponse.json(
-        { error: "Department is required for staff members" },
-        { status: 400 }
-      );
-    }
-
-    // ENHANCED: Email validation
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json({ error: "Please provide a valid email address" }, { status: 400 });
     }
 
-    // ENHANCED: Password strength validation
+    // Password validation
     if (password.length < 8) {
       return NextResponse.json({ error: "Password must be at least 8 characters long" }, { status: 400 });
     }
@@ -58,15 +49,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Passwords do not match" }, { status: 400 });
     }
 
-    // ENHANCED: Check for existing users in a single query
+    // Check for existing users
     const existingChecks = await Promise.all([
-      // Check email
       prisma.user.findUnique({
         where: { email: email.toLowerCase() },
         select: { id: true },
       }),
-
-      // Check student ID only if provided
       studentId
         ? prisma.user.findUnique({
             where: { studentId },
@@ -85,26 +73,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Student ID already registered" }, { status: 409 });
     }
 
-    // ENHANCED: Hash password with proper options
+    // Hash password
     const hashedPassword = await hash(password, {
-      memoryCost: 2 ** 16, // 64 MB
-      timeCost: 3, // 3 iterations
-      parallelism: 1, // 1 thread
+      memoryCost: 2 ** 16,
+      timeCost: 3,
+      parallelism: 1,
     });
 
-    // ENHANCED: Create user with transaction for data consistency
+    // ✅ Create user without department field
     const newUser = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
           fullName: fullName.trim(),
           email: email.toLowerCase().trim(),
           passwordHash: hashedPassword,
-          role: userType.toUpperCase() as "STUDENT" | "STAFF",
+          role: userType.toUpperCase() as "STUDENT" | "STAFF" | "ADMIN",
           studentId: userType === "student" ? studentId.trim() : null,
           hostelBlock: userType === "student" ? hostelBlock.trim() : null,
           roomNumber: userType === "student" ? roomNumber.trim() : null,
-          department: userType === "staff" ? department?.trim() : null,
-          status: "ACTIVE", // ADD: Set initial status
+          // ✅ REMOVED: department field completely
+          phone: phoneNumber?.trim() || null, // ✅ Use phone instead of department
         },
         select: {
           id: true,
@@ -114,18 +102,14 @@ export async function POST(req: Request) {
           studentId: true,
           hostelBlock: true,
           roomNumber: true,
-          department: true,
+          phone: true, // ✅ Include phone in response
           createdAt: true,
         },
       });
 
-      // ADD: Create welcome notification
-
-
       return user;
     });
 
-    // ENHANCED: Log successful registration
     console.log(
       `New ${userType} registered:`,
       {
@@ -136,7 +120,7 @@ export async function POST(req: Request) {
       }
     );
 
-    // ENHANCED: Return comprehensive user data
+    // ✅ Return user data without department
     return NextResponse.json(
       {
         success: true,
@@ -151,9 +135,7 @@ export async function POST(req: Request) {
             hostelBlock: newUser.hostelBlock,
             roomNumber: newUser.roomNumber,
           }),
-          ...(userType === "staff" && {
-            department: newUser.department,
-          }),
+          phone: newUser.phone, // ✅ Include phone for all roles
           registeredAt: newUser.createdAt,
         },
       },
@@ -167,7 +149,6 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Registration error:", error);
 
-    // ENHANCED: Better error handling
     if (error instanceof Error) {
       if (error.message.includes("unique constraint")) {
         return NextResponse.json({ error: "User with this information already exists" }, { status: 409 });
