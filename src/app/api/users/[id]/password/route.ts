@@ -4,9 +4,8 @@ import { db } from "@/lib/db"
 
 export async function PUT(
   req: NextRequest, 
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }  // ✅ Inline destructuring
 ) {
-  const { params } = context
   const { id } = await params
 
   try {
