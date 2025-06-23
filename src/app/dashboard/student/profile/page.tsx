@@ -93,14 +93,14 @@ export default function StudentProfilePage() {
       .toUpperCase()
   }
 
-  // 🎯 SAME fetch logic as staff profile with STUDENT protection
+  //  SAME fetch logic as staff profile with STUDENT protection
   useEffect(() => {
     const verifyAccessAndFetchProfile = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        // 🎯 STEP 1: Check role first
+        //  STEP 1: Check role first
         console.log("Student Profile: Checking role authorization")
         const roleResponse = await fetch("/api/auth/check-role", {
           credentials: "include",
@@ -118,7 +118,7 @@ export default function StudentProfilePage() {
         const roleData = await roleResponse.json()
         console.log(" Role Check Result:", roleData.user.role)
 
-        // 🎯 STEP 2: Verify user should be on student profile
+        //  STEP 2: Verify user should be on student profile
         if (roleData.user.role !== "STUDENT") {
           console.log(` Access denied. User role: ${roleData.user.role} - redirecting to staff profile`)
           toast({
@@ -131,7 +131,7 @@ export default function StudentProfilePage() {
           return
         }
 
-        // 🎯 STEP 3: Role verified, now fetch profile data
+        //  STEP 3: Role verified, now fetch profile data
         console.log(" Student access verified - fetching profile from /api/student/profile")
         
         const profileResponse = await fetch("/api/student/profile", {
@@ -212,7 +212,7 @@ export default function StudentProfilePage() {
     try {
       console.log("💾 Student Profile: Saving to /api/student/profile")
 
-      // 🎯 Change this from /api/users/${userData.id} to /api/student/profile
+      //  Change this from /api/users/${userData.id} to /api/student/profile
       const response = await fetch("/api/student/profile", {
         method: "PUT",
         headers: {

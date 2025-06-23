@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       userType,
     } = await req.json();
 
-    // ✅ Basic validation
+    // Basic validation
     if (!fullName?.trim() || !email?.trim() || !password || !confirmPassword || !userType) {
       return NextResponse.json(
         { error: "Full name, email, password, and user type are required" },
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Only validate student fields for students
+    // Only validate student fields for students
     if (userType === "student") {
       if (!studentId?.trim() || !hostelBlock?.trim() || !roomNumber?.trim()) {
         return NextResponse.json(
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       parallelism: 1,
     });
 
-    // ✅ Create user without department field
+    // Create user without department field
     const newUser = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
@@ -91,8 +91,8 @@ export async function POST(req: Request) {
           studentId: userType === "student" ? studentId.trim() : null,
           hostelBlock: userType === "student" ? hostelBlock.trim() : null,
           roomNumber: userType === "student" ? roomNumber.trim() : null,
-          // ✅ REMOVED: department field completely
-          phone: phoneNumber?.trim() || null, // ✅ Use phone instead of department
+          // REMOVED: department field completely
+          phone: phoneNumber?.trim() || null, // Use phone instead of department
         },
         select: {
           id: true,
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
           studentId: true,
           hostelBlock: true,
           roomNumber: true,
-          phone: true, // ✅ Include phone in response
+          phone: true, // Include phone in response
           createdAt: true,
         },
       });
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
       }
     );
 
-    // ✅ Return user data without department
+    // Return user data without department
     return NextResponse.json(
       {
         success: true,

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react" // Add useEffect to imports
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,28 @@ export default function LoginPage() {
   const [userType, setUserType] = useState("student")
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  // ADD THIS: Handle browser back button
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // Prevent the default back action
+      event.preventDefault()
+      
+      // Redirect to homepage instead
+      router.push("/")
+    }
+
+    // Add the event listener
+    window.addEventListener("popstate", handlePopState)
+
+    // Push current state to browser history
+    window.history.pushState(null, "", window.location.href)
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener("popstate", handlePopState)
+    }
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

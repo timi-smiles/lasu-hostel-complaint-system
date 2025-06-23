@@ -4,9 +4,9 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 const isAnalyze = process.env.ANALYZE === "true";
 
 const nextConfig: NextConfig = {
-  // ✅ Remove JWT_SECRET from here - use .env files only
+  // Remove JWT_SECRET from here - use .env files only
   
-  // ✅ Security Headers
+  // Security Headers
   async headers() {
     return [
       {
@@ -53,7 +53,7 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  // ✅ Image Optimization
+  // Image Optimization
   images: {
     domains: ['res.cloudinary.com', 'localhost'],
     formats: ['image/webp', 'image/avif'],
@@ -62,27 +62,27 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
-  // ✅ Performance Optimizations
+  // Performance Optimizations
   compress: true,
   poweredByHeader: false, // Remove X-Powered-By header
   
-  // ✅ Experimental Features
+  // Experimental Features
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
   },
 
-  // ✅ TypeScript Configuration
+  // TypeScript Configuration
   typescript: {
     ignoreBuildErrors: false,
   },
 
-  // ✅ ESLint Configuration
+  // ESLint Configuration
   eslint: {
     ignoreDuringBuilds: false,
   },
 
-  // ✅ Redirects for Security
+  // Redirects for Security
   async redirects() {
     return [
       {
@@ -93,17 +93,17 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  // ✅ Environment Variables (only non-sensitive ones)
+  // Environment Variables (only non-sensitive ones)
   env: {
     APP_NAME: 'LASU Hostel Complaint System',
     APP_VERSION: '1.0.0',
     DATABASE_URL: process.env.DATABASE_URL,
   },
 
-  // ✅ Output Configuration for Production
+  // Output Configuration for Production
   output: process.env.NEXT_PUBLIC_NODE_ENV === 'production' ? 'standalone' : undefined,
   
-  // ✅ Bundle Analysis in Development
+  // Bundle Analysis in Development
   productionBrowserSourceMaps: false, // Disable source maps in production
 };
 

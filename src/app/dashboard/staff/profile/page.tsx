@@ -438,7 +438,7 @@ export default function StaffProfilePage() {
                             disabled={!isEditing} 
                           />
                         </div>
-                        {/* ✅ REMOVED: Department field completely */}
+                        {/* REMOVED: Department field completely */}
                         <div className="space-y-2">
                           <Label htmlFor="role">Role</Label>
                           <Input id="role" value={"ADMIN"} disabled />
