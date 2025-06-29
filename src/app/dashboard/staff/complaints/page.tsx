@@ -603,44 +603,52 @@ export default function ComplaintsPage() {
 
       {/* Complaint Detail Dialog */}
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           {selectedComplaint && (
             <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center justify-between">
-                  <span>Complaint {selectedComplaint.id.slice(-8)}</span>
-                  <div className="flex items-center gap-2">
+              <DialogHeader className="pb-4">
+                <DialogTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span className="text-lg">Complaint {selectedComplaint.id.slice(-8)}</span>
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
                     <StatusBadge status={selectedComplaint.status} />
                     <PriorityBadge priority={selectedComplaint.priority} />
                   </div>
                 </DialogTitle>
-                <DialogDescription>Submitted on {formatDate(selectedComplaint.createdAt)}</DialogDescription>
+                <DialogDescription className="text-sm">
+                  Submitted on {formatDate(selectedComplaint.createdAt)}
+                </DialogDescription>
               </DialogHeader>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
+              {/* Student & Location Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-4 border-b">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-muted-foreground">Student</h4>
-                  <p className="text-sm">{selectedComplaint.student.fullName}</p>
-                  <p className="text-xs text-muted-foreground">{selectedComplaint.student.email}</p>
+                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Student</h4>
+                  <p className="text-sm font-medium break-words">{selectedComplaint.student.fullName}</p>
+                  <p className="text-xs text-muted-foreground break-all">{selectedComplaint.student.email}</p>
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-muted-foreground">Location</h4>
+                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Location</h4>
                   <p className="text-sm">Block {selectedComplaint.hostelBlock}, Room {selectedComplaint.roomNumber}</p>
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-muted-foreground">Category</h4>
+                <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Category</h4>
                   <CategoryBadge category={selectedComplaint.category} />
                 </div>
               </div>
 
+              {/* Complaint Details */}
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium">{selectedComplaint.title}</h3>
-                  <p className="mt-2 text-sm text-gray-700">{selectedComplaint.description}</p>
+                  <h3 className="text-base sm:text-lg font-medium mb-2 break-words">{selectedComplaint.title}</h3>
+                  <div className="p-3 bg-slate-50 rounded-md">
+                    <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+                      {selectedComplaint.description}
+                    </p>
+                  </div>
                 </div>
 
                 {selectedComplaint.assignedTo && (
-                  <div className="p-3 bg-blue-50 rounded-md">
+                  <div className="p-3 bg-blue-50 rounded-md border-l-4 border-blue-500">
                     <p className="text-sm text-blue-700">
                       <span className="font-medium">Assigned to:</span> {selectedComplaint.assignedTo.fullName}
                     </p>
@@ -648,47 +656,77 @@ export default function ComplaintsPage() {
                 )}
 
                 {selectedComplaint.updates && selectedComplaint.updates.length > 0 && (
-                  <div className="space-y-3 mt-6">
-                    <h4 className="text-sm font-medium">Updates</h4>
-                    {selectedComplaint.updates.map((update) => (
-                      <div
-                        key={update.id}
-                        className="p-3 rounded-md bg-green-50 border-l-4 border-green-500"
-                      >
-                        <div className="flex justify-between items-center mb-1">
-                          <p className="text-sm font-medium">
-                            {update.staff?.fullName || 'Staff Member'}
-                            <span className="text-xs ml-2 text-muted-foreground">(Staff)</span>
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatDateTime(update.createdAt)}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-medium flex items-center gap-2">
+                      Updates
+                      <Badge variant="secondary" className="text-xs">
+                        {selectedComplaint.updates.length}
+                      </Badge>
+                    </h4>
+                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                      {selectedComplaint.updates.map((update) => (
+                        <div
+                          key={update.id}
+                          className="p-3 rounded-md bg-green-50 border-l-4 border-green-500"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mb-2">
+                            <p className="text-sm font-medium">
+                              {update.staff?.fullName || 'Staff Member'}
+                              <Badge variant="outline" className="text-xs ml-2">Staff</Badge>
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatDateTime(update.createdAt)}
+                            </p>
+                          </div>
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+                            {update.message}
                           </p>
                         </div>
-                        <p className="text-sm">{update.message}</p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
 
-              <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between">
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                    Close
-                  </Button>
-                  <Button>Add Update</Button>
-                </div>
-                <div className="flex gap-2">
-                  {selectedComplaint.status !== "IN_PROGRESS" && (
-                    <Button variant="secondary" onClick={() => handleStatusUpdate(selectedComplaint.id, "IN_PROGRESS")}>
-                      Mark as In Progress
+              <DialogFooter className="pt-6 border-t">
+                <div className="flex flex-col gap-3 w-full">
+                  {/* Primary Actions */}
+                  <div className="flex flex-col sm:flex-row gap-2 w-full">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setViewDialogOpen(false)}
+                      className="w-full sm:w-auto"
+                    >
+                      Close
                     </Button>
-                  )}
-                  {selectedComplaint.status !== "RESOLVED" && (
-                    <Button variant="default" onClick={() => handleStatusUpdate(selectedComplaint.id, "RESOLVED")}>
-                      Mark as Resolved
+                    <Button className="w-full sm:w-auto">
+                      Add Update
                     </Button>
-                  )}
+                  </div>
+                  
+                  {/* Status Actions */}
+                  <div className="flex flex-col sm:flex-row gap-2 w-full">
+                    {selectedComplaint.status !== "IN_PROGRESS" && (
+                      <Button 
+                        variant="secondary" 
+                        onClick={() => handleStatusUpdate(selectedComplaint.id, "IN_PROGRESS")}
+                        className="w-full sm:flex-1 text-xs sm:text-sm"
+                      >
+                        <AlertCircle className="mr-1 h-3 w-3" />
+                        Mark as In Progress
+                      </Button>
+                    )}
+                    {selectedComplaint.status !== "RESOLVED" && (
+                      <Button 
+                        variant="default" 
+                        onClick={() => handleStatusUpdate(selectedComplaint.id, "RESOLVED")}
+                        className="w-full sm:flex-1 text-xs sm:text-sm"
+                      >
+                        <CheckCircle2 className="mr-1 h-3 w-3" />
+                        Mark as Resolved
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </DialogFooter>
             </>

@@ -12,9 +12,11 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Logo } from "@/components/ui/Logo" // Import your Logo component
 import { Eye, EyeOff, Mail, Lock, User, Shield, GraduationCap, Users, Home, Phone, Hash, CheckCircle } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -33,12 +35,20 @@ export default function RegisterPage() {
     e.preventDefault()
     
     if (password !== confirmPassword) {
-      alert("Passwords don't match")
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords don't match. Please check and try again.",
+        variant: "destructive",
+      })
       return
     }
 
     if (!acceptTerms) {
-      alert("Please accept the terms and conditions")
+      toast({
+        title: "Terms Required",
+        description: "Please accept the terms and conditions to continue.",
+        variant: "destructive",
+      })
       return
     }
 
@@ -78,12 +88,26 @@ export default function RegisterPage() {
         throw new Error(data.error || "Registration failed")
       }
 
-      alert("Registration successful! Please login.")
-      router.push("/login")
+      // Success toast notification in green
+      toast({
+        title: "Registration Successful! 🎉",
+        description: "Your account has been created successfully. You can now log in with your credentials.",
+        variant: "default",
+        className: "bg-green-50 border-green-200 text-green-800",
+      })
+
+      // Redirect to login after a short delay to let user see the toast
+      setTimeout(() => {
+        router.push("/login")
+      }, 2000)
 
     } catch (err: any) {
       console.error(" Registration error:", err)
-      alert(err.message)
+      toast({
+        title: "Registration Failed",
+        description: err.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }

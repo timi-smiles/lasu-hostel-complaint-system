@@ -586,107 +586,148 @@ export default function StudentsPage() {
 
         {/* Student Detail Dialog */}
         <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             {selectedStudent && (
               <>
-                <DialogHeader>
-                  <DialogTitle className="flex items-center justify-between">
-                    <span>Student Profile</span>
+                <DialogHeader className="pb-4">
+                  <DialogTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span className="text-lg">Student Profile</span>
                     <StatusBadge status={selectedStudent.status} />
                   </DialogTitle>
-                  <DialogDescription>Student ID: {selectedStudent.studentId || "Not assigned"}</DialogDescription>
+                  <DialogDescription className="text-sm">
+                    Student ID: {selectedStudent.studentId || "Not assigned"}
+                  </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="md:col-span-1 flex flex-col items-center">
-                    <Avatar className="h-32 w-32">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Student Avatar and Basic Info */}
+                  <div className="lg:col-span-1 flex flex-col items-center text-center">
+                    <Avatar className="h-24 w-24 sm:h-32 sm:w-32">
                       <AvatarImage src={`/placeholder.svg?height=128&width=128`} alt={selectedStudent.fullName} />
-                      <AvatarFallback className="text-2xl">
+                      <AvatarFallback className="text-xl sm:text-2xl">
                         {selectedStudent.fullName
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    <h3 className="mt-4 text-lg font-semibold">{selectedStudent.fullName}</h3>
-                    <p className="text-muted-foreground">{selectedStudent.department || "Not specified"}</p>
-                    <p className="text-sm">Student</p>
+                    <h3 className="mt-3 text-base sm:text-lg font-semibold break-words">
+                      {selectedStudent.fullName}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedStudent.department || "Not specified"}
+                    </p>
+                    <Badge variant="secondary" className="mt-1 text-xs">Student</Badge>
 
-                    <div className="mt-6 w-full space-y-2">
+                    {/* Action Buttons */}
+                    <div className="mt-4 w-full space-y-2">
                       <Button variant="outline" className="w-full justify-start" size="sm">
                         <Mail className="mr-2 h-4 w-4" />
-                        Send Email
+                        <span className="truncate">Send Email</span>
                       </Button>
                       {selectedStudent.phone && (
                         <Button variant="outline" className="w-full justify-start" size="sm">
                           <Phone className="mr-2 h-4 w-4" />
-                          Call Student
+                          <span className="truncate">Call Student</span>
                         </Button>
                       )}
                     </div>
                   </div>
 
-                  <div className="md:col-span-2 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Student Details */}
+                  <div className="lg:col-span-2 space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Email</p>
-                        <p>{selectedStudent.email}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
+                        <p className="text-sm break-all">{selectedStudent.email}</p>
                       </div>
+                      
                       {selectedStudent.phone && (
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Phone</p>
-                          <p>{selectedStudent.phone}</p>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
+                          <p className="text-sm">{selectedStudent.phone}</p>
                         </div>
                       )}
-                      {selectedStudent.hostelBlock && (
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Hostel Block</p>
-                          <p>Block {selectedStudent.hostelBlock}</p>
-                        </div>
-                      )}
-                      {selectedStudent.roomNumber && (
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Room Number</p>
-                          <p>{selectedStudent.roomNumber}</p>
-                        </div>
-                      )}
+                      
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Registration Date</p>
-                        <p>{formatDate(selectedStudent.createdAt)}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Hostel Info</p>
+                        <p className="text-sm">
+                          {selectedStudent.hostelBlock && selectedStudent.roomNumber 
+                            ? `Block ${selectedStudent.hostelBlock}, Room ${selectedStudent.roomNumber}`
+                            : "Not assigned"
+                          }
+                        </p>
                       </div>
+                      
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Department</p>
+                        <p className="text-sm">{selectedStudent.department || "Not specified"}</p>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Registration Date</p>
+                        <p className="text-sm">{formatDate(selectedStudent.createdAt)}</p>
+                      </div>
+                      
                       {selectedStudent.lastLogin && (
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Last Login</p>
-                          <p>{formatDate(selectedStudent.lastLogin)}</p>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Last Login</p>
+                          <p className="text-sm">{formatDate(selectedStudent.lastLogin)}</p>
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
 
-                <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between">
-                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                      Close
-                    </Button>
-                    <Button>Edit Student</Button>
-                  </div>
-                  <div className="flex gap-2">
-                    {selectedStudent.status !== "ACTIVE" && (
-                      <Button variant="secondary" onClick={() => handleStatusUpdate(selectedStudent.id, "ACTIVE")}>
-                        Set as Active
+                <DialogFooter className="pt-6 border-t">
+                  <div className="flex flex-col gap-3 w-full">
+                    {/* Primary Actions */}
+                    <div className="flex flex-col sm:flex-row gap-2 w-full">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setViewDialogOpen(false)}
+                        className="w-full sm:w-auto"
+                      >
+                        Close
                       </Button>
-                    )}
-                    {selectedStudent.status !== "INACTIVE" && (
-                      <Button variant="secondary" onClick={() => handleStatusUpdate(selectedStudent.id, "INACTIVE")}>
-                        Set as Inactive
+                      <Button className="w-full sm:w-auto">
+                        Edit Student
                       </Button>
-                    )}
-                    {selectedStudent.status !== "SUSPENDED" && (
-                      <Button variant="destructive" onClick={() => handleStatusUpdate(selectedStudent.id, "SUSPENDED")}>
-                        Suspend Student
-                      </Button>
-                    )}
+                    </div>
+                    
+                    {/* Status Actions */}
+                    <div className="flex flex-col sm:flex-row gap-2 w-full">
+                      {selectedStudent.status !== "ACTIVE" && (
+                        <Button 
+                          variant="secondary" 
+                          onClick={() => handleStatusUpdate(selectedStudent.id, "ACTIVE")}
+                          className="w-full sm:flex-1 text-xs sm:text-sm"
+                        >
+                          <CheckCircle className="mr-1 h-3 w-3" />
+                          Set Active
+                        </Button>
+                      )}
+                      {selectedStudent.status !== "INACTIVE" && (
+                        <Button 
+                          variant="secondary" 
+                          onClick={() => handleStatusUpdate(selectedStudent.id, "INACTIVE")}
+                          className="w-full sm:flex-1 text-xs sm:text-sm"
+                        >
+                          <XCircle className="mr-1 h-3 w-3" />
+                          Set Inactive
+                        </Button>
+                      )}
+                      {selectedStudent.status !== "SUSPENDED" && (
+                        <Button 
+                          variant="destructive" 
+                          onClick={() => handleStatusUpdate(selectedStudent.id, "SUSPENDED")}
+                          className="w-full sm:flex-1 text-xs sm:text-sm"
+                        >
+                          <UserX className="mr-1 h-3 w-3" />
+                          Suspend
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </DialogFooter>
               </>

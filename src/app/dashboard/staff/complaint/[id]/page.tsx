@@ -602,7 +602,7 @@ export default function ComplaintDetailPage({
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+                    <Button type="submit" disabled={isSubmitting} className="w-full mt-4 sm:w-auto">
                       {isSubmitting ? "Submitting..." : "Add Update"}
                     </Button>
                   </CardFooter>
