@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
       }
 
       toast({
-        title: "Email Resent! 📧",
+        title: "Email Resent!",
         description: "We've sent another reset email to your inbox.",
         className: "bg-blue-50 border-blue-200 text-blue-800",
       })
@@ -98,8 +98,8 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="relative w-full max-w-md">
-        {/* Back to Login - Hidden on large screens */}
-        <div className="mb-6 lg:hidden">
+        {/* Back to Login - Hidden on large and medium screens  */}
+        <div className="mb-6 lg:hidden md:hidden">
           <Link href="/login">
             <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-white/50">
               <ArrowLeft className="h-4 w-4" />

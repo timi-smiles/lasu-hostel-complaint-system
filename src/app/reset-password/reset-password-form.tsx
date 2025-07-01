@@ -120,7 +120,7 @@ export function ResetPasswordForm() {
       }
 
       toast({
-        title: "Password Reset Successful! 🎉",
+        title: "Password Reset Successful!",
         description: "Your password has been updated. You can now log in with your new password.",
         className: "bg-green-50 border-green-200 text-green-800",
       })
@@ -199,7 +199,7 @@ export function ResetPasswordForm() {
 
       <div className="relative w-full max-w-md">
         {/* Back to Login - Hidden on large screens */}
-        <div className="mb-6 lg:hidden">
+        <div className="mb-6 lg:hidden md:hidden">
           <Link href="/login">
             <Button variant="ghost" className="flex items-center gap-2 pl-1 hover:bg-white/50">
               <ArrowLeft className="h-4 w-4" />
