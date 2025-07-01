@@ -58,8 +58,11 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      // Create reset URL
-      const resetURL = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
+      // Create reset URL - dynamically get the domain
+      const protocol = request.headers.get('x-forwarded-proto') || 'https'
+      const host = request.headers.get('host') || request.headers.get('x-forwarded-host')
+      const baseUrl = process.env.NEXTAUTH_URL || `${protocol}://${host}`
+      const resetURL = `${baseUrl}/reset-password?token=${resetToken}`
 
       // Email template
       const emailHTML = `
