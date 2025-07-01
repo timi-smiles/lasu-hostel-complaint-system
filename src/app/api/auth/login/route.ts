@@ -3,6 +3,9 @@ import { verify } from "argon2"
 import prisma from "@/lib/db"
 import { createJWTToken, setJWTCookie } from "@/lib/auth"
 
+// Prevent static optimization for this API route
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: NextRequest) {
   try {
     console.log("Login attempt started")

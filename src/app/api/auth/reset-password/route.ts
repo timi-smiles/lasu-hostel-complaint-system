@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "../../../../generated/prisma"
 import * as argon2 from "argon2"
 
+// Prevent static optimization for this API route
+export const dynamic = 'force-dynamic'
+
 const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {

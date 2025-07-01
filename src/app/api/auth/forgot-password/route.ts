@@ -3,6 +3,9 @@ import { PrismaClient } from "../../../../generated/prisma"
 import crypto from "crypto"
 import nodemailer from "nodemailer"
 
+// Prevent static optimization for this API route
+export const dynamic = 'force-dynamic'
+
 const prisma = new PrismaClient()
 
 // Configure nodemailer (you'll need to set up your email service)

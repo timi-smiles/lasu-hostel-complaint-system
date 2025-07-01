@@ -4,6 +4,9 @@ import prisma from '@/lib/db'
 import { ComplaintPriority, ComplaintStatus } from '../../../generated/prisma'
 import { NotificationService } from "@/lib/notification-service"
 
+// Prevent static optimization for this API route
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
   try {
     const user = await getCurrentUser()
