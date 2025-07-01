@@ -11,9 +11,11 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Logo } from "@/components/ui/Logo" // Import your Logo component
 import { Eye, EyeOff, Mail, Lock, User, Shield, GraduationCap, Users } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState("student")
@@ -73,7 +75,11 @@ export default function LoginPage() {
       }
 
     } catch (err: any) {
-      alert(err.message)
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: err.message || "Invalid email or password. Please try again.",
+      })
     } finally {
       setIsLoading(false)
     }

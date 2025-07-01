@@ -73,6 +73,10 @@ model User {
   hostelBlock          String?
   roomNumber           String?
   
+  // Password reset fields
+  resetToken           String?
+  resetTokenExpiry     DateTime?
+  
   // Timestamps
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt

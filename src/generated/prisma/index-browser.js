@@ -132,6 +132,8 @@ exports.Prisma.UserScalarFieldEnum = {
   studentId: 'studentId',
   hostelBlock: 'hostelBlock',
   roomNumber: 'roomNumber',
+  resetToken: 'resetToken',
+  resetTokenExpiry: 'resetTokenExpiry',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   lastLogin: 'lastLogin'
