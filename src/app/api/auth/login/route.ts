@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       console.log("User not found")
       return NextResponse.json({ 
         status: "error",
-        error: "Invalid credentials" 
+        error: "Invalid email or password" 
       }, { status: 401 })
     }
 
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       console.log("Invalid password")
       return NextResponse.json({ 
         status: "error",
-        error: "Invalid credentials" 
+        error: "Invalid email or password" 
       }, { status: 401 })
     }
 

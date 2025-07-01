@@ -3,6 +3,7 @@
 import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import * as argon2 from "argon2"
 
 export async function updateProfile(formData: FormData) {
   try {
@@ -106,16 +107,15 @@ export async function changePassword(formData: FormData) {
       return { error: "User not found" }
     }
 
-    // Verify current password (you'll need to implement this based on your auth system)
-    const bcrypt = require("bcryptjs")
-    const isPasswordValid = await bcrypt.compare(currentPassword, userWithPassword.passwordHash)
+    // Verify current password using Argon2
+    const isPasswordValid = await argon2.verify(userWithPassword.passwordHash, currentPassword)
 
     if (!isPasswordValid) {
       return { error: "Current password is incorrect" }
     }
 
-    // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 12)
+    // Hash new password using Argon2
+    const hashedPassword = await argon2.hash(newPassword)
 
     // Update password in database
     await prisma.user.update({
