@@ -516,7 +516,7 @@ GET    /api/analytics/trends     # Trend analysis
 
 ### **System Administrator**
 - 👨‍💼 **Name**: System Administrator
-- 📧 **Email**: admin@lasuhotel.edu.ng
+- 📧 **Email**: timioguns16@gmail.com
 - 📱 **Phone**: +234 (0) 123 456 7891
 
 ---
@@ -532,13 +532,6 @@ GET    /api/analytics/trends     # Trend analysis
 - 🌐 **Multi-language Support**: Support for local languages
 - 🔄 **Integration APIs**: Connect with other university systems
 
-### **Roadmap**
-- **Q1 2025**: Mobile app development
-- **Q2 2025**: AI chatbot implementation
-- **Q3 2025**: Advanced analytics dashboard
-- **Q4 2025**: Multi-language support
-
----
 
 ## 🏆 **Success Metrics**
 
@@ -580,15 +573,14 @@ We welcome contributions to improve the LASU Hostel Complaint System! Here's how
 
 ## 📄 **License**
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the LAGOS STATE UNIVERSITY
 
 ---
 
 ## 🙏 **Acknowledgments**
 
 Special thanks to:
-- **Lagos State University** for supporting this initiative
-- **The Development Team** for their dedication and hard work
+- **Lagos State University** for sharing light to the initiative
 - **Beta Testers** who provided valuable feedback
 - **Open Source Community** for the amazing tools and libraries
 
