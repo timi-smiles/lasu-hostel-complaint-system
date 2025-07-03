@@ -31,9 +31,41 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState(false)
 
+  // Password strength validation
+  const [passwordStrength, setPasswordStrength] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false,
+  })
+
+  // Update password strength indicators
+  React.useEffect(() => {
+    setPasswordStrength({
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    })
+  }, [password])
+
+  const isPasswordStrong = Object.values(passwordStrength).every(Boolean)
+  const passwordsMatch = password === confirmPassword && password.length > 0
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    if (!isPasswordStrong) {
+      toast({
+        title: "Weak Password",
+        description: "Please ensure your password meets all requirements.",
+        variant: "destructive",
+      })
+      return
+    }
+
     if (password !== confirmPassword) {
       toast({
         title: "Password Mismatch",
@@ -343,6 +375,35 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {/* Password Strength Indicators */}
+              {password.length > 0 && (
+                <div className="space-y-3">
+                  <div className="text-sm font-medium text-slate-700">Password Requirements:</div>
+                  <div className="grid grid-cols-1 gap-2 text-xs">
+                    <div className={`flex items-center space-x-2 ${passwordStrength.length ? 'text-green-600' : 'text-slate-500'}`}>
+                      <CheckCircle className={`w-4 h-4 ${passwordStrength.length ? 'text-green-600' : 'text-slate-300'}`} />
+                      <span>At least 8 characters</span>
+                    </div>
+                    <div className={`flex items-center space-x-2 ${passwordStrength.uppercase ? 'text-green-600' : 'text-slate-500'}`}>
+                      <CheckCircle className={`w-4 h-4 ${passwordStrength.uppercase ? 'text-green-600' : 'text-slate-300'}`} />
+                      <span>One uppercase letter</span>
+                    </div>
+                    <div className={`flex items-center space-x-2 ${passwordStrength.lowercase ? 'text-green-600' : 'text-slate-500'}`}>
+                      <CheckCircle className={`w-4 h-4 ${passwordStrength.lowercase ? 'text-green-600' : 'text-slate-300'}`} />
+                      <span>One lowercase letter</span>
+                    </div>
+                    <div className={`flex items-center space-x-2 ${passwordStrength.number ? 'text-green-600' : 'text-slate-500'}`}>
+                      <CheckCircle className={`w-4 h-4 ${passwordStrength.number ? 'text-green-600' : 'text-slate-300'}`} />
+                      <span>One number</span>
+                    </div>
+                    <div className={`flex items-center space-x-2 ${passwordStrength.special ? 'text-green-600' : 'text-slate-500'}`}>
+                      <CheckCircle className={`w-4 h-4 ${passwordStrength.special ? 'text-green-600' : 'text-slate-300'}`} />
+                      <span>One special character</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Confirm Password Field - Updated colors */}
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-sm font-semibold text-slate-700">
@@ -367,6 +428,12 @@ export default function RegisterPage() {
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                {confirmPassword.length > 0 && (
+                  <div className={`text-xs flex items-center space-x-1 ${passwordsMatch ? 'text-green-600' : 'text-red-500'}`}>
+                    <CheckCircle className={`w-3 h-3 ${passwordsMatch ? 'text-green-600' : 'text-red-500'}`} />
+                    <span>{passwordsMatch ? 'Passwords match' : 'Passwords do not match'}</span>
+                  </div>
+                )}
               </div>
 
               {/* Terms and Conditions - Updated colors */}
@@ -409,7 +476,7 @@ export default function RegisterPage() {
               <Button 
                 type="submit" 
                 className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg shadow-blue-500/25 transition-all duration-300 transform hover:translate-y-[-1px]" 
-                disabled={isLoading || !acceptTerms}
+                disabled={isLoading || !acceptTerms || !isPasswordStrong || !passwordsMatch}
               >
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
