@@ -265,7 +265,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\HP\\Desktop\\lasu-hostel-complaint-system\\src\\generated\\prisma",
+      "value": "/vercel/sandbox/primary/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -274,17 +274,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "rhel-openssl-3.0.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\HP\\Desktop\\lasu-hostel-complaint-system\\prisma\\schema.prisma",
+    "sourceFilePath": "/vercel/sandbox/primary/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.8.2",
